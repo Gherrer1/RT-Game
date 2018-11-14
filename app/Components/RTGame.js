@@ -1,13 +1,17 @@
 import React from 'react';
 import MovieSearchForm from './MovieSearchForm';
+import getMovieData from '../api';
 
 class RTGame extends React.Component {
     constructor(props) {
         super(props);
     }
 
-    searchForMovie(movieTitle) {
+    async searchForMovie(movieTitle) {
         console.log(movieTitle);
+
+        const movieData = await getMovieData(movieTitle);
+        console.log(movieData);
     }
 
     render() {
