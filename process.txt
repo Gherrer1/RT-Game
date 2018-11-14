@@ -7,3 +7,5 @@
    With this data, I can not only read the score for the movie I was searching for but also the scores for related movies.
    ex) Searching for spider man will give me results for the all the toby mcguire spidermans, the forgettable andrew garfield spidermans, and the tom holland movie.
 
+3. My lambda function scrapes RT when user searches for movie X. I serendipitously came across an edge case though: multiple movies sharing the same name.
+   In this case, instead of a recommendations list, we'd send a list of all the titles with the same name and ask which one the user was search for.
