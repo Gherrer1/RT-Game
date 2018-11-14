@@ -3,6 +3,6 @@
     "path": "/",
     "httpMethod": "GET",
     "queryStringParameters": {
-        "movieTitle": "spider man"
+        "movieTitle": "x-Men origin - wolverine"
     }
 }

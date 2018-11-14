@@ -1,6 +1,8 @@
 'use strict';
 const rp = require('request-promise');
 
+const NO_MOVIES_FOUND = 'No movies found.';
+
 const getUrl = (movieTitle) => `https://www.rottentomatoes.com/search/?search=${movieTitle}`;
 const getHtml = async (url) => await rp(url);
 
@@ -18,38 +20,76 @@ function errorParsingJSONMsg(e, { faultyJSON }) {
   };
 }
 
-function successfulScrapeMsg(data) {
+function noMovieQueryProvidedMsg() {
+  return {
+    statusCode: 400,
+    body: JSON.stringify({
+      message: 'Provide a movie to search for.',
+      resource: event.resource,
+      path: event.path,
+      queryStringParamters: event.queryStringParameters
+    })
+  };
+}
+
+function reccomendationsMsg(searchedTitle, recommendations) {
   return {
     statusCode: 200,
     body: JSON.stringify({
-      data,
+      searchedFor: searchedTitle,
+      recommendations: recommendations,
     }),
   };
+}
+
+function noMoviesFoundMsg() {
+  return {
+    statusCode: 404,
+    body: JSON.stringify({
+      message: 'No movies found.',
+    }),
+  };
+}
+
+function findExactMatch(data, movieTitle) {
+  return data.movies.find(movie => movie.name.toLowerCase().trim() === movieTitle.toLowerCase().trim());
+}
+
+function getRecommendedTitles(data) {
+  return data.movies.map(movie => movie.name);
 }
 
 module.exports.getMovieData = async (event, context) => {
   const { queryStringParameters: query } = event;
   const movieTitle = (query && query.movieTitle) || null;
   if(!movieTitle) {
-    return {
-      statusCode: 404,
-      body: JSON.stringify({
-        message: 'couldnt find yoru shit',
-        resource: event.resource,
-        path: event.path,
-        queryStringParamters: event.queryStringParameters
-      })
-    };
+    return noMovieQueryProvidedMsg();
   }
 
-  const url = getUrl('disney');
+  const url = getUrl(movieTitle);
   const html = await getHtml(url);
   const dataStr = extractData(html);
+  if (dataStr === '') {
+    return noMoviesFoundMsg();
+  }
   const dataJSON = dataStr.slice(0, -2);
 
   try {
-    const obj = JSON.parse(dataJSON);
-    return successfulScrapeMsg(obj);
+    const data = JSON.parse(dataJSON);
+
+    const exactMatchExists = findExactMatch(data, movieTitle);    
+    if (exactMatchExists) {
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
+          message: 'exact match found but thats no fun'
+        })
+      };
+    }
+    else {
+      const recommendations = getRecommendedTitles(data);
+      return reccomendationsMsg(movieTitle, recommendations);
+    }
   } catch(e) {
     return errorParsingJSONMsg(e, { faultyJSON: dataStr });
   }
