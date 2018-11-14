@@ -39,9 +39,18 @@ function noMoviesFoundMsg() {
     };
 }
 
+const movieFoundMsg = (movie) => ({
+    statusCode: 200,
+    body: JSON.stringify({
+        message: 'Movie found.',
+        movie,
+    })
+});
+
 module.exports = {
     noMovieQueryProvidedMsg,
     noMoviesFoundMsg,
     reccomendationsMsg,
     errorParsingJSONMsg,
+    movieFoundMsg
 };
