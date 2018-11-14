@@ -1,48 +1,41 @@
-function errorParsingJSONMsg(e, { faultyJSON }) {
-    return {
-        statusCode: 500,
-        body: JSON.stringify({
+const errorParsingJSONMsg = (e, { faultyJSON }) => ({
+    statusCode: 500,
+    body: JSON.stringify({
         message: e.message,
         faultyJSON,
-        }),
-    };
-}
+    }),
+});
 
-function noMovieQueryProvidedMsg() {
-    return {
-        statusCode: 400,
-        body: JSON.stringify({
+const noMovieQueryProvidedMsg = () => ({
+    statusCode: 400,
+    body: JSON.stringify({
         message: 'Provide a movie to search for.',
         resource: event.resource,
         path: event.path,
-        queryStringParamters: event.queryStringParameters
-        })
-    };
-}
+        queryStringParamters: event.queryStringParameters,
+    }),
+});
 
-function reccomendationsMsg(searchedTitle, recommendations) {
-    return {
-        statusCode: 200,
-        body: JSON.stringify({
+const reccomendationsMsg = (searchedTitle, recommendations) => ({
+    statusCode: 200,
+    body: JSON.stringify({
+        message: 'No exact match found. Were you looking for one of these?',
         searchedFor: searchedTitle,
         recommendations: recommendations,
-        }),
-    };
-}
+    }),
+});
 
-function noMoviesFoundMsg() {
-    return {
-        statusCode: 404,
-        body: JSON.stringify({
+const noMoviesFoundMsg = () => ({
+    statusCode: 404,
+    body: JSON.stringify({
         message: 'No movies found.',
-        }),
-    };
-}
+    }),
+});
 
 const movieFoundMsg = (movie) => ({
     statusCode: 200,
     body: JSON.stringify({
-        message: 'Movie found.',
+        message: 'Movie found!',
         movie,
     })
 });
