@@ -44,3 +44,5 @@ module.exports.getMovieData = async (event, context) => {
 // https://serverless.com/framework/docs/providers/aws/guide/quick-start/
 // Async with lambda
 // http://www.goingserverless.com/blog/how-async-lambda-handlers-work-in-node-8-10
+// Testing function locally
+// ../node_modules/.bin/serverless invoke local --function hello --path data.json
