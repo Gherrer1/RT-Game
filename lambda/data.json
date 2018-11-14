@@ -1,0 +1,8 @@
+{
+    "resource": "/",
+    "path": "/",
+    "httpMethod": "GET",
+    "queryStringParameters": {
+        "movieTitle": "spider man"
+    }
+}

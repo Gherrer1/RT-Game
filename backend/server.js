@@ -11,7 +11,7 @@ function extractData (html) {
 }
 
 (async function () {
-    const url = getUrl('wolverine');
+    const url = getUrl('disney');
     const html = await getHtml(url);
     fs.writeFileSync('results.txt', html, 'utf-8');
     const data = extractData(html);
