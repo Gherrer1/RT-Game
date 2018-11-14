@@ -1,0 +1,9 @@
+1. So Rotten Tomatoes (RT) doesn't offer an API easily. There's a whole application process. My project is purely for instructive purposes so I
+   dont think they'd approve my application. So I'll web scrape for now.
+
+2. RT is probably aware that people will try to scrape, so I think that is why they send back HTML without the movie data already rendered.
+   Instead, they include a script that takes the movie data JSON and inserts it into the DOM. This *was* good anti-scraping defense for a
+   little while, but I found the script pattern in the html and used regex to extract that JSON data.
+   With this data, I can not only read the score for the movie I was searching for but also the scores for related movies.
+   ex) Searching for spider man will give me results for the all the toby mcguire spidermans, the forgettable andrew garfield spidermans, and the tom holland movie.
+
