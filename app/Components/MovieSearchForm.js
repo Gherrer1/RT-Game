@@ -28,6 +28,7 @@ class MovieSearchFrom extends React.Component {
                     name="movieTitle"
                     value={this.state.movieInput}
                     onChange={e => this.setState({ movieInput: e.target.value })}
+                    autoComplete="off"
                 />
                 <button type="submit">Add Movie</button>
             </form>
