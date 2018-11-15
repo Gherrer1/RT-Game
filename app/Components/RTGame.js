@@ -1,6 +1,7 @@
 import React from 'react';
 import Alert from 'react-bootstrap/lib/Alert';
 import MovieSearchForm from './MovieSearchForm';
+import GameGrid from './GameGrid';
 import AmbiguousSearchResults from './AmbiguousSearchResults';
 import HowToPlay from './HowToPlay';
 import MoviesList from './MoviesList';
@@ -21,6 +22,7 @@ class RTGame extends React.Component {
 
         this.state = {
             movies: fakeMovieData,
+            playing: false,
             errorMessage: null,
             warningMessage: null,
             searchedFor: null,
@@ -77,12 +79,21 @@ class RTGame extends React.Component {
     }
 
     render() {
-        const { movies, errorMessage, warningMessage, searchedFor, recommendations } = this.state;
+        const { movies, errorMessage, warningMessage, searchedFor, recommendations, playing } = this.state;
+
+        if(playing) {
+            return (
+                <GameGrid />
+            );
+        }
+
         return (
             <div>
                 <h1>Rotten Tomatoes Game</h1>
                 <HowToPlay />
-                <MovieSearchForm handleSubmit={this.searchForMovie} />
+                {movies.length < 5 && (
+                    <MovieSearchForm handleSubmit={this.searchForMovie} />)
+                }
                 {errorMessage && (
                     <Alert bsStyle="danger">
                         {COULD_NOT_FIND_MOVIE_NAMED} <strong>{searchedFor}</strong>
@@ -97,6 +108,9 @@ class RTGame extends React.Component {
                     />
                 )}
                 <MoviesList movies={movies} />
+                {movies.length > 0 && (
+                    <button onClick={() => this.setState({ playing: true })}>Ready to play?</button>
+                )}
             </div>
         );
     }
