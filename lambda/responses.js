@@ -1,4 +1,4 @@
-const { MOVIE_FOUND, COULD_NOT_FIND_MOVIE_NAMED, RECOMMENDATIONS } = require('./messages');
+const { MOVIE_FOUND, COULD_NOT_FIND_MOVIE_NAMED, RECOMMENDATIONS, MULTIPLE_MOVIES_FOUND } = require('./messages');
 
 const enableCors = (responseObj) => ({
     ...responseObj,
@@ -35,6 +35,15 @@ const reccomendationsMsg = (searchedTitle, recommendations) => enableCors({
     }),
 });
 
+const multipleMoviesFoundMsg = (searchedTitle, matchingMovies) => enableCors({
+    statusCode: 200,
+    body: JSON.stringify({
+        message: MULTIPLE_MOVIES_FOUND,
+        searchedFor: searchedTitle,
+        movies: matchingMovies,
+    }),
+});
+
 const noMoviesFoundMsg = (movieSearchedFor) => enableCors({
     statusCode: 404,
     body: JSON.stringify({
@@ -56,5 +65,6 @@ module.exports = {
     noMoviesFoundMsg,
     reccomendationsMsg,
     errorParsingJSONMsg,
-    movieFoundMsg
+    movieFoundMsg,
+    multipleMoviesFoundMsg,
 };

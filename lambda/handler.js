@@ -1,11 +1,12 @@
 'use strict';
-const { getHtml, getUrl, extractData, findExactMatch } = require('./helpers');
+const { getHtml, getUrl, extractData, findExactMatches } = require('./helpers');
 const {
   errorParsingJSONMsg,
   noMovieQueryProvidedMsg,
   reccomendationsMsg,
   noMoviesFoundMsg,
-  movieFoundMsg } = require('./responses');
+  movieFoundMsg,
+  multipleMoviesFoundMsg } = require('./responses');
 
 
 module.exports.getMovieData = async (event, context) => {
@@ -26,9 +27,12 @@ module.exports.getMovieData = async (event, context) => {
   try {
     const data = JSON.parse(dataJSON);
 
-    const exactMatchFound = findExactMatch(data, movieTitle);    
-    if (exactMatchFound) {
-      return movieFoundMsg(exactMatchFound);
+    const exactMatchesFound = findExactMatches(data, movieTitle);
+    if (exactMatchesFound.length === 1) {
+      return movieFoundMsg(exactMatchesFound[0]);
+    }
+    else if (exactMatchesFound.length > 1) {
+      return multipleMoviesFoundMsg(movieTitle, exactMatchesFound);
     }
     else {
       return reccomendationsMsg(movieTitle, data.movies);
