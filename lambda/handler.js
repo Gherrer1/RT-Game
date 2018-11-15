@@ -1,5 +1,5 @@
 'use strict';
-const { getHtml, getUrl, extractData, findExactMatch, getRecommendedTitles } = require('./helpers');
+const { getHtml, getUrl, extractData, findExactMatch } = require('./helpers');
 const {
   errorParsingJSONMsg,
   noMovieQueryProvidedMsg,
@@ -31,8 +31,7 @@ module.exports.getMovieData = async (event, context) => {
       return movieFoundMsg(exactMatchFound);
     }
     else {
-      const recommendations = getRecommendedTitles(data);
-      return reccomendationsMsg(movieTitle, recommendations);
+      return reccomendationsMsg(movieTitle, data.movies);
     }
   } catch(e) {
     return errorParsingJSONMsg(e, { faultyJSON: dataStr });

@@ -1,4 +1,4 @@
-const { MOVIE_FOUND, COULD_NOT_FIND_MOVIE_NAMED } = require('./messages');
+const { MOVIE_FOUND, COULD_NOT_FIND_MOVIE_NAMED, RECOMMENDATIONS } = require('./messages');
 
 const enableCors = (responseObj) => ({
     ...responseObj,
@@ -29,7 +29,7 @@ const noMovieQueryProvidedMsg = () => enableCors({
 const reccomendationsMsg = (searchedTitle, recommendations) => enableCors({
     statusCode: 200,
     body: JSON.stringify({
-        message: 'No exact match found. Were you looking for one of these?',
+        message: RECOMMENDATIONS,
         searchedFor: searchedTitle,
         recommendations: recommendations,
     }),
