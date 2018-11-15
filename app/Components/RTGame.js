@@ -31,6 +31,7 @@ class RTGame extends React.Component {
 
         this.searchForMovie = this.searchForMovie.bind(this);
         this.addMovieToGame = this.addMovieToGame.bind(this);
+        this.removeMovie = this.removeMovie.bind(this);
     }
 
     async searchForMovie(movieTitle) {
@@ -66,6 +67,12 @@ class RTGame extends React.Component {
                 recommendations: movieData.movies
             })
         }
+    }
+
+    removeMovie(movie) {
+        this.setState(prevState => ({
+            movies: prevState.movies.filter(mov => mov.image !== movie.image),
+        }));
     }
 
     addMovieToGame(movie) {
@@ -107,7 +114,7 @@ class RTGame extends React.Component {
                         handleClickMovie={this.addMovieToGame}
                     />
                 )}
-                <MoviesList movies={movies} />
+                <MoviesList movies={movies} removeMovie={this.removeMovie} />
                 {movies.length > 0 && (
                     <button onClick={() => this.setState({ playing: true })}>Ready to play?</button>
                 )}

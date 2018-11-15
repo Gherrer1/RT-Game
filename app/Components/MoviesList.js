@@ -1,11 +1,11 @@
 import React from 'react';
 import Movie from './Movie';
 
-export default function MoviesList(props) {
+export default function MoviesList({ removeMovie, movies }) {
     return (
         <div className="movies-list">
-            {props.movies.map(movie => (
-                <Movie movie={movie} />
+            {movies.map(movie => (
+                <Movie movie={movie} remove={removeMovie} />
             ))}
         </div>
     )
