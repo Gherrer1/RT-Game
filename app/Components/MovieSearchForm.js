@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Button from 'react-bootstrap/lib/Button';
 
 class MovieSearchFrom extends React.Component {
     constructor(props) {
@@ -31,7 +32,7 @@ class MovieSearchFrom extends React.Component {
                     onChange={e => this.setState({ movieInput: e.target.value })}
                     autoComplete="off"
                 />
-                <button type="submit">Add Movie</button>
+                <Button className="add-movie-btn" type="submit" bsStyle="success">Add Movie</Button>
             </form>
         );
     }

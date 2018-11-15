@@ -11,6 +11,10 @@ ol, ul {
     list-style: none;
 }
 
+.add-movie-btn {
+    margin-left: 10px;
+}
+
 .movies-list {
     margin-top: 50px;
     display: grid;
