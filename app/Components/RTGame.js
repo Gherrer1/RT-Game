@@ -2,6 +2,7 @@ import React from 'react';
 import Alert from 'react-bootstrap/lib/Alert';
 import MovieSearchForm from './MovieSearchForm';
 import AmbiguousSearchResults from './AmbiguousSearchResults';
+import HowToPlay from './HowToPlay';
 import MoviesList from './MoviesList';
 import getMovieData from '../api';
 
@@ -80,6 +81,7 @@ class RTGame extends React.Component {
         return (
             <div>
                 <h1>Rotten Tomatoes Game</h1>
+                <HowToPlay />
                 <MovieSearchForm handleSubmit={this.searchForMovie} />
                 {errorMessage && (
                     <Alert bsStyle="danger">

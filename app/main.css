@@ -1,3 +1,11 @@
+body {
+    padding: 20px;
+}
+
+ol, ul {
+    padding-left: 15px;
+}
+
 .movies-list {
     margin-top: 50px;
     display: grid;
