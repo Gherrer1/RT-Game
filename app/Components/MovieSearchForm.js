@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 class MovieSearchFrom extends React.Component {
     constructor(props) {
@@ -35,5 +36,9 @@ class MovieSearchFrom extends React.Component {
         );
     }
 }
+
+MovieSearchFrom.propTypes = {
+    handleSubmit: PropTypes.func.isRequired,
+};
 
 export default MovieSearchFrom;

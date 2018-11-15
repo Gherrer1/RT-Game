@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Alert from 'react-bootstrap/lib/Alert';
 
 function AmbiguousSearchResults({ message, searchedFor, recommendations, handleClickMovie }) {
@@ -21,5 +22,12 @@ function AmbiguousSearchResults({ message, searchedFor, recommendations, handleC
         </Alert>
     );
 }
+
+AmbiguousSearchResults.propTypes = {
+    message: PropTypes.string.isRequired,
+    searchedFor: PropTypes.string.isRequired,
+    recommendations: PropTypes.array.isRequired,
+    handleClickMovie: PropTypes.func.isRequired,
+};
 
 export default AmbiguousSearchResults;

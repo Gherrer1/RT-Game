@@ -1,5 +1,6 @@
 import React from 'react';
 import Button from 'react-bootstrap/lib/Button';
+import PropTypes from 'prop-types';
 
 function Movie({ movie, remove }) {
     return (
@@ -15,5 +16,10 @@ function Movie({ movie, remove }) {
         </div>
     );
 }
+
+Movie.propTypes = {
+    movie: PropTypes.object.isRequired,
+    remove: PropTypes.func.isRequired,
+};
 
 export default Movie;
