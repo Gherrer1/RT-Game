@@ -15,6 +15,9 @@ class MovieSearchFrom extends React.Component {
         e.preventDefault();
 
         this.props.handleSubmit(this.state.movieInput);
+        this.setState({
+            movieInput: '',
+        });
     }
 
     render() {

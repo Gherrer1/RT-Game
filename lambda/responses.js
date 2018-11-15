@@ -1,3 +1,5 @@
+const { MOVIE_FOUND } = require('./messages');
+
 const enableCors = (responseObj) => ({
     ...responseObj,
     headers: {
@@ -43,7 +45,7 @@ const noMoviesFoundMsg = () => enableCors({
 const movieFoundMsg = (movie) => enableCors({
     statusCode: 200,
     body: JSON.stringify({
-        message: 'Movie found!',
+        message: MOVIE_FOUND,
         movie,
     })
 });
