@@ -1,6 +1,7 @@
 import React from 'react';
 import Alert from 'react-bootstrap/lib/Alert';
 import MovieSearchForm from './MovieSearchForm';
+import AmbiguousSearchResults from './AmbiguousSearchResults';
 import MoviesList from './MoviesList';
 import getMovieData from '../api';
 
@@ -86,22 +87,12 @@ class RTGame extends React.Component {
                     </Alert>
                 )}
                 {warningMessage && (
-                    <Alert bsStyle="warning">
-                        <h4>{warningMessage}</h4>
-                        <p>Searched for <strong>{searchedFor}</strong></p>
-                        <ul>
-                            {recommendations.map(movie => (
-                                <li key={movie.image}>
-                                    <a
-                                        className="recommended-title"
-                                        onClick={() => this.addMovieToGame(movie)}
-                                    >
-                                        {movie.name}
-                                    </a> ({movie.year})
-                                </li>
-                            ))}
-                        </ul>
-                    </Alert>
+                    <AmbiguousSearchResults
+                        message={warningMessage}
+                        searchedFor={searchedFor}
+                        recommendations={recommendations}
+                        handleClickMovie={this.addMovieToGame}
+                    />
                 )}
                 <MoviesList movies={movies} />
             </div>
