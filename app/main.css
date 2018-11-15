@@ -6,6 +6,11 @@ ol, ul {
     padding-left: 15px;
 }
 
+.movie-info {
+    padding: 0;
+    list-style: none;
+}
+
 .movies-list {
     margin-top: 50px;
     display: grid;

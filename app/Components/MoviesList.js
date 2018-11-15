@@ -1,13 +1,11 @@
 import React from 'react';
+import Movie from './Movie';
 
 export default function MoviesList(props) {
     return (
         <div className="movies-list">
             {props.movies.map(movie => (
-                <div key={movie.image}>
-                    <img src={movie.image} />
-                    <p>{movie.name}</p>
-                </div>
+                <Movie movie={movie} />
             ))}
         </div>
     )
