@@ -4,7 +4,7 @@ import MovieSearchForm from './MovieSearchForm';
 import MoviesList from './MoviesList';
 import getMovieData from '../api';
 
-const { MOVIE_FOUND, COULD_NOT_FIND_MOVIE_NAMED, RECOMMENDATIONS } = require('../../lambda/messages');
+const { MOVIE_FOUND, COULD_NOT_FIND_MOVIE_NAMED, RECOMMENDATIONS, MULTIPLE_MOVIES_FOUND } = require('../../lambda/messages');
 const fakeMovieData = [
     { image: 'https://resizing.flixster.com/yTmdjXPPphGLshRtgVT_uIITjZQ=/fit-in/80x80/v1.bTsxMTMxMTY2NztqOzE3OTUwOzEyMDA7MTAxMDsxMzQ2', name: 'Thor' },
     { name: 'Iron man', image: 'https://resizing.flixster.com/VLupEasUmxg6mJGHLSbuOzw9Sdo=/fit-in/80x80/v1.bTsxMTIxODE4OTtqOzE3OTQ5OzEyMDA7MTAwMDsxNTAw' },
@@ -53,6 +53,15 @@ class RTGame extends React.Component {
                 recommendations: movieData.recommendations,
             });
         }
+
+        if(movieData.message === MULTIPLE_MOVIES_FOUND) {
+            return this.setState({
+                errorMessage: null,
+                warningMessage: MULTIPLE_MOVIES_FOUND,
+                searchedFor: movieData.searchedFor,
+                recommendations: movieData.movies
+            })
+        }
     }
 
     addMovieToGame(movie) {
@@ -88,7 +97,7 @@ class RTGame extends React.Component {
                                         onClick={() => this.addMovieToGame(movie)}
                                     >
                                         {movie.name}
-                                    </a>
+                                    </a> ({movie.year})
                                 </li>
                             ))}
                         </ul>
