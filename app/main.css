@@ -1,4 +1,10 @@
 .movies-list {
+    margin-top: 50px;
     display: grid;
     grid-template-columns: repeat(5, 1fr);
+    justify-items: center;
+}
+
+.movies-list > div {
+    text-align: center;
 }
