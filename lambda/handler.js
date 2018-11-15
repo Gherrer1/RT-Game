@@ -19,7 +19,7 @@ module.exports.getMovieData = async (event, context) => {
   const html = await getHtml(url);
   const dataStr = extractData(html);
   if (dataStr === '') {
-    return noMoviesFoundMsg();
+    return noMoviesFoundMsg(movieTitle);
   }
   const dataJSON = dataStr.slice(0, -2);
 

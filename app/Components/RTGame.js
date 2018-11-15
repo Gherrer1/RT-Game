@@ -1,9 +1,10 @@
 import React from 'react';
+import Alert from 'react-bootstrap/lib/Alert';
 import MovieSearchForm from './MovieSearchForm';
 import MoviesList from './MoviesList';
 import getMovieData from '../api';
 
-const { MOVIE_FOUND } = require('../../lambda/messages');
+const { MOVIE_FOUND, COULD_NOT_FIND_MOVIE_NAMED } = require('../../lambda/messages');
 const fakeMovieData = [
     { image: 'https://resizing.flixster.com/yTmdjXPPphGLshRtgVT_uIITjZQ=/fit-in/80x80/v1.bTsxMTMxMTY2NztqOzE3OTUwOzEyMDA7MTAxMDsxMzQ2', name: 'Thor' },
     { name: 'Iron man', image: 'https://resizing.flixster.com/VLupEasUmxg6mJGHLSbuOzw9Sdo=/fit-in/80x80/v1.bTsxMTIxODE4OTtqOzE3OTQ5OzEyMDA7MTAwMDsxNTAw' },
@@ -18,6 +19,8 @@ class RTGame extends React.Component {
 
         this.state = {
             movies: fakeMovieData,
+            errorMessage: '',
+            warningMessage: '',
         };
 
         this.searchForMovie = this.searchForMovie.bind(this);
@@ -29,16 +32,30 @@ class RTGame extends React.Component {
         if(movieData.message === MOVIE_FOUND) {
             return this.setState(prevState => ({
                 movies: prevState.movies.concat([ movieData.movie ]),
+                errorMessage: '',
+                warningMessage: '',
             }));
+        }
+
+        if(movieData.message.startsWith(COULD_NOT_FIND_MOVIE_NAMED)) {
+            return this.setState({
+                errorMessage: movieData.message,
+                warningMessage: '',
+            });
         }
     }
 
     render() {
-        const { movies } = this.state;
+        const { movies, errorMessage } = this.state;
         return (
             <div>
                 <h1>Rotten Tomatoes Game</h1>
                 <MovieSearchForm handleSubmit={this.searchForMovie} />
+                {errorMessage && (
+                    <Alert bsStyle="danger">
+                        {COULD_NOT_FIND_MOVIE_NAMED} <strong>{errorMessage.replace(COULD_NOT_FIND_MOVIE_NAMED, '')}</strong>
+                    </Alert>
+                )}
                 <MoviesList movies={movies} />
             </div>
         );

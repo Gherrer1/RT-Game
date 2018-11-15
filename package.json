@@ -28,7 +28,9 @@
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
     "express": "^4.16.4",
+    "prop-types": "^15.6.2",
     "react": "^16.6.3",
+    "react-bootstrap": "^0.32.4",
     "react-dom": "^16.6.3",
     "request": "^2.88.0",
     "request-promise": "^4.2.2"

@@ -1,4 +1,4 @@
-const { MOVIE_FOUND } = require('./messages');
+const { MOVIE_FOUND, COULD_NOT_FIND_MOVIE_NAMED } = require('./messages');
 
 const enableCors = (responseObj) => ({
     ...responseObj,
@@ -35,10 +35,11 @@ const reccomendationsMsg = (searchedTitle, recommendations) => enableCors({
     }),
 });
 
-const noMoviesFoundMsg = () => enableCors({
+const noMoviesFoundMsg = (movieSearchedFor) => enableCors({
     statusCode: 404,
     body: JSON.stringify({
-        message: 'No movies found.',
+        message: `${COULD_NOT_FIND_MOVIE_NAMED} ${movieSearchedFor}`,
+        searchedFor: movieSearchedFor,
     }),
 });
 
