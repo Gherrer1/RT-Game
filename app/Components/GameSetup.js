@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Alert, Button } from 'react-bootstrap/lib';
 import HowToPlay from './HowToPlay';
 import MovieSearchForm from './MovieSearchForm';
@@ -117,13 +118,12 @@ class GameSetup extends React.Component {
 	render() {
 		const { movies, players, errorMessage, warningMessage,
 			searchedFor, recommendations } = this.state;
+		const { beginGame } = this.props;
 		return (
 			<div>
 				<h1>Rotten Tomatoes Game</h1>
 				<HowToPlay />
-				{movies.length < 5 && (
-					<MovieSearchForm handleSubmit={this.searchForMovie} />)
-				}
+				<MovieSearchForm handleSubmit={this.searchForMovie} disabled={movies.length === 5} />
 				{errorMessage && (
 					<Alert bsStyle="danger">
 						{COULD_NOT_FIND_MOVIE_NAMED} <strong>{searchedFor}</strong>
@@ -143,12 +143,20 @@ class GameSetup extends React.Component {
 					updatePlayerName={this.updatePlayerName}
 					addPlayer={this.addPlayer}
 				/>
-				{movies.length > 0 && (
-					<Button onClick={() => console.log('unimplemented')} bsStyle="primary">Start Game!</Button>
-				)}
+				<Button
+					onClick={() => beginGame(movies, players)}
+					bsStyle="primary"
+					disabled={movies.length === 0 || players.length === 0}
+				>
+					Start Game!
+				</Button>
 			</div>
 		);
 	}
 }
+
+GameSetup.propTypes = {
+	beginGame: PropTypes.func.isRequired,
+};
 
 export default GameSetup;
