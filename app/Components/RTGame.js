@@ -11,18 +11,30 @@ class RTGame extends React.Component {
 			players: [],
 			playing: false,
 		};
+
+		this.beginGame = this.beginGame.bind(this);
+	}
+
+	beginGame(movies, players) {
+		this.setState({
+			movies,
+			players,
+			playing: true,
+		});
 	}
 
 	render() {
-		const { playing } = this.state;
+		const { playing, movies, players } = this.state;
 		if (playing) {
 			return (
-				<GameGrid />
+				<GameGrid movies={movies} players={players} />
 			);
 		}
 
 		return (
-			<GameSetup />
+			<GameSetup
+				beginGame={this.beginGame}
+			/>
 		);
 	}
 }
