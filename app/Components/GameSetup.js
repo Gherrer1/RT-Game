@@ -34,6 +34,7 @@ class GameSetup extends React.Component {
 			warningMessage: null,
 			searchedFor: null,
 			recommendations: null,
+			loading: false,
 		};
 
 		this.searchForMovie = this.searchForMovie.bind(this);
@@ -44,6 +45,7 @@ class GameSetup extends React.Component {
 	}
 
 	async searchForMovie(movieTitle) {
+		this.setState({ loading: true });
 		const movieData = await getMovieData(movieTitle);
 		console.log(movieData);
 		if (movieData.message === MOVIE_FOUND) {
@@ -52,6 +54,7 @@ class GameSetup extends React.Component {
 
 		if (movieData.message.startsWith(COULD_NOT_FIND_MOVIE_NAMED)) {
 			return this.setState({
+				loading: false,
 				errorMessage: movieData.message,
 				searchedFor: movieData.searchedFor,
 				warningMessage: null,
@@ -61,6 +64,7 @@ class GameSetup extends React.Component {
 
 		if (movieData.message === RECOMMENDATIONS) {
 			return this.setState({
+				loading: false,
 				errorMessage: null,
 				warningMessage: RECOMMENDATIONS,
 				searchedFor: movieData.searchedFor,
@@ -70,12 +74,15 @@ class GameSetup extends React.Component {
 
 		if (movieData.message === MULTIPLE_MOVIES_FOUND) {
 			return this.setState({
+				loading: false,
 				errorMessage: null,
 				warningMessage: MULTIPLE_MOVIES_FOUND,
 				searchedFor: movieData.searchedFor,
 				recommendations: movieData.movies,
 			});
 		}
+
+		return this.setState({ loading: false });
 	}
 
 	addPlayer(e) {
@@ -102,6 +109,7 @@ class GameSetup extends React.Component {
 	addMovieToGame(movie) {
 		this.setState(prevState => ({
 			movies: prevState.movies.concat([ movie ]),
+			loading: false,
 			errorMessage: null,
 			warningMessage: null,
 			searchFor: null,
@@ -117,13 +125,16 @@ class GameSetup extends React.Component {
 
 	render() {
 		const { movies, players, errorMessage, warningMessage,
-			searchedFor, recommendations } = this.state;
+			searchedFor, recommendations, loading } = this.state;
 		const { beginGame } = this.props;
 		return (
 			<div>
 				<h1>Rotten Tomatoes Game</h1>
 				<HowToPlay />
-				<MovieSearchForm handleSubmit={this.searchForMovie} disabled={movies.length === 5} />
+				<MovieSearchForm
+					handleSubmit={this.searchForMovie}
+					disabled={loading || movies.length === 5}
+				/>
 				{errorMessage && (
 					<Alert bsStyle="danger">
 						{COULD_NOT_FIND_MOVIE_NAMED} <strong>{searchedFor}</strong>
@@ -146,7 +157,7 @@ class GameSetup extends React.Component {
 				<Button
 					onClick={() => beginGame(movies, players)}
 					bsStyle="primary"
-					disabled={movies.length === 0 || players.length === 0}
+					disabled={loading || movies.length === 0 || players.length === 0}
 				>
 					Start Game!
 				</Button>
