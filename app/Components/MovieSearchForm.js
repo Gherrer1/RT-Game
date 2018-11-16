@@ -26,6 +26,7 @@ class MovieSearchFrom extends React.Component {
 
 	render() {
 		const { movieInput } = this.state;
+		const { disabled } = this.props;
 		return (
 			<form onSubmit={this.handleSubmit}>
 				<input
@@ -35,7 +36,7 @@ class MovieSearchFrom extends React.Component {
 					onChange={e => this.setState({ movieInput: e.target.value })}
 					autoComplete="off"
 				/>
-				<Button className="add-movie-btn" type="submit" bsStyle="success">Add Movie</Button>
+				<Button className="add-movie-btn" type="submit" bsStyle="success" disabled={disabled}>Add Movie</Button>
 			</form>
 		);
 	}
@@ -43,6 +44,7 @@ class MovieSearchFrom extends React.Component {
 
 MovieSearchFrom.propTypes = {
 	handleSubmit: PropTypes.func.isRequired,
+	disabled: PropTypes.bool.isRequired,
 };
 
 export default MovieSearchFrom;
