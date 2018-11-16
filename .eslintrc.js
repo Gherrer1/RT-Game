@@ -5,6 +5,8 @@ module.exports = {
     "parser": "babel-eslint",
     "extends": "airbnb",
     "rules": {
+        "array-bracket-spacing": 0,
+        "consistent-return": 1,
         "comma-dangle": ["error", {
             "functions": "ignore",
             "objects": "always-multiline",
@@ -18,6 +20,7 @@ module.exports = {
         "no-plusplus": 0,
         "no-tabs": 0,
         "no-underscore-dangle": 0,
+        "object-curly-newline": 0,
         "react/forbid-prop-types": 0,
         "react/jsx-filename-extension": 0,
         "react/jsx-indent": [2, 'tab'],
