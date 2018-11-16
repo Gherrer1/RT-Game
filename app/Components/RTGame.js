@@ -1,8 +1,9 @@
 import React from 'react';
-import Alert from 'react-bootstrap/lib/Alert';
+import { Alert, Button } from 'react-bootstrap/lib';
 import MovieSearchForm from './MovieSearchForm';
 import GameGrid from './GameGrid';
 import AmbiguousSearchResults from './AmbiguousSearchResults';
+import PlayersForm from './PlayersForm';
 import HowToPlay from './HowToPlay';
 import MoviesList from './MoviesList';
 import getMovieData from '../api';
@@ -16,12 +17,18 @@ const fakeMovieData = [
     { name: 'Stuart Little', image: 'https://resizing.flixster.com/1cFCxP0P0sX_GHxZv6alw0Bmevk=/fit-in/80x80/v1.bTsxMTIwNDY2OTtqOzE3OTQ5OzEyMDA7MTUzMDsyMDQw', year: 1999 },
 ];
 
+const initialPlayerData = [
+    { name: '', score: 0, id: 1 },
+    { name: '', score: 0, id: 2},
+];
+
 class RTGame extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
             movies: fakeMovieData,
+            players: initialPlayerData,
             playing: false,
             errorMessage: null,
             warningMessage: null,
@@ -32,6 +39,8 @@ class RTGame extends React.Component {
         this.searchForMovie = this.searchForMovie.bind(this);
         this.addMovieToGame = this.addMovieToGame.bind(this);
         this.removeMovie = this.removeMovie.bind(this);
+        this.updatePlayerName = this.updatePlayerName.bind(this);
+        this.addPlayer = this.addPlayer.bind(this);
     }
 
     async searchForMovie(movieTitle) {
@@ -69,6 +78,27 @@ class RTGame extends React.Component {
         }
     }
 
+    updatePlayerName(index, name) {
+        this.setState(prevState => ({
+            players: prevState.players.map((player, i) => i === index ?
+                { ...player, name }
+                : player
+            ),
+        }));
+    }
+
+    addPlayer(e) {
+        e.preventDefault();
+        
+        this.setState(prevState => ({
+            players: prevState.players.concat([{
+                name: '',
+                score: 0,
+                id: prevState.players[prevState.players.length - 1].id + 1,
+            }]),
+        }));
+    }
+
     removeMovie(movie) {
         this.setState(prevState => ({
             movies: prevState.movies.filter(mov => mov.image !== movie.image),
@@ -86,7 +116,7 @@ class RTGame extends React.Component {
     }
 
     render() {
-        const { movies, errorMessage, warningMessage, searchedFor, recommendations, playing } = this.state;
+        const { movies, players, errorMessage, warningMessage, searchedFor, recommendations, playing } = this.state;
 
         if(playing) {
             return (
@@ -115,8 +145,9 @@ class RTGame extends React.Component {
                     />
                 )}
                 <MoviesList movies={movies} removeMovie={this.removeMovie} />
+                <PlayersForm players={players} updatePlayerName={this.updatePlayerName} addPlayer={this.addPlayer} />
                 {movies.length > 0 && (
-                    <button onClick={() => this.setState({ playing: true })}>Ready to play?</button>
+                    <Button onClick={() => this.setState({ playing: true })} bsStyle="primary">Start Game!</Button>
                 )}
             </div>
         );

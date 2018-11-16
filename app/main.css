@@ -15,6 +15,10 @@ ol, ul {
     margin-left: 10px;
 }
 
+.player-input {
+    display: block;
+}
+
 .movies-list {
     margin-top: 50px;
     display: grid;
