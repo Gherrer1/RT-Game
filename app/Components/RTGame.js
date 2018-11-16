@@ -1,12 +1,8 @@
 import React from 'react';
-import { Alert, Button } from 'react-bootstrap/lib';
-import MovieSearchForm from './MovieSearchForm';
 import GameGrid from './GameGrid';
-import AmbiguousSearchResults from './AmbiguousSearchResults';
-import PlayersForm from './PlayersForm';
-import HowToPlay from './HowToPlay';
-import MoviesList from './MoviesList';
+import GameSetup from './GameSetup';
 import getMovieData from '../api';
+import PlayersForm from './PlayersForm';
 
 const { MOVIE_FOUND, COULD_NOT_FIND_MOVIE_NAMED, RECOMMENDATIONS, MULTIPLE_MOVIES_FOUND } = require('../../lambda/messages');
 const fakeMovieData = [
@@ -125,31 +121,20 @@ class RTGame extends React.Component {
         }
 
         return (
-            <div>
-                <h1>Rotten Tomatoes Game</h1>
-                <HowToPlay />
-                {movies.length < 5 && (
-                    <MovieSearchForm handleSubmit={this.searchForMovie} />)
-                }
-                {errorMessage && (
-                    <Alert bsStyle="danger">
-                        {COULD_NOT_FIND_MOVIE_NAMED} <strong>{searchedFor}</strong>
-                    </Alert>
-                )}
-                {warningMessage && (
-                    <AmbiguousSearchResults
-                        message={warningMessage}
-                        searchedFor={searchedFor}
-                        recommendations={recommendations}
-                        handleClickMovie={this.addMovieToGame}
-                    />
-                )}
-                <MoviesList movies={movies} removeMovie={this.removeMovie} />
-                <PlayersForm players={players} updatePlayerName={this.updatePlayerName} addPlayer={this.addPlayer} />
-                {movies.length > 0 && (
-                    <Button onClick={() => this.setState({ playing: true })} bsStyle="primary">Start Game!</Button>
-                )}
-            </div>
+            <GameSetup
+                movies={movies}
+                players={players}
+                errorMessage={errorMessage}
+                warningMessage={warningMessage}
+                searchedFor={searchedFor}
+                recommendations={recommendations}
+                removeMovie={this.removeMovie}
+                updatePlayerName={this.updatePlayerName}
+                addPlayer={this.addPlayer}
+                searchForMovie={this.searchForMovie}
+                startGame={() => this.setState({ playing: true })}
+                addMovieToGame={this.addMovieToGame}
+            />
         );
     }
 }
