@@ -1,5 +1,6 @@
 body {
     padding: 20px;
+    --num-columns: 6;
 }
 
 ol, ul {
@@ -9,6 +10,11 @@ ol, ul {
 .movie-info {
     padding: 0;
     list-style: none;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(var(--num-columns), 1fr);
 }
 
 .add-movie-btn {

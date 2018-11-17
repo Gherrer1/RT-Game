@@ -10,7 +10,7 @@ function PlayerNameInput({ player, index, updatePlayerName, removePlayer, remove
 				placeholder={`Player ${index + 1}`}
 				onChange={e => updatePlayerName(index, e.target.value)}
 			/>
-			<Button type="button" bsStyle="danger" onClick={() => removePlayer(player.id)} disabled={removeDisabled}>x</Button>
+			<Button type="button" bsStyle="danger" bsSize="xsmall" onClick={() => removePlayer(player.id)} disabled={removeDisabled}>x</Button>
 		</div>
 	);
 }
