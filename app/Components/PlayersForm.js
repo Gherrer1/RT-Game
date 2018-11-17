@@ -1,17 +1,19 @@
 import React from 'react';
 import { Button } from 'react-bootstrap/lib';
 import PropTypes from 'prop-types';
+import PlayerNameInput from './PlayerNameInput';
 
-function PlayersForm({ players, updatePlayerName, addPlayer }) {
+function PlayersForm({ players, updatePlayerName, addPlayer, removePlayer }) {
 	return (
 		<React.Fragment>
 			<form onSubmit={e => e.preventDefault()}>
 				{players.map((player, index) => (
-					<input
-						className="player-input"
-						value={player.name}
-						placeholder={`Player ${index + 1}`}
-						onChange={e => updatePlayerName(index, e.target.value)}
+					<PlayerNameInput
+						player={player}
+						index={index}
+						updatePlayerName={updatePlayerName}
+						removePlayer={removePlayer}
+						removeDisabled={players.length < 2}
 						key={player.id}
 					/>
 				))}
@@ -25,6 +27,7 @@ PlayersForm.propTypes = {
 	players: PropTypes.array.isRequired,
 	updatePlayerName: PropTypes.func.isRequired,
 	addPlayer: PropTypes.func.isRequired,
+	removePlayer: PropTypes.func.isRequired,
 };
 
 export default PlayersForm;

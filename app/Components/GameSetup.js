@@ -42,6 +42,7 @@ class GameSetup extends React.Component {
 		this.addMovieToGame = this.addMovieToGame.bind(this);
 		this.removeMovie = this.removeMovie.bind(this);
 		this.addPlayer = this.addPlayer.bind(this);
+		this.removePlayer = this.removePlayer.bind(this);
 	}
 
 	async searchForMovie(movieTitle) {
@@ -94,6 +95,12 @@ class GameSetup extends React.Component {
 				score: 0,
 				id: prevState.players[prevState.players.length - 1].id + 1,
 			}]),
+		}));
+	}
+
+	removePlayer(id) {
+		this.setState(prevState => ({
+			players: prevState.players.filter(p => p.id !== id),
 		}));
 	}
 
@@ -153,6 +160,7 @@ class GameSetup extends React.Component {
 					players={players}
 					updatePlayerName={this.updatePlayerName}
 					addPlayer={this.addPlayer}
+					removePlayer={this.removePlayer}
 				/>
 				<Button
 					onClick={() => beginGame(movies, players)}
