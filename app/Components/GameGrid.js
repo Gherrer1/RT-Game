@@ -1,13 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import GridHeader from './GridHeader';
+import PlayerGuesses from './PlayerGuesses';
 
 class GameGrid extends React.Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			players: [...props.players],
+			players: props.players.map(player => ({
+				...player,
+				guesses: props.movies.map(() => 0),
+			})),
 			movies: [...props.movies],
 		};
 	}
@@ -17,6 +21,9 @@ class GameGrid extends React.Component {
 		return (
 			<div className="grid">
 				<GridHeader movies={movies} />
+				{players.map(player => (
+					<PlayerGuesses key={player.id} player={player} />
+				))}
 			</div>
 		);
 	}
