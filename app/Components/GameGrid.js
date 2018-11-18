@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import GridHeader from './GridHeader';
 import PlayerGuesses from './PlayerGuesses';
+import ScoreRoundRow from './ScoreRoundRow';
 import { isValidRatingGuess } from '../helpers/validators';
 
 class GameGrid extends React.Component {
@@ -45,6 +46,7 @@ class GameGrid extends React.Component {
 						updateGuess={this.updateGuess}
 					/>
 				))}
+				<ScoreRoundRow numMovies={movies.length} round={round} />
 			</div>
 		);
 	}
