@@ -17,6 +17,7 @@ function PlayerGuesses({ player, round, updateGuess }) {
 						value={guess}
 						onChange={e => updateGuess(player.id, index, e.target.value)}
 						disabled={index !== round}
+						placeholder="0 - 100"
 					/>
 				</div>
 			))}

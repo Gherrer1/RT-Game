@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import GridHeader from './GridHeader';
 import PlayerGuesses from './PlayerGuesses';
+import { isValidRatingGuess } from '../helpers/validators';
 
 class GameGrid extends React.Component {
 	constructor(props) {
@@ -10,7 +11,7 @@ class GameGrid extends React.Component {
 		this.state = {
 			players: props.players.map(player => ({
 				...player,
-				guesses: props.movies.map(() => '0'),
+				guesses: props.movies.map(() => ''),
 			})),
 			movies: [...props.movies],
 			round: 0,
@@ -20,6 +21,9 @@ class GameGrid extends React.Component {
 	}
 
 	updateGuess(playerId, guessIndex, newValue) {
+		if (!isValidRatingGuess(newValue)) {
+			return;
+		}
 		this.setState(prevState => ({
 			players: prevState.players.map(p => (p.id === playerId ? ({
 				...p,
