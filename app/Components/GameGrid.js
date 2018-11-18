@@ -4,6 +4,7 @@ import GridHeader from './GridHeader';
 import PlayerGuesses from './PlayerGuesses';
 import ScoreRoundRow from './ScoreRoundRow';
 import { isValidRatingGuess } from '../helpers/validators';
+import { playersWhoHaventGuessedYet } from '../helpers/gameplay';
 
 class GameGrid extends React.Component {
 	constructor(props) {
@@ -19,6 +20,22 @@ class GameGrid extends React.Component {
 		};
 
 		this.updateGuess = this.updateGuess.bind(this);
+		this.scoreRound = this.scoreRound.bind(this);
+	}
+
+	scoreRound(round) {
+		// first, make sure that all players have entered a non empty string score
+		const { players } = this.state;
+		const problemPlayers = playersWhoHaventGuessedYet(players, round);
+		if (problemPlayers.length > 0) {
+			const errMsg = `The following players need to input a guess: ${problemPlayers.map(p => p.name).join(' ')}`;
+			alert(errMsg);
+			return;
+		}
+
+		this.setState(prevState => ({
+			round: prevState.round + 1,
+		}));
 	}
 
 	updateGuess(playerId, guessIndex, newValue) {
@@ -46,7 +63,7 @@ class GameGrid extends React.Component {
 						updateGuess={this.updateGuess}
 					/>
 				))}
-				<ScoreRoundRow numMovies={movies.length} round={round} />
+				<ScoreRoundRow numMovies={movies.length} round={round} handleClick={this.scoreRound} />
 			</div>
 		);
 	}
