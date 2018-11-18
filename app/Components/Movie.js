@@ -9,9 +9,10 @@ function Movie({ movie, remove }) {
 				<li><img src={movie.image} alt={`poster for ${movie.name}`} /></li>
 				<li>{movie.name}</li>
 				<li>({movie.year})</li>
-				<li>
-					<Button bsSize="xsmall" onClick={() => remove(movie)}>Remove</Button>
-				</li>
+				{remove && (
+					<li>
+						<Button bsSize="xsmall" onClick={() => remove(movie)}>Remove</Button>
+					</li>)}
 			</ul>
 		</div>
 	);
@@ -19,7 +20,10 @@ function Movie({ movie, remove }) {
 
 Movie.propTypes = {
 	movie: PropTypes.object.isRequired,
-	remove: PropTypes.func.isRequired,
+	remove: PropTypes.func,
+};
+Movie.defaultProps = {
+	remove: null,
 };
 
 export default Movie;
