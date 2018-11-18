@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Movie from './Movie';
+import HeaderMovie from './HeaderMovie';
 
-function GridHeader({ movies }) {
+function GridHeader({ movies, round }) {
 	return (
 		<React.Fragment>
 			<div />
-			{movies.map(movie => (
-				<Movie movie={movie} key={movie.image} remove={null} />
+			{movies.map((movie, index) => (
+				<HeaderMovie movie={movie} key={movie.image} emphasized={round === index} />
 			))}
 		</React.Fragment>
 	);
@@ -15,6 +15,7 @@ function GridHeader({ movies }) {
 
 GridHeader.propTypes = {
 	movies: PropTypes.array.isRequired,
+	round: PropTypes.number.isRequired,
 };
 
 export default GridHeader;

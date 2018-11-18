@@ -13,16 +13,17 @@ class GameGrid extends React.Component {
 				guesses: props.movies.map(() => 0),
 			})),
 			movies: [...props.movies],
+			round: 0,
 		};
 	}
 
 	render() {
-		const { players, movies } = this.state;
+		const { players, movies, round } = this.state;
 		return (
 			<div className="grid">
-				<GridHeader movies={movies} />
+				<GridHeader movies={movies} round={round} />
 				{players.map(player => (
-					<PlayerGuesses key={player.id} player={player} />
+					<PlayerGuesses key={player.id} player={player} round={round} />
 				))}
 			</div>
 		);
