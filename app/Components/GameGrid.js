@@ -10,7 +10,7 @@ class GameGrid extends React.Component {
 		this.state = {
 			players: props.players.map(player => ({
 				...player,
-				guesses: props.movies.map(() => 0),
+				guesses: props.movies.map(() => '0'),
 			})),
 			movies: [...props.movies],
 			round: 0,

@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { customArrayValidator } from '../helpers/validators';
 
 function PlayerGuesses({ player, round, updateGuess }) {
 	return (
@@ -25,7 +26,7 @@ function PlayerGuesses({ player, round, updateGuess }) {
 
 PlayerGuesses.propTypes = {
 	player: PropTypes.shape({
-		guesses: PropTypes.arrayOf(PropTypes.number),
+		guesses: PropTypes.arrayOf(customArrayValidator),
 		name: PropTypes.string.isRequired,
 		score: PropTypes.number.isRequired,
 	}).isRequired,
