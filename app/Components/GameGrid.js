@@ -15,6 +15,17 @@ class GameGrid extends React.Component {
 			movies: [...props.movies],
 			round: 0,
 		};
+
+		this.updateGuess = this.updateGuess.bind(this);
+	}
+
+	updateGuess(playerId, guessIndex, newValue) {
+		this.setState(prevState => ({
+			players: prevState.players.map(p => (p.id === playerId ? ({
+				...p,
+				guesses: p.guesses.map((g, index) => (index === guessIndex ? newValue : g)),
+			}) : p)),
+		}));
 	}
 
 	render() {
@@ -23,7 +34,12 @@ class GameGrid extends React.Component {
 			<div className="grid">
 				<GridHeader movies={movies} round={round} />
 				{players.map(player => (
-					<PlayerGuesses key={player.id} player={player} round={round} />
+					<PlayerGuesses
+						key={player.id}
+						player={player}
+						round={round}
+						updateGuess={this.updateGuess}
+					/>
 				))}
 			</div>
 		);
