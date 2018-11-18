@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function PlayerGuesses({ player }) {
+function PlayerGuesses({ player, round }) {
 	return (
 		<React.Fragment>
 			{/* extract this to PlayerInfo component */}
@@ -11,7 +11,7 @@ function PlayerGuesses({ player }) {
 				{player.score}
 			</div>
 			{player.guesses.map((guess, index) => (
-				<div key={index}>
+				<div key={index} className={`movie-guess-cell ${index === round ? '' : 'dormant'}`}>
 					{guess}
 				</div>
 			))}
@@ -25,6 +25,7 @@ PlayerGuesses.propTypes = {
 		name: PropTypes.string.isRequired,
 		score: PropTypes.number.isRequired,
 	}).isRequired,
+	round: PropTypes.number.isRequired,
 };
 
 export default PlayerGuesses;

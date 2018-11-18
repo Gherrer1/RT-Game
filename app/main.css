@@ -20,9 +20,6 @@ ol, ul {
 .dormant {
     opacity: 0.3;
 }
-.movie-guess-cell {
-    opacity: 0.3;
-}
 
 .add-movie-btn {
     margin-left: 10px;
