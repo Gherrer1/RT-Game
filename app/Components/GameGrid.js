@@ -25,16 +25,28 @@ class GameGrid extends React.Component {
 
 	scoreRound(round) {
 		// first, make sure that all players have entered a non empty string score
-		const { players } = this.state;
+		const { players, movies } = this.state;
 		const problemPlayers = playersWhoHaventGuessedYet(players, round);
 		if (problemPlayers.length > 0) {
-			const errMsg = `The following players need to input a guess: ${problemPlayers.map(p => p.name).join(' ')}`;
+			const errMsg = `The following players need to input a guess: ${problemPlayers.map(p => p.name).join(', ')}`;
 			alert(errMsg);
 			return;
 		}
 
+		// now take each guess and update players score
+		const actualScore = movies[round].meterScore;
+		console.log('actual score', actualScore);
+		const eachPlayersGuess = players.map(p => p.guesses).map(guesses => guesses[round]);
+		const scoreOffsets = eachPlayersGuess.map(guess => (Number(guess) === actualScore
+			? -10 : Math.abs(actualScore - Number(guess))));
+		const updatedPlayersState = players.map((p, index) => ({
+			...p,
+			score: p.score + scoreOffsets[index],
+		}));
+
 		this.setState(prevState => ({
 			round: prevState.round + 1,
+			players: updatedPlayersState,
 		}));
 	}
 
