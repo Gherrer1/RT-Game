@@ -82,13 +82,11 @@ class GameGrid extends React.Component {
 							updateGuess={this.updateGuess}
 						/>
 					))}
-					{(round < movies.length)
-						&& (
-							<ScoreRoundRow
-								numMovies={movies.length}
-								round={round}
-								handleClick={this.scoreRound}
-							/>)}
+					<ScoreRoundRow
+						movies={movies}
+						round={round}
+						handleClick={this.scoreRound}
+					/>
 					{(round >= movies.length)
 						&& (
 							<div>The winner is{' '}
