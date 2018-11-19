@@ -9,7 +9,7 @@ function ScoreRoundRow({ numMovies, round, handleClick }) {
 			<div />
 			{emptyArray.map((_, index) => (index === round
 				? (
-					<div key={index}>
+					<div key={index} className="movie-col-cell">
 						<Button bsSize="small" bsStyle="success" onClick={() => handleClick(round)}>Score Round</Button>
 					</div>
 				)
