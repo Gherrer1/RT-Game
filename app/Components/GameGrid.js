@@ -24,6 +24,10 @@ class GameGrid extends React.Component {
 		this.scoreRound = this.scoreRound.bind(this);
 	}
 
+	componentDidMount() {
+		document.body.style.setProperty('--num-columns', this.state.movies.length);
+	}
+
 	scoreRound(round) {
 		// first, make sure that all players have entered a non empty string score
 		const { players, movies } = this.state;
