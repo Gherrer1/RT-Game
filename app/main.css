@@ -27,7 +27,8 @@ h2 {
     list-style: none;
 }
 
-.grid {
+.game-grid {
+    margin-top: 40px;
     display: grid;
     grid-template-columns: repeat(var(--num-columns), 1fr);
 }

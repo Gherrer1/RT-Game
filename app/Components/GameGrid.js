@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import HowScoringWorks from './HowScoringWorks';
 import GridHeader from './GridHeader';
 import PlayerGuesses from './PlayerGuesses';
 import ScoreRoundRow from './ScoreRoundRow';
@@ -65,32 +66,35 @@ class GameGrid extends React.Component {
 	render() {
 		const { players, movies, round } = this.state;
 		return (
-			<div className="grid">
-				<GridHeader movies={movies} round={round} />
-				{players.map(player => (
-					<PlayerGuesses
-						key={player.id}
-						player={player}
-						round={round}
-						updateGuess={this.updateGuess}
-					/>
-				))}
-				{(round < movies.length)
-					&& (
-						<ScoreRoundRow
-							numMovies={movies.length}
+			<div>
+				<HowScoringWorks />
+				<div className="game-grid">
+					<GridHeader movies={movies} round={round} />
+					{players.map(player => (
+						<PlayerGuesses
+							key={player.id}
+							player={player}
 							round={round}
-							handleClick={this.scoreRound}
-						/>)}
-				{(round >= movies.length)
-					&& (
-						<div>The winner is{' '}
-							{players.reduce((accumulator, current) => (
-								current.score < accumulator.score ? current : accumulator
-							), players[0]).name}!
-						</div>
-					)
-				}
+							updateGuess={this.updateGuess}
+						/>
+					))}
+					{(round < movies.length)
+						&& (
+							<ScoreRoundRow
+								numMovies={movies.length}
+								round={round}
+								handleClick={this.scoreRound}
+							/>)}
+					{(round >= movies.length)
+						&& (
+							<div>The winner is{' '}
+								{players.reduce((accumulator, current) => (
+									current.score < accumulator.score ? current : accumulator
+								), players[0]).name}!
+							</div>
+						)
+					}
+				</div>
 			</div>
 		);
 	}
