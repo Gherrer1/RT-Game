@@ -8,7 +8,7 @@
     "start:client": "webpack-dev-server --open",
     "start:server": "nodemon backend/server.js",
     "build": "webpack -p",
-    "deploy": "firebase deploy"
+    "deploy": "webpack -p && firebase deploy"
   },
   "author": "",
   "license": "ISC",

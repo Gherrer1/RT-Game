@@ -27,6 +27,10 @@ class MovieSearchFrom extends React.Component {
 	render() {
 		const { movieInput } = this.state;
 		const { disabled, loading } = this.props;
+		const buttonText = disabled
+			? (loading ? 'Searching for movie...' : 'Max movies reached')
+			: 'Add Movie';
+
 		return (
 			<form onSubmit={this.handleSubmit}>
 				<input
@@ -37,7 +41,7 @@ class MovieSearchFrom extends React.Component {
 					autoComplete="off"
 				/>
 				<Button className="add-movie-btn" type="submit" bsStyle="success" disabled={disabled}>
-					{loading ? 'Searching for movie...' : 'Add Movie'}
+					{buttonText}
 				</Button>
 			</form>
 		);
