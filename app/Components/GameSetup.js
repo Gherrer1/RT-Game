@@ -140,6 +140,7 @@ class GameSetup extends React.Component {
 				<MovieSearchForm
 					handleSubmit={this.searchForMovie}
 					disabled={loading || movies.length === 5}
+					loading={loading}
 				/>
 				{errorMessage && (
 					<Alert bsStyle="danger">
