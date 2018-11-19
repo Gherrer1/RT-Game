@@ -4,7 +4,7 @@ import Movie from './Movie';
 
 function HeaderMovie({ movie, emphasized }) {
 	return (
-		<div className={emphasized ? '' : 'dormant'}>
+		<div className={`movie-col-cell ${emphasized ? '' : 'dormant'}`}>
 			<Movie movie={movie} />
 		</div>
 	);

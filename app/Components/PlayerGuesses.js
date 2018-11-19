@@ -12,12 +12,13 @@ function PlayerGuesses({ player, round, updateGuess }) {
 				{player.score}
 			</div>
 			{player.guesses.map((guess, index) => (
-				<div key={index} className={`movie-guess-cell ${index === round ? '' : 'dormant'}`}>
+				<div key={index} className={`movie-col-cell ${index === round ? '' : 'dormant'}`}>
 					<input
 						value={guess}
 						onChange={e => updateGuess(player.id, index, e.target.value)}
 						disabled={index !== round}
 						placeholder="0 - 100"
+						className="guess-input"
 					/>
 				</div>
 			))}

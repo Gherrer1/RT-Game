@@ -1,6 +1,6 @@
 body {
     padding: 0 20px;
-    --num-columns: 6;
+    --num-columns: 5;
 }
 
 .site-title {
@@ -30,7 +30,17 @@ h2 {
 .game-grid {
     margin-top: 40px;
     display: grid;
-    grid-template-columns: repeat(var(--num-columns), 1fr);
+    grid-template-columns: 100px repeat(var(--num-columns), 1fr);
+}
+
+.game-grid .movie-col-cell {
+    justify-self: center;
+    text-align: center;
+}
+
+.guess-input {
+    width: 60px;
+    text-align: center;
 }
 
 .dormant {
