@@ -134,9 +134,9 @@ class GameSetup extends React.Component {
 			searchedFor, recommendations, loading } = this.state;
 		const { beginGame } = this.props;
 		return (
-			<div>
-				<h1>Rotten Tomatoes Game</h1>
-				<HowToPlay />
+			<div className="game-setup">
+				<h1 className="site-title">The Rotten Tomatoes Game</h1>
+
 				<MovieSearchForm
 					handleSubmit={this.searchForMovie}
 					disabled={loading || movies.length === 5}
@@ -162,6 +162,8 @@ class GameSetup extends React.Component {
 					addPlayer={this.addPlayer}
 					removePlayer={this.removePlayer}
 				/>
+
+				<h2>Step 3:</h2>
 				<Button
 					onClick={() => beginGame(movies, players)}
 					bsStyle="primary"

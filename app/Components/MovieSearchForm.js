@@ -32,18 +32,22 @@ class MovieSearchFrom extends React.Component {
 			: 'Add Movie';
 
 		return (
-			<form onSubmit={this.handleSubmit}>
-				<input
-					type="text"
-					name="movieTitle"
-					value={movieInput}
-					onChange={e => this.setState({ movieInput: e.target.value })}
-					autoComplete="off"
-				/>
-				<Button className="add-movie-btn" type="submit" bsStyle="success" disabled={disabled}>
-					{buttonText}
-				</Button>
-			</form>
+			<div>
+				<h2>Step 1: Add 1 to 5 movies</h2>
+				<form onSubmit={this.handleSubmit}>
+					<input
+						type="text"
+						name="movieTitle"
+						value={movieInput}
+						onChange={e => this.setState({ movieInput: e.target.value })}
+						autoComplete="off"
+						placeholder="e.g. The Godfather"
+					/>
+					<Button className="add-movie-btn" type="submit" bsStyle="success" bsSize="small" disabled={disabled}>
+						{buttonText}
+					</Button>
+				</form>
+			</div>
 		);
 	}
 }

@@ -4,7 +4,7 @@ import { Button } from 'react-bootstrap/lib';
 
 function PlayerNameInput({ player, index, updatePlayerName, removePlayer, removeDisabled }) {
 	return (
-		<div>
+		<div className="player-input">
 			<input
 				value={player.name}
 				placeholder={`Player ${index + 1}`}

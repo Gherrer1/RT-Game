@@ -6,6 +6,7 @@ import PlayerNameInput from './PlayerNameInput';
 function PlayersForm({ players, updatePlayerName, addPlayer, removePlayer }) {
 	return (
 		<React.Fragment>
+			<h2>Step 2: Who&#39;s Playing?</h2>
 			<form onSubmit={e => e.preventDefault()}>
 				{players.map((player, index) => (
 					<PlayerNameInput

@@ -1,10 +1,25 @@
 body {
-    padding: 20px;
+    padding: 0 20px;
     --num-columns: 6;
+}
+
+.site-title {
+    text-align: center;
+    margin: 0;
+    border-bottom: 1px solid black;
+    padding: 10px 0;
 }
 
 ol, ul {
     padding-left: 15px;
+}
+
+h2 {
+    margin-bottom: 5px;
+}
+
+.game-setup {
+    padding-bottom: 20px;
 }
 
 .movie-info {
@@ -26,7 +41,7 @@ ol, ul {
 }
 
 .movies-list {
-    margin-top: 50px;
+    margin-top: 15px;
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     justify-items: center;
@@ -34,4 +49,17 @@ ol, ul {
 
 .movies-list > div {
     text-align: center;
+}
+
+.player-input {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+}
+.player-input button {
+    margin-left: 3px;
+}
+
+.start-game-btn {
+    margin-top: 30px;
 }
