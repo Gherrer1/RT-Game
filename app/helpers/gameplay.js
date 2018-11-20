@@ -5,3 +5,13 @@ export function allPlayersHaveGuessed(players, round) {
 export function playersWhoHaventGuessedYet(players, round) {
 	return players.filter(p => p.guesses[round] === '');
 }
+
+export function getWinningScore(players) {
+	let min = players[0].score;
+	players.forEach((p) => {
+		if (p.score < min) {
+			min = p.score;
+		}
+	});
+	return min;
+}

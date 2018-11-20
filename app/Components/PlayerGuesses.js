@@ -1,16 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Player from './Player';
 import { customArrayValidator } from '../helpers/validators';
 
-function PlayerGuesses({ player, round, updateGuess }) {
+function PlayerGuesses({ player, round, updateGuess, winningScore }) {
 	return (
 		<React.Fragment>
-			{/* extract this to PlayerInfo component */}
-			<div>
-				{player.name}
-				<br />
-				{player.score}
-			</div>
+			<Player player={player} winningScore={winningScore} />
 			{player.guesses.map((guess, index) => (
 				<div key={index} className={`movie-col-cell ${index === round ? '' : 'dormant'}`}>
 					<input
@@ -34,6 +30,7 @@ PlayerGuesses.propTypes = {
 	}).isRequired,
 	round: PropTypes.number.isRequired,
 	updateGuess: PropTypes.func.isRequired,
+	winningScore: PropTypes.number.isRequired,
 };
 
 export default PlayerGuesses;

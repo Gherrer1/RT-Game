@@ -5,7 +5,7 @@ import GridHeader from './GridHeader';
 import PlayerGuesses from './PlayerGuesses';
 import ScoreRoundRow from './ScoreRoundRow';
 import { isValidRatingGuess } from '../helpers/validators';
-import { playersWhoHaventGuessedYet } from '../helpers/gameplay';
+import { playersWhoHaventGuessedYet, getWinningScore } from '../helpers/gameplay';
 
 class GameGrid extends React.Component {
 	constructor(props) {
@@ -69,6 +69,7 @@ class GameGrid extends React.Component {
 
 	render() {
 		const { players, movies, round } = this.state;
+		const winningScore = getWinningScore(players);
 		return (
 			<div>
 				<HowScoringWorks />
@@ -80,6 +81,7 @@ class GameGrid extends React.Component {
 							player={player}
 							round={round}
 							updateGuess={this.updateGuess}
+							winningScore={winningScore}
 						/>
 					))}
 					<ScoreRoundRow
