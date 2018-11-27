@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Button from 'react-bootstrap/lib/Button';
+import dicaprio from '../themeSets/dicaprio';
 
 class MovieSearchFrom extends React.Component {
 	constructor(props) {
@@ -11,6 +12,7 @@ class MovieSearchFrom extends React.Component {
 		};
 
 		this.handleSubmit = this.handleSubmit.bind(this);
+		this.handleSelectMovieThemeSet = this.handleSelectMovieThemeSet.bind(this);
 	}
 
 	handleSubmit(e) {
@@ -22,6 +24,12 @@ class MovieSearchFrom extends React.Component {
 		this.setState({
 			movieInput: '',
 		});
+	}
+
+	handleSelectMovieThemeSet(e, moviePackage) {
+		e.preventDefault();
+		const { handleMovieSet } = this.props;
+		handleMovieSet(moviePackage);
 	}
 
 	render() {
@@ -46,6 +54,12 @@ class MovieSearchFrom extends React.Component {
 					<Button className="add-movie-btn" type="submit" bsStyle="success" bsSize="small" disabled={disabled}>
 						{buttonText}
 					</Button>
+					<div className="movie-packages">
+						Need inspiration? Try these packages:
+						<button type="button" onClick={e => this.handleSelectMovieThemeSet(e, superheroes)}>Super heroes</button>
+						<button type="button" onClick={e => this.handleSelectMovieThemeSet(e, princesses)}>Princesses</button>
+						<button type="button" onClick={e => this.handleSelectMovieThemeSet(e, dicaprio)}>DiCaprio</button>
+					</div>
 				</form>
 			</div>
 		);
@@ -54,6 +68,7 @@ class MovieSearchFrom extends React.Component {
 
 MovieSearchFrom.propTypes = {
 	handleSubmit: PropTypes.func.isRequired,
+	handleMovieSet: PropTypes.func.isRequired,
 	disabled: PropTypes.bool.isRequired,
 	loading: PropTypes.bool.isRequired,
 };

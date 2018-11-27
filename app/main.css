@@ -22,6 +22,19 @@ h2 {
     padding-bottom: 20px;
 }
 
+.movie-packages {
+    font-size: 75%;
+}
+.movie-packages button {
+    border: none;
+    cursor: pointer;
+    color: #337ab7;
+    padding-left: 5px;
+}
+.movie-packages button:hover {
+    text-decoration: underline;
+}
+
 .movie-info {
     padding: 0;
     list-style: none;

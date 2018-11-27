@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Alert, Button } from 'react-bootstrap/lib';
-import HowToPlay from './HowToPlay';
 import MovieSearchForm from './MovieSearchForm';
 import MoviesList from './MoviesList';
 import AmbiguousSearchResults from './AmbiguousSearchResults';
@@ -42,6 +41,7 @@ class GameSetup extends React.Component {
 		this.removeMovie = this.removeMovie.bind(this);
 		this.addPlayer = this.addPlayer.bind(this);
 		this.removePlayer = this.removePlayer.bind(this);
+		this.addMovieThemeSet = this.addMovieThemeSet.bind(this);
 	}
 
 	async searchForMovie(movieTitle) {
@@ -112,6 +112,13 @@ class GameSetup extends React.Component {
 		}));
 	}
 
+	addMovieThemeSet(movies) {
+		// TODO: might have to disable <a> when loading
+		this.setState({
+			movies,
+		});
+	}
+
 	addMovieToGame(movie) {
 		this.setState(prevState => ({
 			movies: prevState.movies.concat([ movie ]),
@@ -139,6 +146,7 @@ class GameSetup extends React.Component {
 
 				<MovieSearchForm
 					handleSubmit={this.searchForMovie}
+					handleMovieSet={this.addMovieThemeSet}
 					disabled={loading || movies.length === 5}
 					loading={loading}
 				/>
