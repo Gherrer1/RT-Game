@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Button from 'react-bootstrap/lib/Button';
 import dicaprio from '../themeSets/dicaprio';
 import superheroes from '../themeSets/superheroes';
+import princesses from '../themeSets/princesses';
 
 class MovieSearchFrom extends React.Component {
 	constructor(props) {
