@@ -26,6 +26,17 @@ h2 {
     padding: 0;
     list-style: none;
 }
+.movie-year {
+    font-size: 12px;
+}
+
+.winners {
+    text-align: center;
+}
+.winners .winner-names {
+    color: green;
+    margin-top: 0;
+}
 
 .game-grid {
     margin-top: 40px;
@@ -35,6 +46,7 @@ h2 {
 
 .game-grid .movie-col-cell {
     justify-self: center;
+    align-self: center;
     text-align: center;
 }
 

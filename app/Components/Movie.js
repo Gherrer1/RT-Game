@@ -7,8 +7,8 @@ function Movie({ movie, remove }) {
 		<div>
 			<ul className="movie-info">
 				<li><img src={movie.image} alt={`poster for ${movie.name}`} /></li>
-				<li>{movie.name}</li>
-				<li>({movie.year})</li>
+				<li><strong>{movie.name}</strong></li>
+				<li className="movie-year">({movie.year})</li>
 				{remove && (
 					<li>
 						<Button bsSize="xsmall" onClick={() => remove(movie)}>Remove</Button>

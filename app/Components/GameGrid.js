@@ -4,6 +4,7 @@ import HowScoringWorks from './HowScoringWorks';
 import GridHeader from './GridHeader';
 import PlayerGuesses from './PlayerGuesses';
 import ScoreRoundRow from './ScoreRoundRow';
+import AnnounceWinners from './AnnounceWinner';
 import { isValidRatingGuess } from '../helpers/validators';
 import { playersWhoHaventGuessedYet, getWinningScore } from '../helpers/gameplay';
 
@@ -73,6 +74,9 @@ class GameGrid extends React.Component {
 		return (
 			<div>
 				<HowScoringWorks />
+				{(round >= movies.length)
+						&& <AnnounceWinners winners={players.filter(p => p.score === winningScore)} />
+				}
 				<div className="game-grid">
 					<GridHeader movies={movies} round={round} />
 					{players.map(player => (
@@ -89,15 +93,6 @@ class GameGrid extends React.Component {
 						round={round}
 						handleClick={this.scoreRound}
 					/>
-					{(round >= movies.length)
-						&& (
-							<div>The winner is{' '}
-								{players.reduce((accumulator, current) => (
-									current.score < accumulator.score ? current : accumulator
-								), players[0]).name}!
-							</div>
-						)
-					}
 				</div>
 			</div>
 		);
