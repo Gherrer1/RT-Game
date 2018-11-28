@@ -3,6 +3,6 @@
     "path": "/",
     "httpMethod": "GET",
     "queryStringParameters": {
-        "movieTitle": "captain america"
+        "movieTitle": "saw"
     }
 }

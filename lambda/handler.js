@@ -1,46 +1,44 @@
-'use strict';
 const { getHtml, getUrl, extractData, findExactMatches } = require('./helpers');
 const {
-  errorParsingJSONMsg,
-  noMovieQueryProvidedMsg,
-  reccomendationsMsg,
-  noMoviesFoundMsg,
-  movieFoundMsg,
-  multipleMoviesFoundMsg } = require('./responses');
+	errorParsingJSONMsg,
+	noMovieQueryProvidedMsg,
+	reccomendationsMsg,
+	noMoviesFoundMsg,
+	movieFoundMsg,
+	multipleMoviesFoundMsg } = require('./responses');
 
 
 module.exports.getMovieData = async (event, context) => {
-  const { queryStringParameters: query } = event;
-  const movieTitle = (query && query.movieTitle) || null;
-  if(!movieTitle) {
-    return noMovieQueryProvidedMsg();
-  }
+	const { queryStringParameters: query } = event;
+	const movieTitle = (query && query.movieTitle) || null;
+	if (!movieTitle) {
+		return noMovieQueryProvidedMsg();
+	}
 
-  const url = getUrl(movieTitle);
-  const html = await getHtml(url);
-  const dataStr = extractData(html);
-  if (dataStr === '') {
-    return noMoviesFoundMsg(movieTitle);
-  }
-  const dataJSON = dataStr.slice(0, -2);
+	const url = getUrl(movieTitle);
+	const html = await getHtml(url);
+	const dataStr = extractData(html);
+	if (dataStr === '') {
+		return noMoviesFoundMsg(movieTitle);
+	}
+	const dataJSON = dataStr.slice(0, -2);
 
-  try {
-    const data = JSON.parse(dataJSON);
+	try {
+		const data = JSON.parse(dataJSON);
 
-    const exactMatchesFound = findExactMatches(data, movieTitle);
-    if (exactMatchesFound.length === 1) {
-      return movieFoundMsg(exactMatchesFound[0]);
-    }
-    else if (exactMatchesFound.length > 1) {
-      return multipleMoviesFoundMsg(movieTitle, exactMatchesFound);
-    }
-    else {
-      return reccomendationsMsg(movieTitle, data.movies);
-    }
-  } catch(e) {
-    return errorParsingJSONMsg(e, { faultyJSON: dataStr });
-  }
-}
+		const exactMatchesFound = findExactMatches(data, movieTitle);
+		if (exactMatchesFound.length === 1) {
+			return movieFoundMsg(exactMatchesFound[0]);
+		}
+		if (exactMatchesFound.length > 1) {
+			return multipleMoviesFoundMsg(movieTitle, exactMatchesFound);
+		}
+
+		return reccomendationsMsg(movieTitle, data.movies);
+	} catch (e) {
+		return errorParsingJSONMsg(e, { faultyJSON: dataStr });
+	}
+};
 
 // useful resources
 // Useful commands
