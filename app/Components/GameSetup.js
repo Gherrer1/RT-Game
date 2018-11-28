@@ -8,7 +8,6 @@ import PlayersForm from './PlayersForm';
 import getMovieData from '../api';
 
 const { MOVIE_FOUND, COULD_NOT_FIND_MOVIE_NAMED, RECOMMENDATIONS, MULTIPLE_MOVIES_FOUND } = require('../../lambda/messages');
-const fakeMovieData = require('../fakeMovieData');
 
 const initialPlayerData = [
 	{ name: '', score: 0, id: 1 },
@@ -26,7 +25,7 @@ class GameSetup extends React.Component {
 		super(props);
 
 		this.state = {
-			movies: fakeMovieData,
+			movies: [],
 			players: fakePlayerData,
 			errorMessage: null,
 			warningMessage: null,
