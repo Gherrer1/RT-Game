@@ -62,6 +62,9 @@ functions:
           path: "search/"
           method: get
           cors: true
+    environment:
+      REDIS_PASSWORD: ${ssm:REDIS_PASSWORD}
+      REDIS_HOST: ${ssm:REDIS_HOST}
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events

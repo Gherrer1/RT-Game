@@ -6,6 +6,7 @@ const {
 	noMoviesFoundMsg,
 	movieFoundMsg,
 	multipleMoviesFoundMsg } = require('./responses');
+const createCache = require('./cache');
 
 
 module.exports.getMovieData = async (event, context) => {
@@ -14,6 +15,17 @@ module.exports.getMovieData = async (event, context) => {
 	if (!movieTitle) {
 		return noMovieQueryProvidedMsg();
 	}
+
+	const redisHost = process.env.REDIS_HOST;
+	const redisPassword = process.env.REDIS_PASSWORD;
+	const cache = createCache(redisHost, redisPassword);
+	try {
+		const result = await cache.get(movieTitle);
+		console.log(`Cache query result for ${movieTitle}: ${result}`);
+	} catch (e) {
+		console.log(`Error querying cache for ${movieTitle}: ${e.message}`);
+	}
+	cache.quit();
 
 	const url = getUrl(movieTitle);
 	const html = await getHtml(url);
@@ -49,3 +61,5 @@ module.exports.getMovieData = async (event, context) => {
 // ../node_modules/.bin/serverless invoke local --function hello --path data.json
 // Logs
 // https://serverless.com/framework/docs/providers/aws/cli-reference/logs/
+// invoking function more useful resources
+// https://serverless.com/framework/docs/providers/aws/cli-reference/invoke/
