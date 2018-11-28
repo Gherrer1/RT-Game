@@ -34,6 +34,9 @@ h2 {
 .movie-packages button:hover {
     text-decoration: underline;
 }
+.movie-packages button:focus {
+    outline: none;
+}
 
 .movie-info {
     padding: 0;
