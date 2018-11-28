@@ -57,6 +57,16 @@ const movieFoundMsg = movie => enableCors({
 	body: JSON.stringify({
 		message: MOVIE_FOUND,
 		movie,
+		fromCache: false,
+	}),
+});
+
+const movieFoundInCacheMsg = movie => enableCors({
+	statusCode: 200,
+	body: JSON.stringify({
+		message: MOVIE_FOUND,
+		movie,
+		fromCache: true,
 	}),
 });
 
@@ -67,4 +77,5 @@ module.exports = {
 	errorParsingJSONMsg,
 	movieFoundMsg,
 	multipleMoviesFoundMsg,
+	movieFoundInCacheMsg,
 };

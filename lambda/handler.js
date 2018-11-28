@@ -5,6 +5,7 @@ const {
 	reccomendationsMsg,
 	noMoviesFoundMsg,
 	movieFoundMsg,
+	movieFoundInCacheMsg,
 	multipleMoviesFoundMsg } = require('./responses');
 const createCache = require('./cache');
 
@@ -21,16 +22,19 @@ module.exports.getMovieData = async (event, context) => {
 	const cache = createCache(redisHost, redisPassword);
 	try {
 		const result = await cache.get(movieTitle);
-		console.log(`Cache query result for ${movieTitle}: ${result}`);
+		if (result) {
+			cache.quit();
+			return movieFoundInCacheMsg(JSON.parse(result));
+		}
 	} catch (e) {
 		console.log(`Error querying cache for ${movieTitle}: ${e.message}`);
 	}
-	cache.quit();
 
 	const url = getUrl(movieTitle);
 	const html = await getHtml(url);
 	const dataStr = extractData(html);
 	if (dataStr === '') {
+		cache.quit();
 		return noMoviesFoundMsg(movieTitle);
 	}
 	const dataJSON = dataStr.slice(0, -2);
@@ -40,8 +44,12 @@ module.exports.getMovieData = async (event, context) => {
 
 		const exactMatchesFound = findExactMatches(data, movieTitle);
 		if (exactMatchesFound.length === 1) {
+			// cache it
+			cache.set(movieTitle, JSON.stringify(exactMatchesFound[0]));
+			cache.quit();
 			return movieFoundMsg(exactMatchesFound[0]);
 		}
+		cache.quit(); // TODO: remove this if we cache not just exact match found movies
 		if (exactMatchesFound.length > 1) {
 			return multipleMoviesFoundMsg(movieTitle, exactMatchesFound);
 		}
