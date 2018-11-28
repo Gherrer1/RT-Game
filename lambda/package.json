@@ -4,7 +4,7 @@
   "description": "",
   "main": "handler.js",
   "scripts": {
-    "test": "serverless invoke local --function getMovieData --path data.json",
+    "test": "serverless invoke local --function getMovieData --path data.json --log",
     "deploy": "serverless deploy",
     "logs": "serverless logs -f getMovieData",
     "logs:tail": "serverless logs -f getMovieData -t"
