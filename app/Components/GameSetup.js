@@ -26,7 +26,7 @@ class GameSetup extends React.Component {
 
 		this.state = {
 			movies: [],
-			players: fakePlayerData,
+			players: initialPlayerData,
 			errorMessage: null,
 			warningMessage: null,
 			searchedFor: null,

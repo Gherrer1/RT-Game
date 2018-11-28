@@ -25,6 +25,10 @@ class RTGame extends React.Component {
 	}
 
 	beginGame(movies, players) {
+		const nonEmptyPlayers = players.filter(p => p.name !== '');
+		if (nonEmptyPlayers.length === 0) {
+			return alert('Please add names for the players who are playing');
+		}
 		this.setState({
 			movies,
 			players,
@@ -42,8 +46,9 @@ class RTGame extends React.Component {
 		}
 
 		if (playing) {
+			const playingPlayers = players.filter(p => p.name !== '');
 			return (
-				<GameGrid movies={movies} players={players} />
+				<GameGrid movies={movies} players={playingPlayers} />
 			);
 		}
 
