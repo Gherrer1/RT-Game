@@ -14,11 +14,11 @@ const initialPlayerData = [
 	{ name: '', score: 0, id: 2 },
 ];
 
-const fakePlayerData = [
-	{ name: 'Lonzo', score: 0, id: 2 },
-	{ name: 'Ingram', score: 0, id: 14 },
-	{ name: 'Kuzma', score: 0, id: 0 },
-];
+// const fakePlayerData = [
+// 	{ name: 'Lonzo', score: 0, id: 2 },
+// 	{ name: 'Ingram', score: 0, id: 14 },
+// 	{ name: 'Kuzma', score: 0, id: 0 },
+// ];
 
 class GameSetup extends React.Component {
 	constructor(props) {
@@ -40,7 +40,7 @@ class GameSetup extends React.Component {
 		this.removeMovie = this.removeMovie.bind(this);
 		this.addPlayer = this.addPlayer.bind(this);
 		this.removePlayer = this.removePlayer.bind(this);
-		this.addMovieThemeSet = this.addMovieThemeSet.bind(this);
+		this.addMovieStarterPack = this.addMovieStarterPack.bind(this);
 	}
 
 	async searchForMovie(movieTitle) {
@@ -111,7 +111,7 @@ class GameSetup extends React.Component {
 		}));
 	}
 
-	addMovieThemeSet(movies) {
+	addMovieStarterPack(movies) {
 		// TODO: might have to disable <a> when loading
 		this.setState({
 			movies,
@@ -145,7 +145,7 @@ class GameSetup extends React.Component {
 
 				<MovieSearchForm
 					handleSubmit={this.searchForMovie}
-					handleMovieSet={this.addMovieThemeSet}
+					handleMovieSet={this.addMovieStarterPack}
 					disabled={loading || movies.length === 5}
 					loading={loading}
 				/>

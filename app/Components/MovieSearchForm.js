@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Button from 'react-bootstrap/lib/Button';
-import dicaprio from '../themeSets/dicaprio';
-import superheroes from '../themeSets/superheroes';
-import princesses from '../themeSets/princesses';
+import dicaprio from '../starterPacks/dicaprio';
+import superheroes from '../starterPacks/superheroes';
+import princesses from '../starterPacks/princesses';
 
 class MovieSearchFrom extends React.Component {
 	constructor(props) {
@@ -14,7 +14,7 @@ class MovieSearchFrom extends React.Component {
 		};
 
 		this.handleSubmit = this.handleSubmit.bind(this);
-		this.handleSelectMovieThemeSet = this.handleSelectMovieThemeSet.bind(this);
+		this.handleSelectMovieStarterPack = this.handleSelectMovieStarterPack.bind(this);
 	}
 
 	handleSubmit(e) {
@@ -28,7 +28,7 @@ class MovieSearchFrom extends React.Component {
 		});
 	}
 
-	handleSelectMovieThemeSet(e, moviePackage) {
+	handleSelectMovieStarterPack(e, moviePackage) {
 		e.preventDefault();
 		const { handleMovieSet } = this.props;
 		handleMovieSet(moviePackage);
@@ -58,9 +58,9 @@ class MovieSearchFrom extends React.Component {
 					</Button>
 					<div className="movie-packages">
 						Need inspiration? Try these packages:
-						<button type="button" onClick={e => this.handleSelectMovieThemeSet(e, superheroes)}>Super heroes</button>
-						<button type="button" onClick={e => this.handleSelectMovieThemeSet(e, princesses)}>Princesses</button>
-						<button type="button" onClick={e => this.handleSelectMovieThemeSet(e, dicaprio)}>DiCaprio</button>
+						<button type="button" onClick={e => this.handleSelectMovieStarterPack(e, superheroes)}>Super heroes</button>
+						<button type="button" onClick={e => this.handleSelectMovieStarterPack(e, princesses)}>Princesses</button>
+						<button type="button" onClick={e => this.handleSelectMovieStarterPack(e, dicaprio)}>DiCaprio</button>
 					</div>
 				</form>
 			</div>
