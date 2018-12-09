@@ -1,7 +1,15 @@
 import React from 'react';
+import openSocket from 'socket.io-client';
 import GameGrid from './GameGrid';
 import GameSetup from './GameSetup';
 import NoMobile from './NoMobile';
+
+const socket = openSocket('http://localhost:8000');
+
+function subscribeToTimer(interval, cb) {
+	socket.on('timer', cb);
+	socket.emit('subscribeToTimer', interval);
+}
 
 class RTGame extends React.Component {
 	constructor(props) {
@@ -12,6 +20,7 @@ class RTGame extends React.Component {
 			players: [],
 			playing: false,
 			onMobile: false,
+			time: null,
 		};
 
 		this.beginGame = this.beginGame.bind(this);
@@ -22,6 +31,11 @@ class RTGame extends React.Component {
 		if (windowWidth <= 500) {
 			this.setState({ onMobile: true });
 		}
+
+		console.log('subscribing to timer');
+		subscribeToTimer(1500, (time) => {
+			this.setState({ time });
+		});
 	}
 
 	beginGame(movies, players) {
