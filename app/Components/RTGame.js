@@ -38,11 +38,18 @@ class RTGame extends React.Component {
 		socket.emit('create room');
 	}
 
-	// joinRoom() {
-	// 	const socket = openSocket('http://localhost:8000');
-	// 	const room = prompt('Which room?');
-	// 	console.log(`you typed ${room}`);
-	// }
+	joinRoom() {
+		const socket = openSocket('http://localhost:8000');
+		socket.on('new player', playerID => console.log(`new player has joined this room: ${playerID}`));
+		socket.on('successful join', roomID => this.setState({
+			socketRoom: roomID,
+		}));
+		socket.on('failed join', () => alert('Failed to join that room. It might not exist')
+			|| socket.close());
+
+		const roomID = prompt('Which room?');
+		socket.emit('join room', roomID);
+	}
 
 	beginGame(movies, players) {
 		const nonEmptyPlayers = players.filter(p => p.name !== '');

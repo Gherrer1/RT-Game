@@ -5,6 +5,8 @@ const CREATE_ROOM = 'create room';
 const JOIN_ROOM = 'join room';
 const ROOM_ID = 'room id';
 const NEW_PLAYER = 'new player';
+const SUCCESSFUL_JOIN = 'successful join';
+const FAILED_JOIN = 'failed join';
 
 io.on('connection', (socket) => {
 	console.log('connection!');
@@ -15,14 +17,23 @@ io.on('connection', (socket) => {
 		socket.emit(ROOM_ID, socket.id);
 	});
 
-	// socket.on(JOIN_ROOM, (roomID) => {
-	// 	console.log(`${socket.id} is joining room ${roomID}`);
-	// 	io.in(roomID).emit(NEW_PLAYER, socket.id);
-	// });
+	socket.on(JOIN_ROOM, (roomID) => {
+		// check if this room exists first
+		if (!io.sockets.adapter.rooms[roomID]) {
+			return socket.emit(FAILED_JOIN);
+		}
+
+		socket.join(roomID);
+		console.log(`${socket.id} is joining room ${roomID}`);
+		socket.emit(SUCCESSFUL_JOIN, roomID);
+		io.in(roomID).emit(NEW_PLAYER, socket.id);
+	});
 
 	socket.on('disconnect', () => {
 		console.log(`disconnected ${socket.id}`);
 	});
+
+	console.log('socket rooms:', io.sockets.adapter.rooms);
 });
 
 const port = 8000;
