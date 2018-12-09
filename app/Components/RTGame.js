@@ -4,13 +4,6 @@ import GameGrid from './GameGrid';
 import GameSetup from './GameSetup';
 import NoMobile from './NoMobile';
 
-const socket = openSocket('http://localhost:8000');
-
-function subscribeToTimer(interval, cb) {
-	socket.on('timer', cb);
-	socket.emit('subscribeToTimer', interval);
-}
-
 class RTGame extends React.Component {
 	constructor(props) {
 		super(props);
@@ -20,10 +13,10 @@ class RTGame extends React.Component {
 			players: [],
 			playing: false,
 			onMobile: false,
-			time: null,
 		};
 
 		this.beginGame = this.beginGame.bind(this);
+		this.createRoom = this.createRoom.bind(this);
 	}
 
 	componentDidMount() {
@@ -31,11 +24,14 @@ class RTGame extends React.Component {
 		if (windowWidth <= 500) {
 			this.setState({ onMobile: true });
 		}
+	}
 
-		console.log('subscribing to timer');
-		subscribeToTimer(1500, (time) => {
-			this.setState({ time });
-		});
+	createRoom() {
+		console.log('hey');
+
+		const socket = openSocket('http://localhost:8000');
+		socket.on('timer', val => console.log(val));
+		socket.emit('subscribeToTimer', 1000);
 	}
 
 	beginGame(movies, players) {
@@ -67,9 +63,12 @@ class RTGame extends React.Component {
 		}
 
 		return (
-			<GameSetup
-				beginGame={this.beginGame}
-			/>
+			<React.Fragment>
+				<GameSetup
+					beginGame={this.beginGame}
+				/>
+				<button onClick={() => this.createRoom()} type="button">Invite Friend</button>
+			</React.Fragment>
 		);
 	}
 }
