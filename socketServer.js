@@ -1,21 +1,27 @@
+/* eslint-disable no-console */
 const io = require('socket.io')();
 
-io.on('connection', (client) => {
+const CREATE_ROOM = 'create room';
+const JOIN_ROOM = 'join room';
+const ROOM_ID = 'room id';
+const NEW_PLAYER = 'new player';
+
+io.on('connection', (socket) => {
 	console.log('connection!');
 
-	let jsInterval;
-
-	client.on('subscribeToTimer', (interval) => {
-		console.log(`client is subscribing to timer with interval ${interval}`);
-		jsInterval = setInterval(() => {
-			client.emit('timer', new Date());
-			console.log(`still emitting lol for client ${client.id}`);
-		}, interval);
+	socket.on(CREATE_ROOM, () => {
+		console.log(`creating room ${socket.id}`);
+		socket.join(socket.id);
+		socket.emit(ROOM_ID, socket.id);
 	});
 
-	client.on('disconnect', (val) => {
-		console.log('disconnected', val);
-		clearInterval(jsInterval);
+	// socket.on(JOIN_ROOM, (roomID) => {
+	// 	console.log(`${socket.id} is joining room ${roomID}`);
+	// 	io.in(roomID).emit(NEW_PLAYER, socket.id);
+	// });
+
+	socket.on('disconnect', () => {
+		console.log(`disconnected ${socket.id}`);
 	});
 });
 

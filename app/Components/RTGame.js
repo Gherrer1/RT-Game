@@ -13,10 +13,12 @@ class RTGame extends React.Component {
 			players: [],
 			playing: false,
 			onMobile: false,
+			socketRoom: null,
 		};
 
 		this.beginGame = this.beginGame.bind(this);
 		this.createRoom = this.createRoom.bind(this);
+		this.joinRoom = this.joinRoom.bind(this);
 	}
 
 	componentDidMount() {
@@ -27,12 +29,20 @@ class RTGame extends React.Component {
 	}
 
 	createRoom() {
-		console.log('hey');
-
 		const socket = openSocket('http://localhost:8000');
-		socket.on('timer', val => console.log(val));
-		socket.emit('subscribeToTimer', 1000);
+		socket.on('room id', roomID => this.setState({
+			socketRoom: roomID,
+		}));
+		socket.on('new player', playerID => console.log(`new player has joined this room: ${playerID}`));
+
+		socket.emit('create room');
 	}
+
+	// joinRoom() {
+	// 	const socket = openSocket('http://localhost:8000');
+	// 	const room = prompt('Which room?');
+	// 	console.log(`you typed ${room}`);
+	// }
 
 	beginGame(movies, players) {
 		const nonEmptyPlayers = players.filter(p => p.name !== '');
@@ -47,7 +57,7 @@ class RTGame extends React.Component {
 	}
 
 	render() {
-		const { playing, movies, players, onMobile } = this.state;
+		const { playing, movies, players, onMobile, socketRoom } = this.state;
 
 		if (onMobile) {
 			return (
@@ -67,7 +77,14 @@ class RTGame extends React.Component {
 				<GameSetup
 					beginGame={this.beginGame}
 				/>
-				<button onClick={() => this.createRoom()} type="button">Invite Friend</button>
+				{socketRoom
+					? <p>{socketRoom}</p>
+					: (
+						<div>
+							<button onClick={() => this.createRoom()} type="button">Invite Friend</button>
+							<button onClick={() => this.joinRoom()} type="button">Join Room</button>
+						</div>)
+				}
 			</React.Fragment>
 		);
 	}
