@@ -11,15 +11,19 @@ const FAILED_JOIN = 'failed join';
 io.on('connection', (socket) => {
 	console.log('connection!');
 
-	socket.on(CREATE_ROOM, () => {
-		console.log(`creating room ${socket.id}`);
+	socket.on(CREATE_ROOM, (gameState) => {
 		socket.join(socket.id);
 		socket.emit(ROOM_ID, socket.id);
+		console.log(`created room ${socket.id}`);
+		const room = io.sockets.adapter.rooms[socket.id];
+		room.gameState = gameState;
+
+		console.log('Room initialized with game state:', room.gameState);
 	});
 
 	socket.on(JOIN_ROOM, (roomID) => {
-		// check if this room exists first
-		if (!io.sockets.adapter.rooms[roomID]) {
+		const room = io.sockets.adapter.rooms[roomID];
+		if (!room) {
 			return socket.emit(FAILED_JOIN);
 		}
 
@@ -31,9 +35,8 @@ io.on('connection', (socket) => {
 
 	socket.on('disconnect', () => {
 		console.log(`disconnected ${socket.id}`);
+		console.log('All rooms:', io.sockets.adapter.rooms);
 	});
-
-	console.log('socket rooms:', io.sockets.adapter.rooms);
 });
 
 const port = 8000;

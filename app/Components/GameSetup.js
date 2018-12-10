@@ -117,7 +117,9 @@ class GameSetup extends React.Component {
 		}));
 		socket.on('new player', playerID => console.log(`new player has joined this room: ${playerID}`));
 
-		socket.emit('create room');
+		const { movies, players } = this.state;
+		const gameState = { movies, players };
+		socket.emit('create room', gameState);
 	}
 
 	joinRoom() {
