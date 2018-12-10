@@ -48,12 +48,9 @@ class GameSetup extends React.Component {
 		this.addListenersToSocket = this.addListenersToSocket.bind(this);
 	}
 
-	componentDidMount() {
-		// print query string
-	}
-
 	addListenersToSocket(socket) {
 		socket.on('did remove movie', newMoviesState => this.setState({ movies: newMoviesState }));
+		socket.on('did add movie pack', movies => this.setState({ movies }));
 	}
 
 	async searchForMovie(movieTitle) {
@@ -162,10 +159,15 @@ class GameSetup extends React.Component {
 	}
 
 	addMovieStarterPack(movies) {
+		const { socketRoom } = this.state;
+		if (this.socket && socketRoom) {
+			this.socket.emit('add movie starter pack', socketRoom, movies);
+		} else {
 		// TODO: might have to disable <a> when loading
-		this.setState({
-			movies,
-		});
+			this.setState({
+				movies,
+			});
+		}
 	}
 
 	addMovieToGame(movie) {
