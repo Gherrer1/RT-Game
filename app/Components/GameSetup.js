@@ -7,7 +7,6 @@ import MoviesList from './MoviesList';
 import AmbiguousSearchResults from './AmbiguousSearchResults';
 import PlayersForm from './PlayersForm';
 import getMovieData from '../api';
-import createInviteURL from '../helpers/url';
 
 const { MOVIE_FOUND, COULD_NOT_FIND_MOVIE_NAMED, RECOMMENDATIONS, MULTIPLE_MOVIES_FOUND } = require('../../lambda/messages');
 
@@ -211,7 +210,7 @@ class GameSetup extends React.Component {
 					Start Game!
 				</Button>
 				{socketRoom
-					? <p>Your friends can join this game via this link: <a href={createInviteURL(socketRoom)}>{createInviteURL(socketRoom)}</a></p>
+					? <p>Your friends can join with this room id: {socketRoom}</p>
 					: (
 						<div>
 							<button onClick={() => this.createRoom()} type="button">Invite Friends</button>
