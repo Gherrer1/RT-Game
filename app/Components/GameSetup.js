@@ -111,10 +111,15 @@ class GameSetup extends React.Component {
 	}
 
 	createRoom() {
+		// TODO: handle fail event?
+		// TODO: remove socket from component instance if socket disconnects
 		const socket = openSocket('http://localhost:8000');
-		socket.on('room id', roomID => this.setState({
-			socketRoom: roomID,
-		}));
+		socket.on('room id', (roomID) => {
+			this.setState({
+				socketRoom: roomID,
+			});
+			this.socket = socket;
+		});
 		socket.on('new player', playerID => console.log(`new player has joined this room: ${playerID}`));
 
 		const { movies, players } = this.state;
@@ -125,11 +130,14 @@ class GameSetup extends React.Component {
 	joinRoom() {
 		const socket = openSocket('http://localhost:8000');
 		socket.on('new player', playerID => console.log(`new player has joined this room: ${playerID}`));
-		socket.on('successful join', (roomID, gameState) => this.setState({
-			socketRoom: roomID,
-			movies: gameState.movies,
-			players: gameState.players,
-		}));
+		socket.on('successful join', (roomID, gameState) => {
+			this.setState({
+				socketRoom: roomID,
+				movies: gameState.movies,
+				players: gameState.players,
+			});
+			this.socket = socket;
+		});
 		socket.on('failed join', () => alert('Failed to join that room. It might not exist')
 			|| socket.close());
 
