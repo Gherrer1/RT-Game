@@ -53,11 +53,9 @@ class RTGame extends React.Component {
 		}
 
 		return (
-			<React.Fragment>
-				<GameSetup
-					beginGame={this.beginGame}
-				/>
-			</React.Fragment>
+			<GameSetup
+				beginGame={this.beginGame}
+			/>
 		);
 	}
 }
