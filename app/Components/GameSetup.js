@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import openSocket from 'socket.io-client';
 import { Alert, Button } from 'react-bootstrap/lib';
 import MovieSearchForm from './MovieSearchForm';
 import MoviesList from './MoviesList';
@@ -32,6 +33,7 @@ class GameSetup extends React.Component {
 			searchedFor: null,
 			recommendations: null,
 			loading: false,
+			socketRoom: null,
 		};
 
 		this.searchForMovie = this.searchForMovie.bind(this);
@@ -41,6 +43,8 @@ class GameSetup extends React.Component {
 		this.addPlayer = this.addPlayer.bind(this);
 		this.removePlayer = this.removePlayer.bind(this);
 		this.addMovieStarterPack = this.addMovieStarterPack.bind(this);
+		this.createRoom = this.createRoom.bind(this);
+		this.joinRoom = this.joinRoom.bind(this);
 	}
 
 	async searchForMovie(movieTitle) {
@@ -102,6 +106,29 @@ class GameSetup extends React.Component {
 		}));
 	}
 
+	createRoom() {
+		const socket = openSocket('http://localhost:8000');
+		socket.on('room id', roomID => this.setState({
+			socketRoom: roomID,
+		}));
+		socket.on('new player', playerID => console.log(`new player has joined this room: ${playerID}`));
+
+		socket.emit('create room');
+	}
+
+	joinRoom() {
+		const socket = openSocket('http://localhost:8000');
+		socket.on('new player', playerID => console.log(`new player has joined this room: ${playerID}`));
+		socket.on('successful join', roomID => this.setState({
+			socketRoom: roomID,
+		}));
+		socket.on('failed join', () => alert('Failed to join that room. It might not exist')
+			|| socket.close());
+
+		const roomID = prompt('Which room?');
+		socket.emit('join room', roomID);
+	}
+
 	updatePlayerName(index, name) {
 		this.setState(prevState => ({
 			players: prevState.players.map((player, i) => (i === index
@@ -137,7 +164,7 @@ class GameSetup extends React.Component {
 
 	render() {
 		const { movies, players, errorMessage, warningMessage,
-			searchedFor, recommendations, loading } = this.state;
+			searchedFor, recommendations, loading, socketRoom } = this.state;
 		const { beginGame } = this.props;
 		return (
 			<div className="game-setup">
@@ -178,6 +205,15 @@ class GameSetup extends React.Component {
 				>
 					Start Game!
 				</Button>
+				{socketRoom
+					? <p>Send this room id to your friends so they can join: {socketRoom}</p>
+					: (
+						<div>
+							<button onClick={() => this.createRoom()} type="button">Invite Friends</button>
+							<button onClick={() => this.joinRoom()} type="button">Join Room</button>
+						</div>
+					)
+				}
 			</div>
 		);
 	}
