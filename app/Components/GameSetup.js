@@ -45,10 +45,15 @@ class GameSetup extends React.Component {
 		this.addMovieStarterPack = this.addMovieStarterPack.bind(this);
 		this.createRoom = this.createRoom.bind(this);
 		this.joinRoom = this.joinRoom.bind(this);
+		this.addListenersToSocket = this.addListenersToSocket.bind(this);
 	}
 
 	componentDidMount() {
 		// print query string
+	}
+
+	addListenersToSocket(socket) {
+		socket.on('did remove movie', newMoviesState => this.setState({ movies: newMoviesState }));
 	}
 
 	async searchForMovie(movieTitle) {
@@ -119,6 +124,7 @@ class GameSetup extends React.Component {
 				socketRoom: roomID,
 			});
 			this.socket = socket;
+			this.addListenersToSocket(socket);
 		});
 		socket.on('new player', playerID => console.log(`new player has joined this room: ${playerID}`));
 
@@ -137,6 +143,7 @@ class GameSetup extends React.Component {
 				players: gameState.players,
 			});
 			this.socket = socket;
+			this.addListenersToSocket(socket);
 		});
 		socket.on('failed join', () => alert('Failed to join that room. It might not exist')
 			|| socket.close());
@@ -173,9 +180,15 @@ class GameSetup extends React.Component {
 	}
 
 	removeMovie(movie) {
-		this.setState(prevState => ({
-			movies: prevState.movies.filter(mov => mov.image !== movie.image),
-		}));
+		const { socketRoom } = this.state;
+		if (this.socket && socketRoom) {
+			// send intent to remove movie from game state
+			this.socket.emit('remove movie', socketRoom, movie.image);
+		} else {
+			this.setState(prevState => ({
+				movies: prevState.movies.filter(mov => mov.image !== movie.image),
+			}));
+		}
 	}
 
 	render() {
