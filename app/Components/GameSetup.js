@@ -125,14 +125,16 @@ class GameSetup extends React.Component {
 	joinRoom() {
 		const socket = openSocket('http://localhost:8000');
 		socket.on('new player', playerID => console.log(`new player has joined this room: ${playerID}`));
-		socket.on('successful join', roomID => this.setState({
+		socket.on('successful join', (roomID, gameState) => this.setState({
 			socketRoom: roomID,
+			movies: gameState.movies,
+			players: gameState.players,
 		}));
 		socket.on('failed join', () => alert('Failed to join that room. It might not exist')
 			|| socket.close());
 
 		const roomID = prompt('Which room?');
-		socket.emit('join room', roomID);
+		socket.emit('join room', roomID.trim());
 	}
 
 	updatePlayerName(index, name) {

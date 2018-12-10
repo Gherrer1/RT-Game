@@ -22,6 +22,7 @@ io.on('connection', (socket) => {
 	});
 
 	socket.on(JOIN_ROOM, (roomID) => {
+		// if theres no room, fail and disconnect
 		const room = io.sockets.adapter.rooms[roomID];
 		if (!room) {
 			return socket.emit(FAILED_JOIN);
@@ -29,7 +30,8 @@ io.on('connection', (socket) => {
 
 		socket.join(roomID);
 		console.log(`${socket.id} is joining room ${roomID}`);
-		socket.emit(SUCCESSFUL_JOIN, roomID);
+		const { gameState } = io.sockets.adapter.rooms[roomID];
+		socket.emit(SUCCESSFUL_JOIN, roomID, gameState);
 		io.in(roomID).emit(NEW_PLAYER, socket.id);
 	});
 
