@@ -9,7 +9,7 @@
     "start:server": "nodemon backend/server.js",
     "build": "webpack -p",
     "deploy": "webpack -p && firebase deploy",
-    "socket:dev": "docker image build -t socket:devvv sockets/ && docker run -p 8000:8000 --name sock --rm -v $(pwd)/sockets/socketServer.js:/app/socketServer.js socket"
+    "socket:dev": "docker image build -t socket:devvv sockets/ && docker run -p 8000:8000 --name sock --rm -v $(pwd)/sockets/socketServer.js:/app/socketServer.js socket:devvv"
   },
   "author": "",
   "license": "ISC",
