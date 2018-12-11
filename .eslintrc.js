@@ -3,7 +3,8 @@ module.exports = {
         "browser": true
     },
     "parser": "babel-eslint",
-    "extends": "airbnb",
+    "extends": ["airbnb", "plugin:jest/recommended"],
+    "plugins": ["jest"],
     "rules": {
         "array-bracket-spacing": 0,
         "consistent-return": 1,
