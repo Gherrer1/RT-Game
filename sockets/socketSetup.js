@@ -76,6 +76,9 @@ io.on('connection', (socket) => {
 	});
 });
 
-const port = 8000;
-io.listen(port);
-console.log('listening on port ', port);
+module.exports = io;
+
+// const port = 8000;
+// io.listen(port);
+// console.log('listening on port ', port);
+

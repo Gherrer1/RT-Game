@@ -6,6 +6,7 @@ RUN npm init -y && npm install -g nodemon && npm install --save socket.io
 
 EXPOSE 8000
 
-COPY socketServer.js socketServer.js
+COPY socketSetup.js socketSetup.js
+COPY server.js server.js
 
-CMD ["nodemon", "socketServer.js"]
+CMD ["nodemon", "server.js"]
