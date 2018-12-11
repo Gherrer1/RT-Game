@@ -18,6 +18,7 @@ function getRoom(id) {
 
 io.on('connection', (socket) => {
 	console.log('connection!');
+	console.log('all rooms:', Object.keys(io.sockets.adapter.rooms));
 
 	socket.on(CREATE_ROOM, (gameState) => {
 		socket.join(socket.id);
@@ -77,8 +78,3 @@ io.on('connection', (socket) => {
 });
 
 module.exports = io;
-
-// const port = 8000;
-// io.listen(port);
-// console.log('listening on port ', port);
-
