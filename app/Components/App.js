@@ -12,6 +12,7 @@ function App() {
 			<Route path="/" exact component={GameMode} />
 			{/* <RTGame /> */}
 			<Route path="/setup" exact component={GameSetup} />
+			<Route path="/setup-multi" exact render={props => <GameSetup {...props} multi />} />
 		</div>
 	);
 }

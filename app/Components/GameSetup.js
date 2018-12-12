@@ -197,7 +197,7 @@ class GameSetup extends React.Component {
 	render() {
 		const { movies, players, errorMessage, warningMessage,
 			searchedFor, recommendations, loading, socketRoom } = this.state;
-		const { beginGame } = this.props;
+		const { multi: multiplayerMode } = this.props;
 		return (
 			<div className="game-setup">
 				<NavBar />
@@ -231,28 +231,37 @@ class GameSetup extends React.Component {
 
 				<h2>Step 3:</h2>
 				<Button
-					onClick={() => beginGame(movies, players)}
+					onClick={() => console.log('heyyyy')}
 					bsStyle="primary"
 					disabled={loading || movies.length === 0 || players.length === 0}
 				>
 					Start Game!
 				</Button>
-				{socketRoom
+				{multiplayerMode && (
+					<div>
+						<button type="button">Invite Friends</button>
+						<button type="button">Join Room</button>
+					</div>
+				)}
+				{/* {socketRoom
 					? <p>Your friends can join with this room id: {socketRoom}</p>
 					: (
 						<div>
-							{/* <button onClick={() => this.createRoom()} type="button">Invite Friends</button> */}
-							{/* <button onClick={() => this.joinRoom()} type="button">Join Room</button> */}
+							<button onClick={() => this.createRoom()} type="button">Invite Friends</button>
+							<button onClick={() => this.joinRoom()} type="button">Join Room</button>
 						</div>
 					)
-				}
+				}  */}
 			</div>
 		);
 	}
 }
 
 GameSetup.propTypes = {
-	beginGame: PropTypes.func.isRequired,
+	multi: PropTypes.bool,
+};
+GameSetup.defaultProps = {
+	multi: false,
 };
 
 export default GameSetup;
