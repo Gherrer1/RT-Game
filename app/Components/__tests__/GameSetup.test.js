@@ -8,24 +8,33 @@ describe('<GameSetup />', () => {
 	afterEach(cleanup);
 
 	describe('socket interaction', () => {
+		let renderResult;
+		let getByText;
+		let container;
+
 		beforeEach(() => {
 			const port = 8000;
 			io.listen(port);
 			console.log(`listening on port ${port}`);
+			// render component
+			renderResult = render(<GameSetup />);
+			({ getByText, container } = renderResult);
 		});
 		afterEach((done) => {
 			io.close(done);
 		});
 
 		it('should show room ID when user clicks "Invite Friends" button', async () => {
-			const renderResult = render(<GameSetup />);
-			const { getByText, container } = renderResult;
 			fireEvent.click(getByText('Invite Friends'));
-
 			const roomIdElement = await waitForElement(() => getByText(/can join with this room id/), {
 				timeout: 500,
 			});
 			expect(container).toContainElement(roomIdElement);
+		});
+		it('should remove movie when it received "did remove movie" socket message', async () => {
+			fireEvent.click(getByText(/Super heroes/));
+			await waitForElement(() => getByText(/Deadpool/), { timeout: 500 });
+
 		});
 	});
 
@@ -41,6 +50,17 @@ describe('<GameSetup />', () => {
 			const { container, getByText } = renderResult;
 			const joinRoomBtnNode = getByText('Join Room');
 			expect(container).toContainElement(joinRoomBtnNode);
+		});
+		it('should show Deadpool when user clicks superheroes starter pack', async () => {
+			const renderResult = render(<GameSetup />);
+			const { getByText, container, queryByText } = renderResult;
+			expect(queryByText(/Deadpool/)).toBeNull();
+			fireEvent.click(getByText(/Super heroes/));
+
+			const deadpoolElement = await waitForElement(() => getByText(/Deadpool/), {
+				timeout: 500,
+			});
+			expect(container).toContainElement(deadpoolElement);
 		});
 	});
 });
