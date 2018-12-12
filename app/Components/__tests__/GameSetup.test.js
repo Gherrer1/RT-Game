@@ -34,26 +34,31 @@ describe('<GameSetup />', () => {
 		it('should remove movie when it received "did remove movie" socket message', async () => {
 			fireEvent.click(getByText(/Super heroes/));
 			await waitForElement(() => getByText(/Deadpool/), { timeout: 500 });
-
 		});
 	});
 
 	describe('ui', () => {
+		let renderResult;
+		let getByText;
+		let queryByText;
+		let container;
+		beforeEach(() => {
+			renderResult = render(<GameSetup />);
+			({ getByText, queryByText, container } = renderResult);
+		});
+		it('should show a navbar', () => {
+			const navBar = container.querySelector('.site-title');
+			expect(navBar).toBeTruthy();
+		});
 		it('should show "Invite Friends" button', () => {
-			const renderResult = render(<GameSetup />);
-			const { getByText, container } = renderResult;
 			const inviteFriendsBtnNode = getByText('Invite Friends');
 			expect(container).toContainElement(inviteFriendsBtnNode);
 		});
 		it('should show "Join Room" button', () => {
-			const renderResult = render(<GameSetup />);
-			const { container, getByText } = renderResult;
 			const joinRoomBtnNode = getByText('Join Room');
 			expect(container).toContainElement(joinRoomBtnNode);
 		});
 		it('should show Deadpool when user clicks superheroes starter pack', async () => {
-			const renderResult = render(<GameSetup />);
-			const { getByText, container, queryByText } = renderResult;
 			expect(queryByText(/Deadpool/)).toBeNull();
 			fireEvent.click(getByText(/Super heroes/));
 
