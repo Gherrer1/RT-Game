@@ -2,14 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import openSocket from 'socket.io-client';
 import { Alert, Button } from 'react-bootstrap/lib';
+import GameSetupSplitScreen from './GameSetupSplitScreen';
 import NavBar from './NavBar';
-import MovieSearchForm from './MovieSearchForm';
 import MoviesList from './MoviesList';
-import AmbiguousSearchResults from './AmbiguousSearchResults';
 import PlayersForm from './PlayersForm';
-import getMovieData from '../api';
-
-const { MOVIE_FOUND, COULD_NOT_FIND_MOVIE_NAMED, RECOMMENDATIONS, MULTIPLE_MOVIES_FOUND } = require('../../lambda/messages');
 
 const initialPlayerData = [
 	{ name: '', score: 0, id: 1 },
@@ -29,15 +25,10 @@ class GameSetup extends React.Component {
 		this.state = {
 			movies: [],
 			players: initialPlayerData,
-			errorMessage: null,
-			warningMessage: null,
-			searchedFor: null,
-			recommendations: null,
 			loading: false,
 			socketRoom: null,
 		};
 
-		this.searchForMovie = this.searchForMovie.bind(this);
 		this.updatePlayerName = this.updatePlayerName.bind(this);
 		this.addMovieToGame = this.addMovieToGame.bind(this);
 		this.removeMovie = this.removeMovie.bind(this);
@@ -47,6 +38,9 @@ class GameSetup extends React.Component {
 		this.createRoom = this.createRoom.bind(this);
 		this.joinRoom = this.joinRoom.bind(this);
 		this.addListenersToSocket = this.addListenersToSocket.bind(this);
+		this.startGame = this.startGame.bind(this);
+		this.setLoading = this.setLoading.bind(this);
+		this.endLoading = this.endLoading.bind(this);
 	}
 
 	startGame() {
@@ -68,45 +62,12 @@ class GameSetup extends React.Component {
 		socket.on('did add movie pack', movies => this.setState({ movies }));
 	}
 
-	async searchForMovie(movieTitle) {
+	setLoading() {
 		this.setState({ loading: true });
-		const movieData = await getMovieData(movieTitle);
-		console.log(movieData);
-		if (movieData.message === MOVIE_FOUND) {
-			return this.addMovieToGame(movieData.movie);
-		}
+	}
 
-		if (movieData.message.startsWith(COULD_NOT_FIND_MOVIE_NAMED)) {
-			return this.setState({
-				loading: false,
-				errorMessage: movieData.message,
-				searchedFor: movieData.searchedFor,
-				warningMessage: null,
-				recommendations: null,
-			});
-		}
-
-		if (movieData.message === RECOMMENDATIONS) {
-			return this.setState({
-				loading: false,
-				errorMessage: null,
-				warningMessage: RECOMMENDATIONS,
-				searchedFor: movieData.searchedFor,
-				recommendations: movieData.recommendations,
-			});
-		}
-
-		if (movieData.message === MULTIPLE_MOVIES_FOUND) {
-			return this.setState({
-				loading: false,
-				errorMessage: null,
-				warningMessage: MULTIPLE_MOVIES_FOUND,
-				searchedFor: movieData.searchedFor,
-				recommendations: movieData.movies,
-			});
-		}
-
-		return this.setState({ loading: false });
+	endLoading() {
+		this.setState({ loading: false });
 	}
 
 	addPlayer(e) {
@@ -188,11 +149,6 @@ class GameSetup extends React.Component {
 	addMovieToGame(movie) {
 		this.setState(prevState => ({
 			movies: prevState.movies.concat([ movie ]),
-			loading: false,
-			errorMessage: null,
-			warningMessage: null,
-			searchFor: null,
-			recommendations: null,
 		}));
 	}
 
@@ -209,65 +165,58 @@ class GameSetup extends React.Component {
 	}
 
 	render() {
-		const { movies, players, errorMessage, warningMessage,
-			searchedFor, recommendations, loading, socketRoom } = this.state;
-		const { multi: multiplayerMode } = this.props;
-		return (
-			<div className="game-setup">
-				<NavBar />
+		const { movies, players, loading, socketRoom } = this.state;
 
-				<MovieSearchForm
-					handleSubmit={this.searchForMovie}
-					handleMovieSet={this.addMovieStarterPack}
-					disabled={loading || movies.length === 5}
-					loading={loading}
-				/>
-				{errorMessage && (
-					<Alert bsStyle="danger">
-						{COULD_NOT_FIND_MOVIE_NAMED} <strong>{searchedFor}</strong>
-					</Alert>
-				)}
-				{warningMessage && (
-					<AmbiguousSearchResults
-						message={warningMessage}
-						searchedFor={searchedFor}
-						recommendations={recommendations}
-						handleClickMovie={this.addMovieToGame}
-					/>
-				)}
-				<MoviesList movies={movies} removeMovie={this.removeMovie} />
-				<PlayersForm
+		const { multi: multiplayerMode } = this.props;
+
+		if (!multiplayerMode) {
+			return (
+				<GameSetupSplitScreen
 					players={players}
 					updatePlayerName={this.updatePlayerName}
 					addPlayer={this.addPlayer}
 					removePlayer={this.removePlayer}
+					movies={movies}
+					addMovieToGame={this.addMovieToGame}
+					addMovieStarterPack={this.addMovieStarterPack}
+					removeMovie={this.removeMovie}
+					loading={loading}
+					startGame={this.startGame}
+					setLoading={this.setLoading}
+					endLoading={this.endLoading}
 				/>
+			);
+		}
 
-				<h2>Step 3:</h2>
-				<Button
-					onClick={() => this.startGame()}
-					bsStyle="primary"
-					disabled={loading || movies.length === 0 || players.length === 0}
-				>
-					Start Game!
-				</Button>
-				{multiplayerMode && (
-					<div>
-						<button type="button">Invite Friends</button>
-						<button type="button">Join Room</button>
-					</div>
-				)}
-				{/* {socketRoom
-					? <p>Your friends can join with this room id: {socketRoom}</p>
-					: (
-						<div>
-							<button onClick={() => this.createRoom()} type="button">Invite Friends</button>
-							<button onClick={() => this.joinRoom()} type="button">Join Room</button>
-						</div>
-					)
-				}  */}
-			</div>
+		return (
+			<div>Hey</div>
+			// <GameSetupMultiplayer
+				
+			// />
 		);
+
+		return <div>Hey</div>
+
+		// return (
+		// 	<React.Fragment>
+				
+		// 		{multiplayerMode && (
+		// 			<div>
+		// 				<button type="button">Invite Friends</button>
+		// 				<button type="button">Join Room</button>
+		// 			</div>
+		// 		)}
+		// 		{/* {socketRoom
+		// 			? <p>Your friends can join with this room id: {socketRoom}</p>
+		// 			: (
+		// 				<div>
+		// 					<button onClick={() => this.createRoom()} type="button">Invite Friends</button>
+		// 					<button onClick={() => this.joinRoom()} type="button">Join Room</button>
+		// 				</div>
+		// 			)
+		// 		}  */}
+		// 		</React.Fragment>
+		// );
 	}
 }
 
