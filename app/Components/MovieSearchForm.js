@@ -43,7 +43,6 @@ class MovieSearchFrom extends React.Component {
 
 		return (
 			<div>
-				<h2>Step 1: Add 1 to 5 movies</h2>
 				<form onSubmit={this.handleSubmit}>
 					<input
 						type="text"
