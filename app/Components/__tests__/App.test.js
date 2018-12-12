@@ -1,5 +1,5 @@
 import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, StaticRouter } from 'react-router-dom';
 import { render, cleanup, fireEvent, waitForElement } from 'react-testing-library';
 import 'jest-dom/extend-expect';
 import App from '../App';
@@ -95,6 +95,34 @@ describe('<App />', () => {
 				await waitForElement(() => getByText(/Split Screen/) && getByText(/Multiplayer/), {
 					timeout: 250,
 				});
+			});
+			it('<GameGrid /> should have a navbar', () => {
+				const preconfiguredRouterLocation = {
+					pathname: '/play',
+					state: {
+						movies: [{
+							image: 'https://resizing.flixster.com/A31QtxjB2dTh0__osCvH6XfREHo=/fit-in/80x80/v1.bTsxMTE2NzgzNTtqOzE3OTQ5OzEyMDA7ODAwOzEyMDA',
+							meterScore: 87,
+							name: 'The Dark Knight Rises',
+							year: 2012,
+						}],
+						players: [{
+							id: 1,
+							name: 'Lonzo',
+							score: 0,
+						}],
+					},
+				};
+				renderResult = render(
+					<StaticRouter
+						location={preconfiguredRouterLocation}
+					>
+						<App />
+					</StaticRouter>
+				);
+				({ container } = renderResult);
+				const navBar = container.querySelector('.site-title');
+				expect(navBar).toBeDefined();
 			});
 		});
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import NavBar from './NavBar';
 import HowScoringWorks from './HowScoringWorks';
 import GridHeader from './GridHeader';
 import PlayerGuesses from './PlayerGuesses';
@@ -91,6 +92,7 @@ class GameGrid extends React.Component {
 		const winningScore = getWinningScore(players);
 		return (
 			<div>
+				<NavBar />
 				<HowScoringWorks />
 				{(round >= movies.length)
 						&& <AnnounceWinners winners={players.filter(p => p.score === winningScore)} />
