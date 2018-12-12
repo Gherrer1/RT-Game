@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import openSocket from 'socket.io-client';
 import { Alert, Button } from 'react-bootstrap/lib';
+import NavBar from './NavBar';
 import MovieSearchForm from './MovieSearchForm';
 import MoviesList from './MoviesList';
 import AmbiguousSearchResults from './AmbiguousSearchResults';
@@ -199,7 +200,7 @@ class GameSetup extends React.Component {
 		const { beginGame } = this.props;
 		return (
 			<div className="game-setup">
-				<h1 className="site-title">The Rotten Tomatoes Game</h1>
+				<NavBar />
 
 				<MovieSearchForm
 					handleSubmit={this.searchForMovie}
@@ -240,8 +241,8 @@ class GameSetup extends React.Component {
 					? <p>Your friends can join with this room id: {socketRoom}</p>
 					: (
 						<div>
-							<button onClick={() => this.createRoom()} type="button">Invite Friends</button>
-							<button onClick={() => this.joinRoom()} type="button">Join Room</button>
+							{/* <button onClick={() => this.createRoom()} type="button">Invite Friends</button> */}
+							{/* <button onClick={() => this.joinRoom()} type="button">Join Room</button> */}
 						</div>
 					)
 				}
