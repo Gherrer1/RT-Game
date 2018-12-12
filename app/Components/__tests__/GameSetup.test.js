@@ -1,9 +1,26 @@
 import React from 'react';
 import { render, cleanup, fireEvent, waitForElement } from 'react-testing-library';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, StaticRouter } from 'react-router-dom';
 import 'jest-dom/extend-expect';
 import GameSetup from '../GameSetup';
 import io from '../../../sockets/socketSetup';
+
+const preconfiguredRouterLocation = {
+	pathname: '/play',
+	state: {
+		movies: [{
+			image: 'https://resizing.flixster.com/A31QtxjB2dTh0__osCvH6XfREHo=/fit-in/80x80/v1.bTsxMTE2NzgzNTtqOzE3OTQ5OzEyMDA7ODAwOzEyMDA',
+			meterScore: 87,
+			name: 'The Dark Knight Rises',
+			year: 2012,
+		}],
+		players: [{
+			id: 1,
+			name: 'Lonzo',
+			score: 0,
+		}],
+	},
+};
 
 describe('<GameSetup />', () => {
 	afterEach(cleanup);
@@ -55,14 +72,6 @@ describe('<GameSetup />', () => {
 			const navBar = container.querySelector('.site-title');
 			expect(navBar).toBeTruthy();
 		});
-		it.skip('should show "Invite Friends" button', () => {
-			const inviteFriendsBtnNode = getByText('Invite Friends');
-			expect(container).toContainElement(inviteFriendsBtnNode);
-		});
-		it.skip('should show "Join Room" button', () => {
-			const joinRoomBtnNode = getByText('Join Room');
-			expect(container).toContainElement(joinRoomBtnNode);
-		});
 		it('should show Deadpool when user clicks superheroes starter pack', async () => {
 			expect(queryByText(/Deadpool/)).toBeNull();
 			fireEvent.click(getByText(/Super heroes/));
@@ -71,6 +80,18 @@ describe('<GameSetup />', () => {
 				timeout: 500,
 			});
 			expect(container).toContainElement(deadpoolElement);
+		});
+
+		it('should always show Step 1, Step 2, and Step 3', () => {
+			renderResult = render(
+				<StaticRouter location={preconfiguredRouterLocation}>
+					<GameSetup />
+				</StaticRouter>
+			);
+			({ getByText } = renderResult);
+			getByText(/Step 1/);
+			getByText(/Step 2/);
+			getByText(/Step 3/);
 		});
 	});
 });

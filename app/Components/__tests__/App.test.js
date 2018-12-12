@@ -114,9 +114,7 @@ describe('<App />', () => {
 					},
 				};
 				renderResult = render(
-					<StaticRouter
-						location={preconfiguredRouterLocation}
-					>
+					<StaticRouter location={preconfiguredRouterLocation}>
 						<App />
 					</StaticRouter>
 				);
