@@ -2,9 +2,7 @@ import React from 'react';
 import { Route } from 'react-router-dom';
 import GameMode from './GameMode';
 import GameSetup from './GameSetup';
-// import RTGame from './RTGame';
-
-// GameSetup's beginGame function can just programmtically navigate to new route from there
+import GameGrid from './GameGrid';
 
 function App() {
 	return (
@@ -13,6 +11,7 @@ function App() {
 			{/* <RTGame /> */}
 			<Route path="/setup" exact component={GameSetup} />
 			<Route path="/setup-multi" exact render={props => <GameSetup {...props} multi />} />
+			<Route path="/play" exact component={GameGrid} />
 		</div>
 	);
 }

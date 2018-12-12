@@ -14,7 +14,7 @@ describe('<App />', () => {
 	let container;
 
 	describe('navigation', () => {
-		describe('pre-socket navigation', () => {
+		describe('non-socket navigation', () => {
 			beforeEach(() => {
 				renderResult = render(
 					<MemoryRouter>
@@ -63,6 +63,28 @@ describe('<App />', () => {
 				await waitForElement(() => getByText(/Split Screen/), {
 					timeout: 100,
 				});
+			});
+			it('(Split Screen) should take you from <GameSetup /> -> <GameGrid /> when user clicks Start Game', async () => {
+				fireEvent.click(getByText(/Split Screen/));
+				await waitForElement(() => container.querySelector('.game-setup'), {
+					timeout: 100,
+				});
+
+				const { getByPlaceholderText } = renderResult;
+				fireEvent.click(getByText('Super heroes'));
+				fireEvent.change(getByPlaceholderText('Player 1'));
+				const startGameButton = getByText('Start Game!');
+				await waitForElement(() => {
+					expect(startGameButton).not.toBeDisabled();
+					return true;
+				}, { timeout: 200 });
+				fireEvent.click(startGameButton);
+				await waitForElement(() => container.querySelector('.game-grid'), {
+					timeout: 200,
+				});
+			});
+			it.skip('should redirect to home if user navigates to /play without any players or movies state', () => {
+				throw new Error('unimplemented');
 			});
 		});
 

@@ -49,6 +49,20 @@ class GameSetup extends React.Component {
 		this.addListenersToSocket = this.addListenersToSocket.bind(this);
 	}
 
+	startGame() {
+		const { multi: multiplayerMode, history } = this.props;
+		const { movies, players } = this.state;
+		if (!multiplayerMode) {
+			history.push({
+				pathname: '/play',
+				state: {
+					movies,
+					players,
+				},
+			});
+		}
+	}
+
 	addListenersToSocket(socket) {
 		socket.on('did remove movie', newMoviesState => this.setState({ movies: newMoviesState }));
 		socket.on('did add movie pack', movies => this.setState({ movies }));
@@ -231,7 +245,7 @@ class GameSetup extends React.Component {
 
 				<h2>Step 3:</h2>
 				<Button
-					onClick={() => console.log('heyyyy')}
+					onClick={() => this.startGame()}
 					bsStyle="primary"
 					disabled={loading || movies.length === 0 || players.length === 0}
 				>
@@ -259,6 +273,9 @@ class GameSetup extends React.Component {
 
 GameSetup.propTypes = {
 	multi: PropTypes.bool,
+	history: PropTypes.shape({
+		push: PropTypes.func.isRequired,
+	}).isRequired,
 };
 GameSetup.defaultProps = {
 	multi: false,
