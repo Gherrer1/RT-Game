@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import GameMode from './GameMode';
 import GameSetup from './GameSetup';
 // import RTGame from './RTGame';
@@ -8,13 +8,11 @@ import GameSetup from './GameSetup';
 
 function App() {
 	return (
-		<Router>
-			<div>
-				<Route path="/" exact component={GameMode} />
-				{/* <RTGame /> */}
-				<Route path="/setup" exact render={props => <GameSetup />} />
-			</div>
-		</Router>
+		<div>
+			<Route path="/" exact component={GameMode} />
+			{/* <RTGame /> */}
+			<Route path="/setup" exact component={GameSetup} />
+		</div>
 	);
 }
 

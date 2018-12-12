@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, cleanup, fireEvent, waitForElement } from 'react-testing-library';
+import { MemoryRouter } from 'react-router-dom';
 import 'jest-dom/extend-expect';
 import GameSetup from '../GameSetup';
 import io from '../../../sockets/socketSetup';
@@ -43,7 +44,11 @@ describe('<GameSetup />', () => {
 		let queryByText;
 		let container;
 		beforeEach(() => {
-			renderResult = render(<GameSetup />);
+			renderResult = render(
+				<MemoryRouter>
+					<GameSetup />
+				</MemoryRouter>
+			);
 			({ getByText, queryByText, container } = renderResult);
 		});
 		it('should show a navbar', () => {
