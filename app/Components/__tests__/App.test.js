@@ -83,8 +83,18 @@ describe('<App />', () => {
 					timeout: 200,
 				});
 			});
-			it.skip('should redirect to home if user navigates to /play without any players or movies state', () => {
-				throw new Error('unimplemented');
+			it('should redirect to home if user navigates to /play without any players or movies state', async () => {
+				renderResult = render(
+					<MemoryRouter
+						initialEntries={['/play']}
+					>
+						<App />
+					</MemoryRouter>
+				);
+				({ getByText, queryByText, container } = renderResult);
+				await waitForElement(() => getByText(/Split Screen/) && getByText(/Multiplayer/), {
+					timeout: 250,
+				});
 			});
 		});
 

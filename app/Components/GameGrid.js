@@ -37,7 +37,9 @@ class GameGrid extends React.Component {
 
 	componentDidMount() {
 		const { movies } = this.state;
-		document.body.style.setProperty('--num-columns', movies.length);
+		if (movies) {
+			document.body.style.setProperty('--num-columns', movies.length);
+		}
 	}
 
 	scoreRound(round) {
