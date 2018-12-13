@@ -36,7 +36,7 @@ class MovieSearchFrom extends React.Component {
 		const movieData = await getMovieData(movieTitle);
 		searchDidEnd();
 		this.setState({ loading: false, movieInput: '' });
-		console.log(movieData);
+		// console.log(movieData);
 
 		if (movieData.message === MOVIE_FOUND) {
 			return addMovieToGame(movieData.movie);
@@ -78,12 +78,17 @@ class MovieSearchFrom extends React.Component {
 
 	render() {
 		const { movieInput, errorMessage, warningMessage, searchedFor,
-			loading, disabled, recommendations } = this.state;
-		const { addMovieToGame } = this.props;
+			loading, recommendations } = this.state;
+		const { addMovieToGame, disableSearch } = this.props;
 
-		const buttonText = disabled
-			? (loading ? 'Searching for movie...' : 'Max movies reached')
-			: 'Add Movie';
+		let buttonText;
+		if (loading) {
+			buttonText = 'Searching for movie...';
+		} else if (disableSearch) {
+			buttonText = 'Max movies reached';
+		} else {
+			buttonText = 'Add Movie';
+		}
 
 		return (
 			<div>
@@ -96,7 +101,7 @@ class MovieSearchFrom extends React.Component {
 						autoComplete="off"
 						placeholder="e.g. The Godfather"
 					/>
-					<Button className="add-movie-btn" type="submit" bsStyle="success" bsSize="small" disabled={disabled}>
+					<Button className="add-movie-btn" type="submit" bsStyle="success" bsSize="small" disabled={disableSearch}>
 						{buttonText}
 					</Button>
 					<div className="movie-packages">
@@ -127,6 +132,8 @@ class MovieSearchFrom extends React.Component {
 MovieSearchFrom.propTypes = {
 	addMovieToGame: PropTypes.func.isRequired,
 	handleMovieSet: PropTypes.func.isRequired,
+	didFireSearch: PropTypes.func.isRequired,
+	disableSearch: PropTypes.bool.isRequired,
 };
 
 export default MovieSearchFrom;

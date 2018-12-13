@@ -1,17 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Alert, Button } from 'react-bootstrap/lib';
+import { Button } from 'react-bootstrap/lib';
 import NavBar from './NavBar';
 import PlayersForm from './PlayersForm';
 import MovieSearchForm from './MovieSearchForm';
 import MoviesList from './MoviesList';
 
-const { COULD_NOT_FIND_MOVIE_NAMED } = require('../../lambda/messages');
-
-
 function GameSetupSplitScreen(props) {
 	const { players, movies, updatePlayerName, addPlayer, removePlayer, startLoading, endLoading,
-		addMovieStarterPack, loading, removeMovie, addMovieToGame, startGame, } = props;
+		addMovieStarterPack, loading, removeMovie, addMovieToGame, startGame } = props;
 	return (
 		<div className="game-setup">
 			<NavBar />
@@ -31,6 +28,7 @@ function GameSetupSplitScreen(props) {
 				didFireSearch={startLoading}
 				searchDidEnd={endLoading}
 				addMovieToGame={addMovieToGame}
+				disableSearch={movies.length === 5}
 			/>
 
 			<MoviesList movies={movies} removeMovie={removeMovie} />
@@ -58,6 +56,8 @@ GameSetupSplitScreen.propTypes = {
 	removeMovie: PropTypes.func.isRequired,
 	loading: PropTypes.bool.isRequired,
 	startGame: PropTypes.func.isRequired,
+	startLoading: PropTypes.func.isRequired,
+	endLoading: PropTypes.func.isRequired,
 };
 
 export default GameSetupSplitScreen;
