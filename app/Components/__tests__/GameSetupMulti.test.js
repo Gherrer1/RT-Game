@@ -5,6 +5,12 @@ import 'jest-dom/extend-expect';
 import GameSetupMulti from '../GameSetupMulti';
 import io from '../../../sockets/socketSetup';
 
+const nameUserTypes = {
+	target: {
+		value: 'l',
+	},
+};
+
 describe('<GameSetupMulti />', () => {
 	afterEach((done) => {
 		cleanup();
@@ -13,7 +19,6 @@ describe('<GameSetupMulti />', () => {
 
 	let renderResult;
 	let getByText;
-	let queryByText;
 	let container;
 	beforeEach(() => {
 		renderResult = render(
@@ -21,7 +26,7 @@ describe('<GameSetupMulti />', () => {
 				<GameSetupMulti />
 			</StaticRouter>
 		);
-		({ getByText, queryByText, container } = renderResult);
+		({ getByText, container } = renderResult);
 
 		const port = 8000;
 		io.listen(port);
@@ -38,20 +43,13 @@ describe('<GameSetupMulti />', () => {
 		const joinRoomBtn = getByText(/Join Room/);
 		expect(inviteFriendsBtn).toBeDisabled();
 		expect(joinRoomBtn).toBeDisabled();
-		fireEvent.change(playerNameInput, {
-			target: {
-				value: 'l',
-			},
-		});
+		fireEvent.change(playerNameInput, nameUserTypes);
 		expect(inviteFriendsBtn).not.toBeDisabled();
 		expect(joinRoomBtn).not.toBeDisabled();
 	});
 	it('should show a link to invite users when user clicks `Invite Friends`', async () => {
-		fireEvent.change(container.querySelector('.player-name-input'), {
-			target: {
-				value: 'l',
-			},
-		});
+		expect(container.querySelector('.invite-link')).toBeNull();
+		fireEvent.change(container.querySelector('.player-name-input'), nameUserTypes);
 		fireEvent.click(getByText(/Invite Friends/));
 		await waitForElement(() => container.querySelector('.invite-link'), {
 			timeout: 1000,
@@ -60,11 +58,7 @@ describe('<GameSetupMulti />', () => {
 	it('should not show <MovieSearchForm /> or Start Game Button until user has clicked `Invite Friends` or `Join Room`', async () => {
 		const MovieSearchForm = container.querySelector('.movie-search-form');
 		expect(MovieSearchForm).toBeNull();
-		fireEvent.change(container.querySelector('.player-name-input'), {
-			target: {
-				value: 'l',
-			},
-		});
+		fireEvent.change(container.querySelector('.player-name-input'), nameUserTypes);
 		fireEvent.click(getByText(/Invite Friends/));
 		await waitForElement(() => container.querySelector('.movie-search-form'), {
 			timeout: 1000,
