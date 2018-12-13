@@ -20,14 +20,15 @@ io.on('connection', (socket) => {
 	console.log('connection!');
 	console.log('all rooms:', Object.keys(io.sockets.adapter.rooms));
 
-	socket.on(CREATE_ROOM, (gameState) => {
+	socket.on(CREATE_ROOM, () => {
 		socket.join(socket.id);
 		socket.emit(ROOM_ID, socket.id);
 		console.log(`created room ${socket.id}`);
 		const room = getRoom(socket.id);
-		room.gameState = gameState;
-
-		console.log('Room initialized with game state:', room.gameState);
+		room.gameState = {
+			movies: [],
+			players: [],
+		};
 	});
 
 	socket.on(JOIN_ROOM, (roomID) => {
