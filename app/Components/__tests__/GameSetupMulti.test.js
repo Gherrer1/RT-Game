@@ -1,14 +1,19 @@
 import React from 'react';
 import { render, cleanup, fireEvent, waitForElement } from 'react-testing-library';
-import { MemoryRouter, StaticRouter } from 'react-router-dom';
+import { StaticRouter } from 'react-router-dom';
 import 'jest-dom/extend-expect';
 import GameSetupMulti from '../GameSetupMulti';
+import io from '../../../sockets/socketSetup';
 
 describe('<GameSetupMulti />', () => {
-	afterEach(cleanup);
+	afterEach((done) => {
+		cleanup();
+		io.close(done);
+	});
 
 	let renderResult;
 	let getByText;
+	let queryByText;
 	let container;
 	beforeEach(() => {
 		renderResult = render(
@@ -16,7 +21,10 @@ describe('<GameSetupMulti />', () => {
 				<GameSetupMulti />
 			</StaticRouter>
 		);
-		({ getByText, container } = renderResult);
+		({ getByText, queryByText, container } = renderResult);
+
+		const port = 8000;
+		io.listen(port);
 	});
 
 	it('should have a player-name input', () => {
@@ -37,5 +45,29 @@ describe('<GameSetupMulti />', () => {
 		});
 		expect(inviteFriendsBtn).not.toBeDisabled();
 		expect(joinRoomBtn).not.toBeDisabled();
+	});
+	it('should show a link to invite users when user clicks `Invite Friends`', async () => {
+		fireEvent.change(container.querySelector('.player-name-input'), {
+			target: {
+				value: 'l',
+			},
+		});
+		fireEvent.click(getByText(/Invite Friends/));
+		await waitForElement(() => container.querySelector('.invite-link'), {
+			timeout: 1000,
+		});
+	});
+	it('should not show <MovieSearchForm /> or Start Game Button until user has clicked `Invite Friends` or `Join Room`', async () => {
+		const MovieSearchForm = container.querySelector('.movie-search-form');
+		expect(MovieSearchForm).toBeNull();
+		fireEvent.change(container.querySelector('.player-name-input'), {
+			target: {
+				value: 'l',
+			},
+		});
+		fireEvent.click(getByText(/Invite Friends/));
+		await waitForElement(() => container.querySelector('.movie-search-form'), {
+			timeout: 1000,
+		});
 	});
 });

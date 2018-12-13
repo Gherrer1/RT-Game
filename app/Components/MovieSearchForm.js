@@ -91,7 +91,7 @@ class MovieSearchFrom extends React.Component {
 		}
 
 		return (
-			<div>
+			<div className="movie-search-form">
 				<form onSubmit={this.searchForMovie}>
 					<input
 						type="text"
