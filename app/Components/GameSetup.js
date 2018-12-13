@@ -1,16 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import openSocket from 'socket.io-client';
-import { Alert, Button } from 'react-bootstrap/lib';
 import GameSetupSplitScreen from './GameSetupSplitScreen';
-import NavBar from './NavBar';
-import MoviesList from './MoviesList';
-import PlayersForm from './PlayersForm';
 
 const initialPlayerData = [
 	{ name: '', score: 0, id: 1 },
 	{ name: '', score: 0, id: 2 },
 ];
+
+// TODO: get rid of all traces of sockets in here
 
 // const fakePlayerData = [
 // 	{ name: 'Lonzo', score: 0, id: 2 },
@@ -39,22 +37,20 @@ class GameSetup extends React.Component {
 		this.joinRoom = this.joinRoom.bind(this);
 		this.addListenersToSocket = this.addListenersToSocket.bind(this);
 		this.startGame = this.startGame.bind(this);
-		this.setLoading = this.setLoading.bind(this);
+		this.startLoading = this.startLoading.bind(this);
 		this.endLoading = this.endLoading.bind(this);
 	}
 
 	startGame() {
-		const { multi: multiplayerMode, history } = this.props;
+		const { history } = this.props;
 		const { movies, players } = this.state;
-		if (!multiplayerMode) {
-			history.push({
-				pathname: '/play',
-				state: {
-					movies,
-					players,
-				},
-			});
-		}
+		history.push({
+			pathname: '/play',
+			state: {
+				movies,
+				players,
+			},
+		});
 	}
 
 	addListenersToSocket(socket) {
@@ -62,7 +58,7 @@ class GameSetup extends React.Component {
 		socket.on('did add movie pack', movies => this.setState({ movies }));
 	}
 
-	setLoading() {
+	startLoading() {
 		this.setState({ loading: true });
 	}
 
@@ -167,67 +163,29 @@ class GameSetup extends React.Component {
 	render() {
 		const { movies, players, loading, socketRoom } = this.state;
 
-		const { multi: multiplayerMode } = this.props;
-
-		if (!multiplayerMode) {
-			return (
-				<GameSetupSplitScreen
-					players={players}
-					updatePlayerName={this.updatePlayerName}
-					addPlayer={this.addPlayer}
-					removePlayer={this.removePlayer}
-					movies={movies}
-					addMovieToGame={this.addMovieToGame}
-					addMovieStarterPack={this.addMovieStarterPack}
-					removeMovie={this.removeMovie}
-					loading={loading}
-					startGame={this.startGame}
-					setLoading={this.setLoading}
-					endLoading={this.endLoading}
-				/>
-			);
-		}
-
 		return (
-			<div>Hey</div>
-			// <GameSetupMultiplayer
-				
-			// />
+			<GameSetupSplitScreen
+				players={players}
+				updatePlayerName={this.updatePlayerName}
+				addPlayer={this.addPlayer}
+				removePlayer={this.removePlayer}
+				movies={movies}
+				addMovieToGame={this.addMovieToGame}
+				addMovieStarterPack={this.addMovieStarterPack}
+				removeMovie={this.removeMovie}
+				loading={loading}
+				startGame={this.startGame}
+				startLoading={this.startLoading}
+				endLoading={this.endLoading}
+			/>
 		);
-
-		return <div>Hey</div>
-
-		// return (
-		// 	<React.Fragment>
-				
-		// 		{multiplayerMode && (
-		// 			<div>
-		// 				<button type="button">Invite Friends</button>
-		// 				<button type="button">Join Room</button>
-		// 			</div>
-		// 		)}
-		// 		{/* {socketRoom
-		// 			? <p>Your friends can join with this room id: {socketRoom}</p>
-		// 			: (
-		// 				<div>
-		// 					<button onClick={() => this.createRoom()} type="button">Invite Friends</button>
-		// 					<button onClick={() => this.joinRoom()} type="button">Join Room</button>
-		// 				</div>
-		// 			)
-		// 		}  */}
-		// 		</React.Fragment>
-		// );
 	}
 }
 
 GameSetup.propTypes = {
-	multi: PropTypes.bool,
 	history: PropTypes.shape({
 		push: PropTypes.func.isRequired,
 	}).isRequired,
-};
-GameSetup.defaultProps = {
-	multi: false,
 };
 
 export default GameSetup;
