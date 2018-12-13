@@ -45,7 +45,7 @@ describe('<App />', () => {
 				expect(inviteFriendsNode).toBeNull();
 				expect(joinRoomNode).toBeNull();
 			});
-			it('should show Invite Friends button on <GameSetup /> when user clicks on Multiplayer', async () => {
+			it('should show "Invite Friends" and "Join Room" buttons on <GameSetup /> when user clicks on Multiplayer', async () => {
 				expect(container.querySelector('.game-setup')).toBeNull();
 				fireEvent.click(getByText(/Multiplayer/));
 				await waitForElement(() => container.querySelector('.game-setup'), {
