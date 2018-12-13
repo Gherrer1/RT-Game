@@ -28,7 +28,7 @@ describe('<MovieSearchForm />', () => {
 		fetch.resetMocks();
 	});
 
-	it('should show <AmbiguousSearchResults /> if I search for "Toy Storey"', async () => {
+	it('should show <AmbiguousSearchResults /> if I json response indicates No exact match found"', async () => {
 		fetch.mockResponseOnce(JSON.stringify({
 			message: 'No exact match found. Were you looking for one of these?',
 			searchedFor: 'toy storey',
@@ -48,7 +48,25 @@ describe('<MovieSearchForm />', () => {
 		});
 		fireEvent.click(getByText('Add Movie'));
 		await waitForElement(() => getByText(/No exact match found/), {
-			timeout: 2000,
+			timeout: 500,
+		});
+	});
+
+	it('should show No Movie Found message if json response indicates No movie found', async () => {
+		fetch.mockResponseOnce(JSON.stringify({
+			message: 'Could not find a movie with the name thor 5',
+			searchedFor: 'thor 5',
+		}));
+
+		const input = container.querySelector('form > input');
+		fireEvent.change(input, {
+			target: {
+				value: 'thor 5',
+			},
+		});
+		fireEvent.click(getByText('Add Movie'));
+		await waitForElement(() => getByText(/Could not find a movie with the name/), {
+			timeout: 500,
 		});
 	});
 });
