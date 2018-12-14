@@ -32,7 +32,7 @@ class MovieSearchFrom extends React.Component {
 		const { movieInput: movieTitle } = this.state;
 		const { didFireSearch, searchDidEnd, addMovieToGame } = this.props;
 		didFireSearch();
-		this.setState({ loading: true });
+		this.setState({ loading: true, errorMessage: null, warningMessage: null });
 		const movieData = await getMovieData(movieTitle);
 		searchDidEnd();
 		this.setState({ loading: false, movieInput: '' });
@@ -121,7 +121,9 @@ class MovieSearchFrom extends React.Component {
 						message={warningMessage}
 						searchedFor={searchedFor}
 						recommendations={recommendations}
-						handleClickMovie={addMovieToGame}
+						handleClickMovie={movie => addMovieToGame(movie) || this.setState({
+							warningMessage: null,
+						})}
 					/>
 				)}
 			</div>
