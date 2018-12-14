@@ -100,4 +100,33 @@ describe('<GameSetupMulti />', () => {
 		movieDivs = container.querySelectorAll('.movies-list > div');
 		expect(movieDivs.length).toBe(1);
 	});
+	it('should add 5 movies to screen after clicking Movie starter pack', async () => {
+		throw new Error('unimp');
+	});
 });
+
+/*
+	addListenersToSocket(socket) {
+		socket.on('did remove movie', newMoviesState => this.setState({ movies: newMoviesState }));
+		socket.on('did add movie pack', movies => this.setState({ movies }));
+	}
+
+	joinRoom() {
+		const socket = openSocket('http://localhost:8000');
+		socket.on('new player', playerID => console.log(`new player has joined this room: ${playerID}`));
+		socket.on('successful join', (roomID, gameState) => {
+			this.setState({
+				socketRoom: roomID,
+				movies: gameState.movies,
+				players: gameState.players,
+			});
+			this.socket = socket;
+			this.addListenersToSocket(socket);
+		});
+		socket.on('failed join', () => alert('Failed to join that room. It might not exist')
+			|| socket.close());
+
+		const roomID = prompt('Which room?');
+		socket.emit('join room', roomID.trim());
+	}
+*/

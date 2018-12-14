@@ -24,21 +24,12 @@ class GameSetup extends React.Component {
 			movies: [],
 			players: initialPlayerData,
 			loading: false,
-			socketRoom: null,
 		};
 
 		this.updatePlayerName = this.updatePlayerName.bind(this);
-		this.addMovieToGame = this.addMovieToGame.bind(this);
-		this.removeMovie = this.removeMovie.bind(this);
 		this.addPlayer = this.addPlayer.bind(this);
 		this.removePlayer = this.removePlayer.bind(this);
-		this.addMovieStarterPack = this.addMovieStarterPack.bind(this);
-		this.createRoom = this.createRoom.bind(this);
-		this.joinRoom = this.joinRoom.bind(this);
-		this.addListenersToSocket = this.addListenersToSocket.bind(this);
 		this.startGame = this.startGame.bind(this);
-		this.startLoading = this.startLoading.bind(this);
-		this.endLoading = this.endLoading.bind(this);
 	}
 
 	startGame() {
@@ -53,18 +44,7 @@ class GameSetup extends React.Component {
 		});
 	}
 
-	addListenersToSocket(socket) {
-		socket.on('did remove movie', newMoviesState => this.setState({ movies: newMoviesState }));
-		socket.on('did add movie pack', movies => this.setState({ movies }));
-	}
 
-	startLoading() {
-		this.setState({ loading: true });
-	}
-
-	endLoading() {
-		this.setState({ loading: false });
-	}
 
 	addPlayer(e) {
 		e.preventDefault();
@@ -84,42 +64,7 @@ class GameSetup extends React.Component {
 		}));
 	}
 
-	createRoom() {
-		// TODO: handle fail event?
-		// TODO: remove socket from component instance if socket disconnects
-		const socket = openSocket('http://localhost:8000');
-		socket.on('room id', (roomID) => {
-			this.setState({
-				socketRoom: roomID,
-			});
-			this.socket = socket;
-			this.addListenersToSocket(socket);
-		});
-		socket.on('new player', playerID => console.log(`new player has joined this room: ${playerID}`));
 
-		const { movies, players } = this.state;
-		const gameState = { movies, players };
-		socket.emit('create room', gameState);
-	}
-
-	joinRoom() {
-		const socket = openSocket('http://localhost:8000');
-		socket.on('new player', playerID => console.log(`new player has joined this room: ${playerID}`));
-		socket.on('successful join', (roomID, gameState) => {
-			this.setState({
-				socketRoom: roomID,
-				movies: gameState.movies,
-				players: gameState.players,
-			});
-			this.socket = socket;
-			this.addListenersToSocket(socket);
-		});
-		socket.on('failed join', () => alert('Failed to join that room. It might not exist')
-			|| socket.close());
-
-		const roomID = prompt('Which room?');
-		socket.emit('join room', roomID.trim());
-	}
 
 	updatePlayerName(index, name) {
 		this.setState(prevState => ({
@@ -130,38 +75,8 @@ class GameSetup extends React.Component {
 		}));
 	}
 
-	addMovieStarterPack(movies) {
-		const { socketRoom } = this.state;
-		if (this.socket && socketRoom) {
-			this.socket.emit('add movie starter pack', socketRoom, movies);
-		} else {
-		// TODO: might have to disable <a> when loading
-			this.setState({
-				movies,
-			});
-		}
-	}
-
-	addMovieToGame(movie) {
-		this.setState(prevState => ({
-			movies: prevState.movies.concat([ movie ]),
-		}));
-	}
-
-	removeMovie(movie) {
-		const { socketRoom } = this.state;
-		if (this.socket && socketRoom) {
-			// send intent to remove movie from game state
-			this.socket.emit('remove movie', socketRoom, movie.image);
-		} else {
-			this.setState(prevState => ({
-				movies: prevState.movies.filter(mov => mov.image !== movie.image),
-			}));
-		}
-	}
-
 	render() {
-		const { movies, players, loading, socketRoom } = this.state;
+		const { movies, players, loading } = this.state;
 
 		return (
 			<GameSetupSplitScreen
@@ -170,13 +85,17 @@ class GameSetup extends React.Component {
 				addPlayer={this.addPlayer}
 				removePlayer={this.removePlayer}
 				movies={movies}
-				addMovieToGame={this.addMovieToGame}
-				addMovieStarterPack={this.addMovieStarterPack}
-				removeMovie={this.removeMovie}
+				addMovieToGame={movie => this.setState(prevState => ({
+					movies: prevState.movies.concat([ movie ]),
+				}))}
+				addMovieStarterPack={moviesPack => this.setState({ movies: moviesPack })}
+				removeMovie={movie => this.setState(prevState => ({
+					movies: prevState.movies.filter(mov => mov.image !== movie.image),
+				}))}
 				loading={loading}
 				startGame={this.startGame}
-				startLoading={this.startLoading}
-				endLoading={this.endLoading}
+				startLoading={() => this.setState({ loading: true })}
+				endLoading={() => this.setState({ loading: false })}
 			/>
 		);
 	}
