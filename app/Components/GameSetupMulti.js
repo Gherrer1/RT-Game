@@ -3,6 +3,7 @@ import openSocket from 'socket.io-client';
 import { Button } from 'react-bootstrap/lib';
 import NavBar from './NavBar';
 import MovieSearchForm from './MovieSearchForm';
+import MoviesList from './MoviesList';
 
 class GameSetupMulti extends React.Component {
 	constructor(props) {
@@ -12,6 +13,7 @@ class GameSetupMulti extends React.Component {
 			playerName: '',
 			socketRoom: null,
 			inRoom: false,
+			loading: false,
 			movies: [],
 			players: [],
 		};
@@ -39,7 +41,7 @@ class GameSetupMulti extends React.Component {
 	}
 
 	render() {
-		const { playerName, inRoom, socketRoom } = this.state;
+		const { playerName, inRoom, socketRoom, movies } = this.state;
 
 		return (
 			<div className="game-setup">
@@ -57,7 +59,22 @@ class GameSetupMulti extends React.Component {
 							<p className="invite-link">
 								Share this link to invite people to your game room: {socketRoom}
 							</p>
-							<MovieSearchForm />
+							<h2>Step 2: Add 1 to 5 movies</h2>
+							<MovieSearchForm
+								addMovieToGame={movie => this.setState(prevState => ({
+									movies: prevState.movies.concat([ movie ]),
+								}))}
+								didFireSearch={() => this.setState({ loading: true })}
+								searchDidEnd={() => this.setState({ loading: false })}
+								disableSearch={movies.length >= 5}
+							/>
+
+							<MoviesList
+								movies={movies}
+								removeMovie={movie => this.setState(prevState => ({
+									movies: prevState.movies.filter(_movie => _movie.image !== movie.image),
+								}))}
+							/>
 						</div>
 					)
 					: (

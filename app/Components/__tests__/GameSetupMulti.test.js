@@ -11,6 +11,10 @@ const nameUserTypes = {
 	},
 };
 
+function simulateTypeUserName(container) {
+	fireEvent.change(container.querySelector('.player-name-input'), nameUserTypes);
+}
+
 describe('<GameSetupMulti />', () => {
 	afterEach((done) => {
 		cleanup();
@@ -21,6 +25,8 @@ describe('<GameSetupMulti />', () => {
 	let getByText;
 	let container;
 	beforeEach(() => {
+		fetch.resetMocks();
+
 		renderResult = render(
 			<StaticRouter context={{}}>
 				<GameSetupMulti />
@@ -63,5 +69,35 @@ describe('<GameSetupMulti />', () => {
 		await waitForElement(() => container.querySelector('.movie-search-form'), {
 			timeout: 1000,
 		});
+	});
+	it('should add movie to screen after a successful search', async () => {
+		simulateTypeUserName(container);
+		fireEvent.click(getByText(/Invite Friends/));
+		await waitForElement(() => container.querySelector('.movie-search-form'), {
+			timeout: 1000,
+		});
+
+		// make sure there arent any movies to begin with
+		let movieDivs = container.querySelectorAll('.movies-list > div');
+		expect(movieDivs.length).toBe(0);
+		fetch.mockResponseOnce(JSON.stringify({
+			message: 'Movie found!',
+			movie: {
+				name: 'Saw II',
+				year: 2005,
+				image: 'https://resizing.flixster.com/rC26YbjB9YcaitFie1N-_TczA-s=/fit-in/80x80/v1.bTsxMTE3NzU3OTtqOzE3OTk0OzEyMDA7ODAwOzEyMDA',
+				meterScore: 36,
+			},
+		}));
+
+		fireEvent.change(container.querySelector('.movie-search-form > form > input'), {
+			target: {
+				value: 'Literally a fake movie search',
+			},
+		});
+		fireEvent.click(getByText('Add Movie'));
+		await waitForElement(() => container.querySelector('.movies-list > div'));
+		movieDivs = container.querySelectorAll('.movies-list > div');
+		expect(movieDivs.length).toBe(1);
 	});
 });

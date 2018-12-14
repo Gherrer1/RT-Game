@@ -101,7 +101,7 @@ class MovieSearchFrom extends React.Component {
 						autoComplete="off"
 						placeholder="e.g. The Godfather"
 					/>
-					<Button className="add-movie-btn" type="submit" bsStyle="success" bsSize="small" disabled={disableSearch}>
+					<Button className="add-movie-btn" type="submit" bsStyle="success" bsSize="small" disabled={disableSearch || loading}>
 						{buttonText}
 					</Button>
 					<div className="movie-packages">
@@ -133,6 +133,7 @@ MovieSearchFrom.propTypes = {
 	addMovieToGame: PropTypes.func.isRequired,
 	handleMovieSet: PropTypes.func.isRequired,
 	didFireSearch: PropTypes.func.isRequired,
+	searchDidEnd: PropTypes.func.isRequired,
 	disableSearch: PropTypes.bool.isRequired,
 };
 
