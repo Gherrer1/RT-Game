@@ -101,7 +101,18 @@ describe('<GameSetupMulti />', () => {
 		expect(movieDivs.length).toBe(1);
 	});
 	it('should add 5 movies to screen after clicking Movie starter pack', async () => {
-		throw new Error('unimp');
+		const { queryByText } = renderResult;
+		simulateTypeUserName(container);
+		fireEvent.click(getByText(/Invite Friends/));
+		await waitForElement(() => getByText(/Super heroes/), {
+			timeout: 500,
+		});
+		expect(queryByText(/Deadpool/)).toBeNull();
+		fireEvent.click(getByText(/Super heroes/));
+		await waitForElement(() => getByText(/Deadpool/), {
+			timeout: 500,
+		});
+		expect(container.querySelectorAll('.movies-list > div').length).toBe(5);
 	});
 });
 

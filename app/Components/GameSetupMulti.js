@@ -67,6 +67,7 @@ class GameSetupMulti extends React.Component {
 								didFireSearch={() => this.setState({ loading: true })}
 								searchDidEnd={() => this.setState({ loading: false })}
 								disableSearch={movies.length >= 5}
+								handleMovieSet={_movies => this.setState({ movies: _movies })}
 							/>
 
 							<MoviesList

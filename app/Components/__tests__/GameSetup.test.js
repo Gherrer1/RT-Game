@@ -60,10 +60,9 @@ describe('<GameSetup />', () => {
 			expect(queryByText(/Deadpool/)).toBeNull();
 			fireEvent.click(getByText(/Super heroes/));
 
-			const deadpoolElement = await waitForElement(() => getByText(/Deadpool/), {
+			await waitForElement(() => getByText(/Deadpool/), {
 				timeout: 500,
 			});
-			expect(container).toContainElement(deadpoolElement);
 		});
 
 		it('should always show Step 1, Step 2, and Step 3', () => {

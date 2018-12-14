@@ -145,9 +145,6 @@ describe('<MovieSearchForm />', () => {
 		});
 		fireEvent.click(container.querySelector('.recommended-title'));
 		expect(queryByText(/No exact match found/)).toBeNull();
-		// await waitForElement(() => expect(queryByText(/No exact match found/)).toBeNull() || true, {
-		// 	timeout: 200,
-		// });
 	});
 	it('should  clear `no movie found` message when new search fires', async () => {
 		sendErrorSearch(renderResult);
