@@ -122,23 +122,20 @@ describe('<MovieSearchForm />', () => {
 		expect(searchButton).toBeDisabled();
 	});
 	it('should disable search button while searching', async () => {
-		fetch.mockResponseOnce(JSON.stringify({
-			message: 'Could not find a movie with the name thor 5',
-			searchedFor: 'thor 5',
-		}));
-
-		const input = container.querySelector('form > input');
-		fireEvent.change(input, {
-			target: {
-				value: 'thor 5',
-			},
-		});
-		fireEvent.click(getByText('Add Movie'));
+		sendAmbiguousSearch(renderResult);
 		const searchBtn = getByText(/Searching for movie\.\.\./);
 		expect(searchBtn).toBeDisabled();
 		// wait for element to not be disabled
 		await waitForElement(() => expect(getByText('Add Movie')).not.toBeDisabled() || true, {
 			timeout: 2000,
+		});
+	});
+	it('should disable starter pack buttons while searching', async () => {
+		sendAmbiguousSearch(renderResult);
+		const movieStarterPackBtns = container.querySelectorAll('.movie-packages > button');
+		movieStarterPackBtns.forEach(button => expect(button).toBeDisabled());
+		await waitForElement(() => expect(container.querySelector('.movie-packages > button')).not.toBeDisabled() || true, {
+			timeout: 500,
 		});
 	});
 	it('should clear `ambiguous search result` message when user selects movie from recommendations', async () => {

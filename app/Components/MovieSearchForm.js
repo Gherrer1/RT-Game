@@ -106,9 +106,9 @@ class MovieSearchFrom extends React.Component {
 					</Button>
 					<div className="movie-packages">
 						Need inspiration? Try these packages:
-						<button type="button" onClick={e => this.handleSelectMovieStarterPack(e, superheroes)}>Super heroes</button>
-						<button type="button" onClick={e => this.handleSelectMovieStarterPack(e, princesses)}>Princesses</button>
-						<button type="button" onClick={e => this.handleSelectMovieStarterPack(e, dicaprio)}>DiCaprio</button>
+						<button type="button" disabled={loading} onClick={e => this.handleSelectMovieStarterPack(e, superheroes)}>Super heroes</button>
+						<button type="button" disabled={loading} onClick={e => this.handleSelectMovieStarterPack(e, princesses)}>Princesses</button>
+						<button type="button" disabled={loading} onClick={e => this.handleSelectMovieStarterPack(e, dicaprio)}>DiCaprio</button>
 					</div>
 				</form>
 				{errorMessage && (
