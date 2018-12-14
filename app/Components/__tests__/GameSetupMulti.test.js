@@ -61,6 +61,25 @@ describe('<GameSetupMulti />', () => {
 			timeout: 1000,
 		});
 	});
+	it('should not show a .player-name-input once user creates room', async () => {
+		expect(container.querySelector('.player-name-input')).toBeDefined();
+		simulateTypeUserName(container);
+		fireEvent.click(getByText(/Invite Friends/));
+		await waitForElement(() => expect(container.querySelector('.player-name-input')).toBeNull() || true, {
+			timeout: 1000,
+		});
+	});
+	it.skip('should not show a .player-name-input once user clicks `Join Room`', () => {
+		throw new Error('unimplemented');
+	});
+	it('should show a <PlayersList /> once user is in a room', async () => {
+		expect(container.querySelector('.players-list')).toBeNull();
+		simulateTypeUserName(container);
+		fireEvent.click(getByText(/Invite Friends/));
+		await waitForElement(() => expect(container.querySelector('.players-list')).not.toBeNull() || true, {
+			timeout: 1000,
+		});
+	});
 	it('should not show <MovieSearchForm /> or Start Game Button until user has clicked `Invite Friends` or `Join Room`', async () => {
 		const MovieSearchForm = container.querySelector('.movie-search-form');
 		expect(MovieSearchForm).toBeNull();

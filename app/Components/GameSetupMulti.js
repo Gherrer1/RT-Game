@@ -4,6 +4,7 @@ import { Button } from 'react-bootstrap/lib';
 import NavBar from './NavBar';
 import MovieSearchForm from './MovieSearchForm';
 import MoviesList from './MoviesList';
+import PlayersList from './PlayersList';
 
 class GameSetupMulti extends React.Component {
 	constructor(props) {
@@ -41,21 +42,18 @@ class GameSetupMulti extends React.Component {
 	}
 
 	render() {
-		const { playerName, inRoom, socketRoom, movies } = this.state;
+		const { playerName, inRoom, socketRoom, movies, players } = this.state;
 
 		return (
 			<div className="game-setup">
 				<NavBar />
 				<h2>Step 1: What&#39;s Your Name?</h2>
-				<input
-					type="text"
-					className="player-name-input"
-					value={playerName}
-					onChange={e => this.setState({ playerName: e.target.value })}
-				/>
 				{inRoom
 					? (
 						<div>
+							<h2>Players in your room</h2>
+							<PlayersList players={players} />
+
 							<p className="invite-link">
 								Share this link to invite people to your game room: {socketRoom}
 							</p>
@@ -80,6 +78,12 @@ class GameSetupMulti extends React.Component {
 					)
 					: (
 						<div>
+							<input
+								type="text"
+								className="player-name-input"
+								value={playerName}
+								onChange={e => this.setState({ playerName: e.target.value })}
+							/>
 							<Button disabled={playerName === ''} onClick={this.createSocketRoom}>
 								Invite Friends
 							</Button>
