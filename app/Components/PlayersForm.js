@@ -6,7 +6,7 @@ import PlayerNameInput from './PlayerNameInput';
 function PlayersForm({ players, updatePlayerName, addPlayer, removePlayer }) {
 	return (
 		<React.Fragment>
-			<form onSubmit={e => e.preventDefault()}>
+			<form>
 				{players.map((player, index) => (
 					<PlayerNameInput
 						player={player}
