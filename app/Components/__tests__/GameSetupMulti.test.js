@@ -23,7 +23,7 @@ async function simulateCreateRoom(renderResult) {
 	});
 }
 
-describe('<GameSetupMulti />', () => {
+describe.skip('<GameSetupMulti />', () => {
 	afterEach((done) => {
 		cleanup();
 		io.close(done);

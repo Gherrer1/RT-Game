@@ -41,6 +41,7 @@
     "jest-dom": "^3.0.0",
     "jest-expect-message": "^1.0.2",
     "jest-fetch-mock": "^2.0.1",
+    "puppeteer": "^1.11.0",
     "react-testing-library": "^5.3.2",
     "serverless": "^1.32.0",
     "style-loader": "^0.23.1",

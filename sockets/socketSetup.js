@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 const io = require('socket.io')();
+const Player = require('./Player');
 
 const CREATE_ROOM = 'create room';
 const JOIN_ROOM = 'join room';
@@ -20,15 +21,15 @@ io.on('connection', (socket) => {
 	console.log('connection!');
 	console.log('all rooms:', Object.keys(io.sockets.adapter.rooms));
 
-	socket.on(CREATE_ROOM, () => {
+	socket.on(CREATE_ROOM, (name) => {
 		socket.join(socket.id);
-		socket.emit(ROOM_ID, socket.id);
 		console.log(`created room ${socket.id}`);
 		const room = getRoom(socket.id);
 		room.gameState = {
 			movies: [],
-			players: [],
+			players: [new Player(name)], // TODO: generate random color to represent player
 		};
+		socket.emit(ROOM_ID, socket.id, room.gameState);
 	});
 
 	socket.on(JOIN_ROOM, (roomID) => {

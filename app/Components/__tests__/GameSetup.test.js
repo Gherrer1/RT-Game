@@ -6,7 +6,7 @@ import GameSetup from '../GameSetup';
 import io from '../../../sockets/socketSetup';
 import { preconfiguredRouterLocation } from '../constants';
 
-describe('<GameSetup />', () => {
+describe.skip('<GameSetup />', () => {
 	afterEach(cleanup);
 
 	describe.skip('socket interaction', () => {

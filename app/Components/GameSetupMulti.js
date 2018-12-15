@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import openSocket from 'socket.io-client';
 import { Button } from 'react-bootstrap/lib';
 import NavBar from './NavBar';
@@ -14,6 +16,7 @@ class GameSetupMulti extends React.Component {
 			playerName: '',
 			socketRoom: null,
 			inRoom: false,
+			fromInviteLink: false,
 			loading: false,
 			movies: [],
 			players: [],
@@ -23,17 +26,29 @@ class GameSetupMulti extends React.Component {
 		this.addSocketListeners = this.addSocketListeners.bind(this);
 	}
 
+	componentDidMount() {
+		const { match } = this.props;
+		const { params } = match;
+		// if url looks like this: /setup-multi/:roomID
+		if (params.roomID) {
+			this.setState({
+				fromInviteLink: true,
+			});
+		}
+	}
+
 	createSocketRoom() {
+		const { playerName } = this.state;
 		const socket = openSocket('http://localhost:8000');
-		socket.on('room id', (roomID) => {
+		socket.on('room id', (roomID, gameState) => {
 			this.setState({
 				socketRoom: roomID,
 				inRoom: true,
 			});
-			this.socket = socket;
+			window.socket = socket;
 			this.addSocketListeners(socket);
 		});
-		socket.emit('create room');
+		socket.emit('create room', playerName);
 	}
 
 	addSocketListeners(socket) {
@@ -42,7 +57,7 @@ class GameSetupMulti extends React.Component {
 	}
 
 	render() {
-		const { playerName, inRoom, socketRoom, movies, players } = this.state;
+		const { playerName, inRoom, fromInviteLink, socketRoom, movies, players } = this.state;
 
 		return (
 			<div className="game-setup">
@@ -55,7 +70,8 @@ class GameSetupMulti extends React.Component {
 							<PlayersList players={players} />
 
 							<p className="invite-link">
-								Share this link to invite people to your game room: {socketRoom}
+								Share this link to invite people to your game room:
+								<a href={`http://localhost:8080/setup-multi/${socketRoom}`}>{socketRoom}</a>
 							</p>
 							<h2>Step 2: Add 1 to 5 movies</h2>
 							<MovieSearchForm
@@ -74,6 +90,18 @@ class GameSetupMulti extends React.Component {
 									movies: prevState.movies.filter(_movie => _movie.image !== movie.image),
 								}))}
 							/>
+
+							<h2>Step 3:</h2>
+							<Link to={{
+								pathname: `/play/${socketRoom}`,
+								state: {
+									movies,
+									players,
+								},
+							}}
+							>
+								<Button>Start Game</Button>
+							</Link>
 						</div>
 					)
 					: (
@@ -82,11 +110,15 @@ class GameSetupMulti extends React.Component {
 								type="text"
 								className="player-name-input"
 								value={playerName}
-								onChange={e => this.setState({ playerName: e.target.value })}
+								onChange={e => this.setState({
+									playerName: e.target.value,
+									players: [{ name: e.target.value, score: 0, id: 1 }], // remove this line later
+								})}
 							/>
-							<Button disabled={playerName === ''} onClick={this.createSocketRoom}>
-								Invite Friends
-							</Button>
+							{!fromInviteLink && (
+								<Button disabled={playerName === ''} onClick={this.createSocketRoom}>
+									Invite Friends
+								</Button>)}
 							<Button disabled={playerName === ''}>
 								Join Room
 							</Button>
@@ -97,5 +129,11 @@ class GameSetupMulti extends React.Component {
 		);
 	}
 }
+
+GameSetupMulti.propTypes = {
+	match: PropTypes.shape({
+		params: PropTypes.object.isRequired,
+	}).isRequired,
+};
 
 export default GameSetupMulti;

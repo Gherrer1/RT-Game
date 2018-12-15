@@ -12,7 +12,9 @@ function App() {
 			{/* <RTGame /> */}
 			<Route path="/setup" exact component={GameSetup} />
 			<Route path="/setup-multi" exact component={GameSetupMulti} />
+			<Route path="/setup-multi/:roomID" component={GameSetupMulti} />
 			<Route path="/play" exact component={GameGrid} />
+			<Route path="/play/:roomID" component={GameGrid} />
 		</div>
 	);
 }
