@@ -27,7 +27,7 @@ io.on('connection', (socket) => {
 		const room = getRoom(socket.id);
 		room.gameState = {
 			movies: [],
-			players: [new Player(name)], // TODO: generate random color to represent player
+			players: [new Player(socket.id, name)], // TODO: generate random color to represent player
 		};
 		socket.emit(ROOM_ID, socket.id, room.gameState);
 	});

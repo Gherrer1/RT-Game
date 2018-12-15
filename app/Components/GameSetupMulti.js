@@ -7,6 +7,7 @@ import NavBar from './NavBar';
 import MovieSearchForm from './MovieSearchForm';
 import MoviesList from './MoviesList';
 import PlayersList from './PlayersList';
+import getInviteURL from '../helpers/url';
 
 class GameSetupMulti extends React.Component {
 	constructor(props) {
@@ -70,8 +71,10 @@ class GameSetupMulti extends React.Component {
 							<PlayersList players={players} />
 
 							<p className="invite-link">
-								Share this link to invite people to your game room:
-								<a href={`http://localhost:8080/setup-multi/${socketRoom}`}>{socketRoom}</a>
+								Share this link to invite people to your game room:&nbsp;
+								<a href={getInviteURL(socketRoom)}>
+									{getInviteURL(socketRoom)}
+								</a>
 							</p>
 							<h2>Step 2: Add 1 to 5 movies</h2>
 							<MovieSearchForm
