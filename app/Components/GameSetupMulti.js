@@ -9,6 +9,12 @@ import MoviesList from './MoviesList';
 import PlayersList from './PlayersList';
 import getInviteURL from '../helpers/url';
 
+const SOCKET_SERVER_URL = process.env.SOCKET_SERVER_URL;
+if (!SOCKET_SERVER_URL) {
+	throw new Error('Socket server url missing. Check your .env file');
+}
+console.log(SOCKET_SERVER_URL);
+
 class GameSetupMulti extends React.Component {
 	constructor(props) {
 		super(props);
@@ -48,7 +54,7 @@ class GameSetupMulti extends React.Component {
 
 	createSocketRoom() {
 		const { playerName } = this.state;
-		const socket = openSocket('http://localhost:8000');
+		const socket = openSocket(SOCKET_SERVER_URL);
 		socket.on('room id', (roomID, gameState) => {
 			this.setState({
 				socketRoom: roomID,
@@ -67,7 +73,7 @@ class GameSetupMulti extends React.Component {
 		const { playerName } = this.state;
 		const { match } = this.props;
 		const roomID = match.params.roomID || prompt('Enter the room ID');
-		const socket = openSocket('http://localhost:8000');
+		const socket = openSocket(SOCKET_SERVER_URL);
 		socket.on('successful join', (roomId, gameState) => {
 			window.socket = socket;
 			this.setState({
