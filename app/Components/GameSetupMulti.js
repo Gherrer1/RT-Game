@@ -24,7 +24,9 @@ class GameSetupMulti extends React.Component {
 		};
 
 		this.createSocketRoom = this.createSocketRoom.bind(this);
+		this.joinRoom = this.joinRoom.bind(this);
 		this.addSocketListeners = this.addSocketListeners.bind(this);
+		this.playerJoined = this.playerJoined.bind(this);
 	}
 
 	componentDidMount() {
@@ -38,6 +40,12 @@ class GameSetupMulti extends React.Component {
 		}
 	}
 
+	playerJoined(newPlayersState) {
+		this.setState({
+			players: newPlayersState,
+		});
+	}
+
 	createSocketRoom() {
 		const { playerName } = this.state;
 		const socket = openSocket('http://localhost:8000');
@@ -45,13 +53,38 @@ class GameSetupMulti extends React.Component {
 			this.setState({
 				socketRoom: roomID,
 				inRoom: true,
+				players: gameState.players,
 			});
 			window.socket = socket;
 			this.addSocketListeners(socket);
 		});
+		socket.on('new player', newPlayerState => this.playerJoined(newPlayerState));
 		socket.emit('create room', playerName);
 	}
 
+	joinRoom() {
+		// try to connect
+		const { playerName } = this.state;
+		const { match } = this.props;
+		const roomID = match.params.roomID || prompt('Enter the room ID');
+		const socket = openSocket('http://localhost:8000');
+		socket.on('successful join', (roomId, gameState) => {
+			window.socket = socket;
+			this.setState({
+				socketRoom: roomId,
+				inRoom: true,
+				movies: gameState.movies,
+				players: gameState.players,
+			});
+			// here is where we add movie updates listeners
+			this.addSocketListeners(socket);
+		});
+		socket.on('new player', newPlayerState => this.playerJoined(newPlayerState));
+		socket.on('failed join', () => alert('That room does not exist.') || socket.close());
+		socket.emit('join room', roomID, playerName);
+	}
+
+	// exclusively related to movies for now
 	addSocketListeners(socket) {
 		socket.on('did remove movie', newMoviesState => this.setState({ movies: newMoviesState }));
 		socket.on('did add movie pack', movies => this.setState({ movies }));
@@ -115,14 +148,13 @@ class GameSetupMulti extends React.Component {
 								value={playerName}
 								onChange={e => this.setState({
 									playerName: e.target.value,
-									players: [{ name: e.target.value, score: 0, id: 1 }], // remove this line later
 								})}
 							/>
 							{!fromInviteLink && (
 								<Button disabled={playerName === ''} onClick={this.createSocketRoom}>
 									Invite Friends
 								</Button>)}
-							<Button disabled={playerName === ''}>
+							<Button disabled={playerName === ''} onClick={this.joinRoom}>
 								Join Room
 							</Button>
 						</div>

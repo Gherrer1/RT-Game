@@ -138,6 +138,13 @@ describe.skip('<GameSetupMulti />', () => {
 		});
 		expect(container.querySelectorAll('.movies-list > div').length).toBe(5);
 	});
+
+	describe('joining room', () => {
+		it('should show all the players in the room and all the movie setup state when player joins a room');
+		it('should redirect to home if room doesnt exist');
+		it('should redirect to home if room is full');
+		it('should notify all OTHER players that player has joined, but not player himself - he will have game state sent to him');
+	});
 });
 
 /*

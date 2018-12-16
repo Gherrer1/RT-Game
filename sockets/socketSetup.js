@@ -32,18 +32,27 @@ io.on('connection', (socket) => {
 		socket.emit(ROOM_ID, socket.id, room.gameState);
 	});
 
-	socket.on(JOIN_ROOM, (roomID) => {
+	socket.on(JOIN_ROOM, (roomID, playerName) => {
 		// if theres no room, fail and disconnect
 		const room = getRoom(roomID);
 		if (!room) {
 			return socket.emit(FAILED_JOIN);
 		}
+		// if room already has 5 players, fail and disconnect
+		if (room.gameState.players.length >= 5) {
+			return socket.emit(FAILED_JOIN);
+		}
 
 		socket.join(roomID);
 		console.log(`${socket.id} is joining room ${roomID}`);
-		const { gameState } = getRoom[roomID];
-		socket.emit(SUCCESSFUL_JOIN, roomID, gameState);
-		io.in(roomID).emit(NEW_PLAYER, socket.id);
+
+		const newGameState = {
+			...room.gameState,
+			players: [...room.gameState.players, new Player(socket.id, playerName)],
+		};
+		room.gameState = newGameState;
+		socket.emit(SUCCESSFUL_JOIN, roomID, room.gameState);
+		socket.to(roomID).emit(NEW_PLAYER, room.gameState.players);
 	});
 
 	socket.on(REMOVE_MOVIE, (roomID, movieID) => {

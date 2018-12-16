@@ -1,5 +1,6 @@
 import React from 'react';
 import { MemoryRouter, StaticRouter } from 'react-router-dom';
+import puppeteer from 'puppeteer';
 import { render, cleanup, fireEvent, waitForElement } from 'react-testing-library';
 import 'jest-dom/extend-expect';
 import App from '../App';
@@ -11,6 +12,7 @@ describe('<App />', () => {
 
 	let renderResult;
 	let getByText;
+	let getByPlaceholderText;
 	let queryByText;
 	let container;
 
@@ -119,13 +121,62 @@ describe('<App />', () => {
 						<App />
 					</MemoryRouter>
 				);
-				({ getByText, queryByText, container } = renderResult);
-				fireEvent.click(getByText(/Multiplayer/));
-				await waitForElement(() => container.querySelector('.multiplayer-options'), {
-					timeout: 200,
+				({ getByText, queryByText, getByPlaceholderText, container } = renderResult);
+
+				fireEvent.click(getByText('Multiplayer'));
+				fireEvent.change(container.querySelector('.player-name-input'), {
+					target: {
+						value: 'Lonzo',
+					},
 				});
+				fireEvent.click(getByText('Invite Friends'));
 			});
 			afterEach(done => io.close(done));
+
+			it('should now allow navigation from <GameSetupMulti /> to <GameGrid /> unless at least 2 players and 1 movie added to game', async () => {
+				function delay(time) {
+					return new Promise(function(resolve, reject) {
+						setTimeout(resolve, time);
+					});
+				}
+
+				// const options = {};
+				const options = { headless: false, slowMo: 200 };
+				// puppeteer
+				const browser = await puppeteer.launch(options);
+				let page;
+				page = await browser.newPage();
+				await page.goto('http://localhost:8080');
+				// to click on something
+				await page.click('a[href$="/setup-multi"]');
+				// to type something
+				await page.type('.player-name-input', 'lonzo');
+				await page.click('div > button');
+				// to query the page for elements
+				const elements = await page.$$('.players-list > div');
+				// open another tab using invite link
+				// to get some info about an element
+				const inviteURL = await page.$eval('.invite-link > a', el => el.href);
+				const page2 = await browser.newPage();
+				await page2.goto(inviteURL);
+				// sleep
+				await delay(2000);
+				await browser.close();
+				// expect(inviteLink).toEqual({});
+				expect(inviteURL).toBe('haha');
+				expect(elements.length).toBe(2);
+
+				throw new Error('still implementing');
+			}, 60000);
+			it.skip('should display `Multiplayer Game` if in a multiplayer <GameGrid />', () => {
+				throw new Error('unimplemented');
+			});
+			it.skip('should not display `Multiplayer Game` if not in a multiplayer <GameGrid />', () => {
+				throw new Error('unimplemeneted');
+			});
 		});
 	});
 });
+
+// puppeteer reference:
+// https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#pageevalselector-pagefunction-args
