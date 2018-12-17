@@ -6,7 +6,7 @@ function PlayersList({ players }) {
 		<div className="players-list">
 			{players.map(p => (
 				<div key={p.id} style={{ borderLeft: `5px solid ${p.color}`, paddingLeft: '5px' }}>
-					{p.name} | {p.color}
+					{p.name}
 				</div>
 			))}
 		</div>

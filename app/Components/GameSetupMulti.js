@@ -125,7 +125,6 @@ class GameSetupMulti extends React.Component {
 		return (
 			<div className="game-setup">
 				<NavBar />
-				<h2>Step 1: What&#39;s Your Name?</h2>
 				{inRoom
 					? (
 						<div>
@@ -169,6 +168,7 @@ class GameSetupMulti extends React.Component {
 					)
 					: (
 						<div>
+							<h2>Step 1: What&#39;s Your Name?</h2>
 							<input
 								type="text"
 								className="player-name-input"
