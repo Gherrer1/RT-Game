@@ -8,6 +8,12 @@ import MovieSearchForm from './MovieSearchForm';
 import MoviesList from './MoviesList';
 import PlayersList from './PlayersList';
 import getInviteURL from '../helpers/url';
+import socketEventNames from '../../sockets/socketEventNames';
+
+const { CREATE_ROOM, JOIN_ROOM, ROOM_ID, NEW_PLAYER, SUCCESSFUL_JOIN, FAILED_JOIN, REMOVE_MOVIE,
+	DID_REMOVE_MOVIE, ADD_MOVIE_STARTER_PACK, DID_ADD_MOVIE_PACK, ADD_MOVIE, DID_ADD_MOVIE,
+} = socketEventNames;
+console.log(DID_ADD_MOVIE);
 
 const SOCKET_SERVER_URL = process.env.SOCKET_SERVER_URL;
 if (!SOCKET_SERVER_URL) {
@@ -56,7 +62,7 @@ class GameSetupMulti extends React.Component {
 	createSocketRoom() {
 		const { playerName } = this.state;
 		const socket = openSocket(SOCKET_SERVER_URL);
-		socket.on('room id', (roomID, gameState) => {
+		socket.on(ROOM_ID, (roomID, gameState) => {
 			this.setState({
 				socketRoom: roomID,
 				inRoom: true,
@@ -65,8 +71,8 @@ class GameSetupMulti extends React.Component {
 			window.socket = socket;
 			this.addSocketListeners(socket);
 		});
-		socket.on('new player', newPlayerState => this.playerJoined(newPlayerState));
-		socket.emit('create room', playerName);
+		socket.on(NEW_PLAYER, newPlayerState => this.playerJoined(newPlayerState));
+		socket.emit(CREATE_ROOM, playerName);
 	}
 
 	joinRoom() {
@@ -75,7 +81,7 @@ class GameSetupMulti extends React.Component {
 		const { match } = this.props;
 		const roomID = match.params.roomID || prompt('Enter the room ID');
 		const socket = openSocket(SOCKET_SERVER_URL);
-		socket.on('successful join', (roomId, gameState) => {
+		socket.on(SUCCESSFUL_JOIN, (roomId, gameState) => {
 			window.socket = socket;
 			this.setState({
 				socketRoom: roomId,
@@ -86,26 +92,26 @@ class GameSetupMulti extends React.Component {
 			// here is where we add movie updates listeners
 			this.addSocketListeners(socket);
 		});
-		socket.on('new player', newPlayerState => this.playerJoined(newPlayerState));
-		socket.on('failed join', () => alert('That room does not exist.') || socket.close());
-		socket.emit('join room', roomID, playerName);
+		socket.on(NEW_PLAYER, newPlayerState => this.playerJoined(newPlayerState));
+		socket.on(FAILED_JOIN, () => alert('That room does not exist.') || socket.close());
+		socket.emit(JOIN_ROOM, roomID, playerName);
 	}
 
 	addMovieToServer(movie) {
 		const { socketRoom } = this.state;
-		window.socket.emit('add movie', socketRoom, movie);
+		window.socket.emit(ADD_MOVIE, socketRoom, movie);
 	}
 
 	removeMovieFromServer(movie) {
 		const { socketRoom } = this.state;
-		window.socket.emit('remove movie', socketRoom, movie);
+		window.socket.emit(REMOVE_MOVIE, socketRoom, movie);
 	}
 
 	// exclusively related to movies for now
 	addSocketListeners(socket) {
-		socket.on('did remove movie', newMoviesState => this.setState({ movies: newMoviesState }));
-		socket.on('did add movie pack', movies => this.setState({ movies }));
-		socket.on('added movie', movieState => this.setState({ movies: movieState }));
+		socket.on(DID_REMOVE_MOVIE, newMoviesState => this.setState({ movies: newMoviesState }));
+		socket.on(DID_ADD_MOVIE_PACK, movies => this.setState({ movies }));
+		socket.on(DID_ADD_MOVIE, movieState => this.setState({ movies: movieState }));
 	}
 
 	render() {

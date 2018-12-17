@@ -1,20 +1,9 @@
 /* eslint-disable no-console */
 const io = require('socket.io')();
 const Player = require('./Player');
-
-const CREATE_ROOM = 'create room';
-const JOIN_ROOM = 'join room';
-const ROOM_ID = 'room id';
-const NEW_PLAYER = 'new player';
-const SUCCESSFUL_JOIN = 'successful join';
-const FAILED_JOIN = 'failed join';
-const REMOVE_MOVIE = 'remove movie';
-const DID_REMOVE_MOVIE = 'did remove movie';
-const ADD_MOVIE_STARTER_PACK = 'add movie starter pack';
-const DID_ADD_MOVIE_PACK = 'did add movie pack';
-
-const ADD_MOVIE = 'add movie';
-const ADDED_MOVIE = 'added movie';
+const { CREATE_ROOM, JOIN_ROOM, ROOM_ID, NEW_PLAYER, SUCCESSFUL_JOIN, FAILED_JOIN, REMOVE_MOVIE,
+	DID_REMOVE_MOVIE, ADD_MOVIE_STARTER_PACK, DID_ADD_MOVIE_PACK, ADD_MOVIE, DID_ADD_MOVIE,
+} = require('./socketEventNames');
 
 function getRoom(id) {
 	return io.sockets.adapter.rooms[id];
@@ -74,7 +63,7 @@ io.on('connection', (socket) => {
 			...room.gameState,
 			movies: newMoviesState,
 		};
-		io.in(roomID).emit(ADDED_MOVIE, room.gameState.movies);
+		io.in(roomID).emit(DID_ADD_MOVIE, room.gameState.movies);
 	});
 
 	socket.on(REMOVE_MOVIE, (roomID, movie) => {

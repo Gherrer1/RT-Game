@@ -9,5 +9,6 @@ EXPOSE 8000
 COPY socketSetup.js socketSetup.js
 COPY server.js server.js
 COPY Player.js Player.js
+COPY socketEventNames.js socketEventNames.js
 
 CMD ["nodemon", "server.js"]
