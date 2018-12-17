@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 import openSocket from 'socket.io-client';
 import { Button } from 'react-bootstrap/lib';
 import NavBar from './NavBar';
@@ -12,9 +11,8 @@ import socketEventNames from '../../sockets/socketEventNames';
 
 const { CREATE_ROOM, JOIN_ROOM, ROOM_ID, NEW_PLAYER, SUCCESSFUL_JOIN, FAILED_JOIN, REMOVE_MOVIE,
 	DID_REMOVE_MOVIE, ADD_MOVIE_STARTER_PACK, DID_ADD_MOVIE_PACK, ADD_MOVIE, DID_ADD_MOVIE,
-	ADD_MOVIE_ERROR, ROOM_FULL, PLAYER_LEFT,
+	ADD_MOVIE_ERROR, ROOM_FULL, PLAYER_LEFT, START_GAME, DID_START_GAME,
 } = socketEventNames;
-console.log(DID_ADD_MOVIE);
 
 const SOCKET_SERVER_URL = process.env.SOCKET_SERVER_URL;
 if (!SOCKET_SERVER_URL) {
@@ -41,6 +39,7 @@ class GameSetupMulti extends React.Component {
 		this.playerJoined = this.playerJoined.bind(this);
 		this.addMovieToServer = this.addMovieToServer.bind(this);
 		this.removeMovieFromServer = this.removeMovieFromServer.bind(this);
+		this.startGame = this.startGame.bind(this);
 	}
 
 	componentDidMount() {
@@ -109,6 +108,11 @@ class GameSetupMulti extends React.Component {
 		window.socket.emit(REMOVE_MOVIE, socketRoom, movie);
 	}
 
+	startGame() {
+		const { socketRoom } = this.state;
+		window.socket.emit(START_GAME, socketRoom);
+	}
+
 	// exclusively related to movies for now
 	addSocketListeners(socket) {
 		socket.on(DID_REMOVE_MOVIE, newMoviesState => this.setState({ movies: newMoviesState }));
@@ -116,6 +120,17 @@ class GameSetupMulti extends React.Component {
 		socket.on(DID_ADD_MOVIE, movieState => this.setState({ movies: movieState }));
 		socket.on(ADD_MOVIE_ERROR, msg => alert(msg));
 		socket.on(PLAYER_LEFT, players => this.setState({ players }));
+		socket.on(DID_START_GAME, () => {
+			const { history } = this.props;
+			const { socketRoom, movies, players } = this.state;
+			history.push({
+				pathname: `/play/${socketRoom}`,
+				state: {
+					movies,
+					players,
+				},
+			});
+		});
 	}
 
 	render() {
@@ -152,18 +167,13 @@ class GameSetupMulti extends React.Component {
 							/>
 
 							<h2>Step 3:</h2>
-							<Link
-								to={{
-									pathname: `/play/${socketRoom}`,
-									state: {
-										movies,
-										players,
-									},
-								}}
-								className="link-to-game-grid"
+							<Button
+								className=""
+								disabled={startGameDisabled}
+								onClick={this.startGame}
 							>
-								<Button className="" disabled={startGameDisabled}>Start Game</Button>
-							</Link>
+								Start Game
+							</Button>
 						</div>
 					)
 					: (
@@ -195,6 +205,9 @@ class GameSetupMulti extends React.Component {
 GameSetupMulti.propTypes = {
 	match: PropTypes.shape({
 		params: PropTypes.object.isRequired,
+	}).isRequired,
+	history: PropTypes.shape({
+		push: PropTypes.func.isRequired,
 	}).isRequired,
 };
 

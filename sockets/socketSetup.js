@@ -3,7 +3,7 @@ const io = require('socket.io')();
 const Player = require('./Player');
 const { CREATE_ROOM, JOIN_ROOM, ROOM_ID, NEW_PLAYER, SUCCESSFUL_JOIN, FAILED_JOIN, REMOVE_MOVIE,
 	DID_REMOVE_MOVIE, ADD_MOVIE_STARTER_PACK, DID_ADD_MOVIE_PACK, ADD_MOVIE, DID_ADD_MOVIE,
-	ADD_MOVIE_ERROR, ROOM_FULL, PLAYER_LEFT,
+	ADD_MOVIE_ERROR, ROOM_FULL, PLAYER_LEFT, START_GAME, DID_START_GAME,
 } = require('./socketEventNames');
 
 function getRoom(id) {
@@ -47,6 +47,19 @@ io.on('connection', (socket) => {
 		room.gameState = newGameState;
 		socket.emit(SUCCESSFUL_JOIN, roomID, room.gameState);
 		socket.to(roomID).emit(NEW_PLAYER, room.gameState.players);
+	});
+
+	socket.on(START_GAME, (roomID) => {
+		const room = getRoom(roomID);
+		if (!room) { return; }
+
+		if (room.gameState.movies.length < 1 || room.gameState.players.length < 2) { return; }
+		// TODO: check if all players are ready
+		room.gameState = {
+			...room.gameState,
+			gameHasStarted: true,
+		};
+		io.in(roomID).emit(DID_START_GAME);
 	});
 
 	socket.on(ADD_MOVIE, (roomID, movie) => {
