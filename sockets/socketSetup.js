@@ -64,6 +64,11 @@ io.on('connection', (socket) => {
 			return;
 		}
 
+		if (room.gameState.movies.length >= 5) {
+			// TODO: send too many movies message
+			return;
+		}
+
 		const newMoviesState = room.gameState.movies.concat([ movie ]);
 		room.gameState = {
 			...room.gameState,
@@ -72,13 +77,13 @@ io.on('connection', (socket) => {
 		io.in(roomID).emit(ADDED_MOVIE, room.gameState.movies);
 	});
 
-	socket.on(REMOVE_MOVIE, (roomID, movieID) => {
+	socket.on(REMOVE_MOVIE, (roomID, movie) => {
 		const room = getRoom(roomID);
 		if (!room) {
 			return;
 		}
 
-		const newMoviesState = room.gameState.movies.filter(movie => movie.image !== movieID);
+		const newMoviesState = room.gameState.movies.filter(_movie => _movie.image !== movie.image);
 		room.gameState = {
 			...room.gameState,
 			movies: newMoviesState,

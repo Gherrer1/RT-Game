@@ -33,6 +33,7 @@ class GameSetupMulti extends React.Component {
 		this.addSocketListeners = this.addSocketListeners.bind(this);
 		this.playerJoined = this.playerJoined.bind(this);
 		this.addMovieToServer = this.addMovieToServer.bind(this);
+		this.removeMovieFromServer = this.removeMovieFromServer.bind(this);
 	}
 
 	componentDidMount() {
@@ -95,6 +96,11 @@ class GameSetupMulti extends React.Component {
 		window.socket.emit('add movie', socketRoom, movie);
 	}
 
+	removeMovieFromServer(movie) {
+		const { socketRoom } = this.state;
+		window.socket.emit('remove movie', socketRoom, movie);
+	}
+
 	// exclusively related to movies for now
 	addSocketListeners(socket) {
 		socket.on('did remove movie', newMoviesState => this.setState({ movies: newMoviesState }));
@@ -133,9 +139,7 @@ class GameSetupMulti extends React.Component {
 
 							<MoviesList
 								movies={movies}
-								removeMovie={movie => this.setState(prevState => ({
-									movies: prevState.movies.filter(_movie => _movie.image !== movie.image),
-								}))}
+								removeMovie={movie => this.removeMovieFromServer(movie)}
 							/>
 
 							<h2>Step 3:</h2>
