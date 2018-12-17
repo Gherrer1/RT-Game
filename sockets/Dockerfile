@@ -1,8 +1,8 @@
 FROM node:10.14.1-jessie-slim
 
-WORKDIR /app
+RUN npm init -y && npm install -g nodemon && npm install --save socket.io randomcolor
 
-RUN npm init -y && npm install -g nodemon && npm install --save socket.io
+WORKDIR /app
 
 EXPOSE 8000
 

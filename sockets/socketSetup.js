@@ -21,6 +21,7 @@ io.on('connection', (socket) => {
 		room.gameState = {
 			movies: [],
 			players: [new Player(socket.id, name)], // TODO: generate random color to represent player
+			gameHasStarted: false,
 		};
 		socket.emit(ROOM_ID, socket.id, room.gameState);
 	});
