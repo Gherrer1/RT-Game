@@ -3,7 +3,7 @@ const io = require('socket.io')();
 const Player = require('./Player');
 const { CREATE_ROOM, JOIN_ROOM, ROOM_ID, NEW_PLAYER, SUCCESSFUL_JOIN, FAILED_JOIN, REMOVE_MOVIE,
 	DID_REMOVE_MOVIE, ADD_MOVIE_STARTER_PACK, DID_ADD_MOVIE_PACK, ADD_MOVIE, DID_ADD_MOVIE,
-	ADD_MOVIE_ERROR, ROOM_FULL,
+	ADD_MOVIE_ERROR, ROOM_FULL, PLAYER_LEFT,
 } = require('./socketEventNames');
 
 function getRoom(id) {
@@ -92,6 +92,23 @@ io.on('connection', (socket) => {
 			movies,
 		};
 		io.in(roomID).emit(DID_ADD_MOVIE_PACK, room.gameState.movies);
+	});
+
+	socket.on('disconnecting', () => {
+		// remove player from room
+		const playersRooms = Object.keys(socket.rooms);
+		for (let i = 0; i < playersRooms.length; i++) {
+			const roomID = playersRooms[i];
+			const room = getRoom(roomID);
+			if (room.gameState) {
+				const newPlayersState = room.gameState.players.filter(p => p.id !== socket.id);
+				room.gameState = {
+					...room.gameState,
+					players: newPlayersState,
+				};
+				io.in(playersRooms[i]).emit(PLAYER_LEFT, room.gameState.players);
+			}
+		}
 	});
 
 	socket.on('disconnect', () => {

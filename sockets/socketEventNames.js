@@ -3,6 +3,7 @@ module.exports = {
 	JOIN_ROOM: 'join room',
 	ROOM_ID: 'room id',
 	ROOM_FULL: 'room full',
+	PLAYER_LEFT: 'player left',
 	NEW_PLAYER: 'new player',
 	SUCCESSFUL_JOIN: 'successful join',
 	FAILED_JOIN: 'failed join',

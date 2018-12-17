@@ -12,7 +12,7 @@ import socketEventNames from '../../sockets/socketEventNames';
 
 const { CREATE_ROOM, JOIN_ROOM, ROOM_ID, NEW_PLAYER, SUCCESSFUL_JOIN, FAILED_JOIN, REMOVE_MOVIE,
 	DID_REMOVE_MOVIE, ADD_MOVIE_STARTER_PACK, DID_ADD_MOVIE_PACK, ADD_MOVIE, DID_ADD_MOVIE,
-	ADD_MOVIE_ERROR, ROOM_FULL,
+	ADD_MOVIE_ERROR, ROOM_FULL, PLAYER_LEFT,
 } = socketEventNames;
 console.log(DID_ADD_MOVIE);
 
@@ -115,6 +115,7 @@ class GameSetupMulti extends React.Component {
 		socket.on(DID_ADD_MOVIE_PACK, movies => this.setState({ movies }));
 		socket.on(DID_ADD_MOVIE, movieState => this.setState({ movies: movieState }));
 		socket.on(ADD_MOVIE_ERROR, msg => alert(msg));
+		socket.on(PLAYER_LEFT, players => this.setState({ players }));
 	}
 
 	render() {
