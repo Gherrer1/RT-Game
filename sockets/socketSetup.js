@@ -3,6 +3,7 @@ const io = require('socket.io')();
 const Player = require('./Player');
 const { CREATE_ROOM, JOIN_ROOM, ROOM_ID, NEW_PLAYER, SUCCESSFUL_JOIN, FAILED_JOIN, REMOVE_MOVIE,
 	DID_REMOVE_MOVIE, ADD_MOVIE_STARTER_PACK, DID_ADD_MOVIE_PACK, ADD_MOVIE, DID_ADD_MOVIE,
+	ADD_MOVIE_ERROR,
 } = require('./socketEventNames');
 
 function getRoom(id) {
@@ -54,7 +55,7 @@ io.on('connection', (socket) => {
 		}
 
 		if (room.gameState.movies.length >= 5) {
-			// TODO: send too many movies message
+			socket.emit(ADD_MOVIE_ERROR, 'Max movies reached');
 			return;
 		}
 

@@ -11,4 +11,5 @@ module.exports = {
 	DID_ADD_MOVIE_PACK: 'did add movie pack',
 	ADD_MOVIE: 'add movie',
 	DID_ADD_MOVIE: 'did add movie',
+	ADD_MOVIE_ERROR: 'add movie error',
 };
