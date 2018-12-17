@@ -12,7 +12,7 @@ import socketEventNames from '../../sockets/socketEventNames';
 
 const { CREATE_ROOM, JOIN_ROOM, ROOM_ID, NEW_PLAYER, SUCCESSFUL_JOIN, FAILED_JOIN, REMOVE_MOVIE,
 	DID_REMOVE_MOVIE, ADD_MOVIE_STARTER_PACK, DID_ADD_MOVIE_PACK, ADD_MOVIE, DID_ADD_MOVIE,
-	ADD_MOVIE_ERROR,
+	ADD_MOVIE_ERROR, ROOM_FULL,
 } = socketEventNames;
 console.log(DID_ADD_MOVIE);
 
@@ -95,6 +95,7 @@ class GameSetupMulti extends React.Component {
 		});
 		socket.on(NEW_PLAYER, newPlayerState => this.playerJoined(newPlayerState));
 		socket.on(FAILED_JOIN, () => alert('That room does not exist.') || socket.close());
+		socket.on(ROOM_FULL, () => alert('That room is already full.') || socket.close()); // TODO: redirect back to home
 		socket.emit(JOIN_ROOM, roomID, playerName);
 	}
 

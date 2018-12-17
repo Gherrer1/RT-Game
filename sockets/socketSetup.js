@@ -3,7 +3,7 @@ const io = require('socket.io')();
 const Player = require('./Player');
 const { CREATE_ROOM, JOIN_ROOM, ROOM_ID, NEW_PLAYER, SUCCESSFUL_JOIN, FAILED_JOIN, REMOVE_MOVIE,
 	DID_REMOVE_MOVIE, ADD_MOVIE_STARTER_PACK, DID_ADD_MOVIE_PACK, ADD_MOVIE, DID_ADD_MOVIE,
-	ADD_MOVIE_ERROR,
+	ADD_MOVIE_ERROR, ROOM_FULL,
 } = require('./socketEventNames');
 
 function getRoom(id) {
@@ -33,7 +33,7 @@ io.on('connection', (socket) => {
 		}
 		// if room already has 5 players, fail and disconnect
 		if (room.gameState.players.length >= 5) {
-			return socket.emit(FAILED_JOIN);
+			return socket.emit(ROOM_FULL);
 		}
 
 		socket.join(roomID);
