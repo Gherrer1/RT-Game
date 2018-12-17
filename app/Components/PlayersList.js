@@ -5,7 +5,7 @@ function PlayersList({ players }) {
 	return (
 		<div className="players-list">
 			{players.map(p => (
-				<div key={p.id}>
+				<div key={p.id} style={{ borderLeft: `5px solid ${p.color}`, paddingLeft: '5px' }}>
 					{p.name} | {p.color}
 				</div>
 			))}
