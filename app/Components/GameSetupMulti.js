@@ -13,7 +13,6 @@ const SOCKET_SERVER_URL = process.env.SOCKET_SERVER_URL;
 if (!SOCKET_SERVER_URL) {
 	throw new Error('Socket server url missing. Check your .env file');
 }
-console.log(SOCKET_SERVER_URL);
 
 class GameSetupMulti extends React.Component {
 	constructor(props) {
@@ -33,6 +32,7 @@ class GameSetupMulti extends React.Component {
 		this.joinRoom = this.joinRoom.bind(this);
 		this.addSocketListeners = this.addSocketListeners.bind(this);
 		this.playerJoined = this.playerJoined.bind(this);
+		this.addMovieToServer = this.addMovieToServer.bind(this);
 	}
 
 	componentDidMount() {
@@ -90,14 +90,21 @@ class GameSetupMulti extends React.Component {
 		socket.emit('join room', roomID, playerName);
 	}
 
+	addMovieToServer(movie) {
+		const { socketRoom } = this.state;
+		window.socket.emit('add movie', socketRoom, movie);
+	}
+
 	// exclusively related to movies for now
 	addSocketListeners(socket) {
 		socket.on('did remove movie', newMoviesState => this.setState({ movies: newMoviesState }));
 		socket.on('did add movie pack', movies => this.setState({ movies }));
+		socket.on('added movie', movieState => this.setState({ movies: movieState }));
 	}
 
 	render() {
 		const { playerName, inRoom, fromInviteLink, socketRoom, movies, players } = this.state;
+		const startGameDisabled = !(players.length >= 2 && movies.length >= 1);
 
 		return (
 			<div className="game-setup">
@@ -117,9 +124,7 @@ class GameSetupMulti extends React.Component {
 							</p>
 							<h2>Step 2: Add 1 to 5 movies</h2>
 							<MovieSearchForm
-								addMovieToGame={movie => this.setState(prevState => ({
-									movies: prevState.movies.concat([ movie ]),
-								}))}
+								addMovieToGame={movie => this.addMovieToServer(movie)}
 								didFireSearch={() => this.setState({ loading: true })}
 								searchDidEnd={() => this.setState({ loading: false })}
 								disableSearch={movies.length >= 5}
@@ -134,15 +139,17 @@ class GameSetupMulti extends React.Component {
 							/>
 
 							<h2>Step 3:</h2>
-							<Link to={{
-								pathname: `/play/${socketRoom}`,
-								state: {
-									movies,
-									players,
-								},
-							}}
+							<Link
+								to={{
+									pathname: `/play/${socketRoom}`,
+									state: {
+										movies,
+										players,
+									},
+								}}
+								className="link-to-game-grid"
 							>
-								<Button>Start Game</Button>
+								<Button className="" disabled={startGameDisabled}>Start Game</Button>
 							</Link>
 						</div>
 					)

@@ -13,6 +13,9 @@ const DID_REMOVE_MOVIE = 'did remove movie';
 const ADD_MOVIE_STARTER_PACK = 'add movie starter pack';
 const DID_ADD_MOVIE_PACK = 'did add movie pack';
 
+const ADD_MOVIE = 'add movie';
+const ADDED_MOVIE = 'added movie';
+
 function getRoom(id) {
 	return io.sockets.adapter.rooms[id];
 }
@@ -53,6 +56,20 @@ io.on('connection', (socket) => {
 		room.gameState = newGameState;
 		socket.emit(SUCCESSFUL_JOIN, roomID, room.gameState);
 		socket.to(roomID).emit(NEW_PLAYER, room.gameState.players);
+	});
+
+	socket.on(ADD_MOVIE, (roomID, movie) => {
+		const room = getRoom(roomID);
+		if (!room) {
+			return;
+		}
+
+		const newMoviesState = room.gameState.movies.concat([ movie ]);
+		room.gameState = {
+			...room.gameState,
+			movies: newMoviesState,
+		};
+		io.in(roomID).emit(ADDED_MOVIE, room.gameState.movies);
 	});
 
 	socket.on(REMOVE_MOVIE, (roomID, movieID) => {
