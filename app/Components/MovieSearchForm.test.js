@@ -39,7 +39,7 @@ function sendErrorSearch(renderResult) {
 	sendSearch(fetchMock, 'thor 5', renderResult);
 }
 
-describe.skip('<MovieSearchForm />', () => {
+describe('<MovieSearchForm />', () => {
 	afterEach(cleanup);
 
 	let renderResult;
