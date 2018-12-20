@@ -23,7 +23,7 @@ async function simulateCreateRoom(renderResult) {
 	});
 }
 
-describe.skip('<GameSetupMulti />', () => {
+describe('<GameSetupMulti />', () => {
 	afterEach((done) => {
 		cleanup();
 		io.close(done);
@@ -37,7 +37,7 @@ describe.skip('<GameSetupMulti />', () => {
 
 		renderResult = render(
 			<StaticRouter context={{}}>
-				<GameSetupMulti />
+				<GameSetupMulti match={{ params: {} }} history={{ push: jest.fn() }} />
 			</StaticRouter>
 		);
 		({ getByText, container } = renderResult);
@@ -140,10 +140,18 @@ describe.skip('<GameSetupMulti />', () => {
 	});
 
 	describe('joining room', () => {
-		it('should show all the players in the room and all the movie setup state when player joins a room');
-		it('should redirect to home if room doesnt exist');
-		it('should redirect to home if room is full');
-		it('should notify all OTHER players that player has joined, but not player himself - he will have game state sent to him');
+		it.skip('should show all the players in the room and all the movie setup state when player joins a room', () => {
+			throw new Error('unimplemented');
+		});
+		it.skip('should redirect to home if room doesnt exist', () => {
+			throw new Error('unimplemented');
+		});
+		it.skip('should redirect to home if room is full', () => {
+			throw new Error('unimplemented');
+		});
+		it.skip('should notify all OTHER players that player has joined, but not player himself - he will have game state sent to him', () => {
+			throw new Error('unimplemented');
+		});
 	});
 });
 

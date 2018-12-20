@@ -20,6 +20,21 @@ if (!SOCKET_SERVER_URL) {
 }
 
 class GameSetupMulti extends React.Component {
+	// TODO: remove async / socket / api stuff from component
+	static removeSocketListeners(socket) {
+		socket.off(DID_REMOVE_MOVIE);
+		socket.off(DID_ADD_MOVIE_PACK);
+		socket.off(DID_ADD_MOVIE);
+		socket.off(ADD_MOVIE_ERROR);
+		socket.off(PLAYER_LEFT);
+		socket.off(DID_START_GAME);
+		socket.off(SUCCESSFUL_JOIN);
+		socket.off(NEW_PLAYER);
+		socket.off(FAILED_JOIN);
+		socket.off(ROOM_FULL);
+		socket.off(ROOM_ID);
+	}
+
 	constructor(props) {
 		super(props);
 
@@ -50,6 +65,12 @@ class GameSetupMulti extends React.Component {
 			this.setState({
 				fromInviteLink: true,
 			});
+		}
+	}
+
+	componentWillUnmount() {
+		if (window.socket) {
+			GameSetupMulti.removeSocketListeners(window.socket);
 		}
 	}
 
