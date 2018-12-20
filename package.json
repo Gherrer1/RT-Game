@@ -54,6 +54,7 @@
     "cheerio": "^1.0.0-rc.2",
     "express": "^4.16.4",
     "prop-types": "^15.6.2",
+    "randomcolor": "^0.5.3",
     "react": "^16.6.3",
     "react-bootstrap": "^0.32.4",
     "react-dom": "^16.6.3",
