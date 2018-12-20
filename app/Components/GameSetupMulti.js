@@ -188,13 +188,15 @@ class GameSetupMulti extends React.Component {
 							/>
 
 							<h2>Step 3:</h2>
-							<Button
-								className=""
-								disabled={startGameDisabled}
-								onClick={this.startGame}
-							>
-								Start Game
-							</Button>
+							<div className="start-game">
+								<Button
+									className=""
+									disabled={startGameDisabled}
+									onClick={this.startGame}
+								>
+									Start Game
+								</Button>
+							</div>
 						</div>
 					)
 					: (

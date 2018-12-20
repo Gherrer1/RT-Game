@@ -61,9 +61,9 @@ describe('end to end tests', () => {
 			expect(playerNames2.length).toBe(2);
 
 			// expect `Start Game` button to still be disabled
-			let startGameBtnIsDisabled1 = await page1.$('.link-to-game-grid > button[disabled]') !== null;
+			let startGameBtnIsDisabled1 = await page1.$('.start-game > button[disabled]') !== null;
 			expect(startGameBtnIsDisabled1).toBe(true);
-			let startGameBtnIsDisabled2 = await page2.$('.link-to-game-grid > button[disabled]') !== null;
+			let startGameBtnIsDisabled2 = await page2.$('.start-game > button[disabled]') !== null;
 			expect(startGameBtnIsDisabled2).toBe(true);
 
 			// add a movie, then expect `Start Game` button to no longer be disabled

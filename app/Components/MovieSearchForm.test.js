@@ -2,7 +2,7 @@ import React from 'react';
 import { render, cleanup, fireEvent, waitForElement } from 'react-testing-library';
 import { StaticRouter } from 'react-router-dom';
 import 'jest-dom/extend-expect';
-import MovieSearchForm from '../MovieSearchForm';
+import MovieSearchForm from './MovieSearchForm';
 
 function sendSearch(fetchMock, movieTitle, renderResult) {
 	const { container, getByText } = renderResult;

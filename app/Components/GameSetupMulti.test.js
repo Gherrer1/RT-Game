@@ -2,8 +2,8 @@ import React from 'react';
 import { render, cleanup, fireEvent, waitForElement } from 'react-testing-library';
 import { StaticRouter } from 'react-router-dom';
 import 'jest-dom/extend-expect';
-import GameSetupMulti from '../GameSetupMulti';
-import io from '../../../sockets/socketSetup';
+import GameSetupMulti from './GameSetupMulti';
+import io from '../../sockets/socketSetup';
 
 const nameUserTypes = {
 	target: {
