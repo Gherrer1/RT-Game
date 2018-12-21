@@ -10,10 +10,11 @@ import { getWinningScore } from '../helpers/gameplay';
 import PlayerGuesses, { OtherPlayerGuesses } from './PlayerGuesses';
 import socketEventNames from '../../sockets/socketEventNames';
 
-const { PLAYER_LEFT } = socketEventNames;
+const { PLAYER_LEFT, PLAYER_SUBMITTED_GUESS, PLAYER_DID_SUBMIT_GUESS } = socketEventNames;
 
 function removeSocketListeners(socket) {
 	socket.off(PLAYER_LEFT);
+	socket.off(PLAYER_DID_SUBMIT_GUESS);
 }
 
 class GameGridMulti extends React.Component {
@@ -24,12 +25,10 @@ class GameGridMulti extends React.Component {
 		const { state: routerState } = location;
 		if (routerState && routerState.players && routerState.movies) {
 			this.state = {
-				players: routerState.players.map(player => ({
-					...player,
-					guesses: routerState.movies.map(() => ''),
-				})),
+				players: [...routerState.players],
 				movies: [...routerState.movies],
-				round: 0,
+				round: routerState.round,
+				socketRoom: routerState.socketRoom,
 				shouldRedirectToHome: false,
 			};
 		} else {
@@ -39,6 +38,7 @@ class GameGridMulti extends React.Component {
 		}
 
 		this.updateGuess = this.updateGuess.bind(this);
+		this.submitGuess = this.submitGuess.bind(this);
 		this.addSocketListeners = this.addSocketListeners.bind(this);
 	}
 
@@ -66,6 +66,8 @@ class GameGridMulti extends React.Component {
 
 	addSocketListeners(socket) {
 		socket.on(PLAYER_LEFT, players => this.setState({ players }));
+		socket.on(PLAYER_DID_SUBMIT_GUESS,
+			newPlayersState => this.setState({ players: newPlayersState }));
 	}
 
 	updateGuess(playerId, guessIndex, newValue) {
@@ -78,6 +80,23 @@ class GameGridMulti extends React.Component {
 				guesses: p.guesses.map((g, index) => (index === guessIndex ? newValue : g)),
 			}) : p)),
 		}));
+	}
+
+	submitGuess() {
+		if (!window.socket) {
+			return;
+		}
+
+		const { players, socketRoom, round } = this.state;
+		const thisPlayer = players.find(player => player.id === window.socket.id);
+		if (!thisPlayer) {
+			this.setState({
+				shouldRedirectToHome: true,
+			});
+			return;
+		}
+
+		window.socket.emit(PLAYER_SUBMITTED_GUESS, socketRoom, thisPlayer.guesses[round]);
 	}
 
 	render() {
@@ -115,7 +134,7 @@ class GameGridMulti extends React.Component {
 						movies={movies}
 						round={round}
 						buttonText="I'm Ready!"
-						handleClick={() => console.log('whoa there')}
+						handleClick={this.submitGuess}
 						disableButton={thisPlayer.guesses[round] === ''}
 					/>
 				</div>

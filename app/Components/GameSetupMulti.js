@@ -143,15 +143,12 @@ class GameSetupMulti extends React.Component {
 		socket.on(DID_ADD_MOVIE, movieState => this.setState({ movies: movieState }));
 		socket.on(ADD_MOVIE_ERROR, msg => alert(msg));
 		socket.on(PLAYER_LEFT, players => this.setState({ players }));
-		socket.on(DID_START_GAME, () => {
+		socket.on(DID_START_GAME, (gameState) => {
 			const { history } = this.props;
-			const { socketRoom, movies, players } = this.state;
+			const { socketRoom } = this.state;
 			history.push({
 				pathname: `/play/${socketRoom}`,
-				state: {
-					movies,
-					players,
-				},
+				state: gameState,
 			});
 		});
 	}
