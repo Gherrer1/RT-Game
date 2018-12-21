@@ -112,6 +112,7 @@ class GameGrid extends React.Component {
 						movies={movies}
 						round={round}
 						handleClick={this.scoreRound}
+						buttonText="Score Row!"
 					/>
 				</div>
 			</div>

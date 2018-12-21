@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import NavBar from './NavBar';
 import HowScoringWorks from './HowScoringWorks';
 import GridHeader from './GridHeader';
+import ScoreRoundRow from './ScoreRoundRow';
 import { isValidRatingGuess } from '../helpers/validators';
 import { getWinningScore } from '../helpers/gameplay';
 import PlayerGuesses, { OtherPlayerGuesses } from './PlayerGuesses';
@@ -67,8 +68,16 @@ class GameGridMulti extends React.Component {
 		socket.on(PLAYER_LEFT, players => this.setState({ players }));
 	}
 
-	updateGuess(guess) {
-		console.log(guess);
+	updateGuess(playerId, guessIndex, newValue) {
+		if (!isValidRatingGuess(newValue)) {
+			return;
+		}
+		this.setState(prevState => ({
+			players: prevState.players.map(p => (p.id === playerId ? ({
+				...p,
+				guesses: p.guesses.map((g, index) => (index === guessIndex ? newValue : g)),
+			}) : p)),
+		}));
 	}
 
 	render() {
@@ -102,6 +111,13 @@ class GameGridMulti extends React.Component {
 							winningScore={winningScore}
 						/>
 					))}
+					<ScoreRoundRow
+						movies={movies}
+						round={round}
+						buttonText="I'm Ready!"
+						handleClick={() => console.log('whoa there')}
+						disableButton={thisPlayer.guesses[round] === ''}
+					/>
 				</div>
 			</div>
 		);
