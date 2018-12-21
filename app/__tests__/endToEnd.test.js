@@ -1,3 +1,4 @@
+/* eslint-disable prefer-promise-reject-errors */
 import React from 'react';
 import { render, cleanup, fireEvent, waitForElement } from 'react-testing-library';
 import 'jest-dom/extend-expect';
@@ -24,7 +25,6 @@ describe('end to end tests', () => {
 			browser = await puppeteer.launch(options);
 			page1 = await browser.newPage();
 			await page1.goto('http://localhost:8080');
-			// to click on something
 			await page1.click('a[href$="/setup-multi"');
 
 			const port = 8000;
@@ -43,21 +43,16 @@ describe('end to end tests', () => {
 				},
 			}));
 
-			// to type something
 			await page1.type('.player-name-input', 'lonzo');
 			await page1.click('div > button');
-			// to query the page for elements
 			await page1.waitForSelector('.players-list');
 			let playerNames1 = await page1.$$('.players-list > div');
 			expect(playerNames1.length).toBe(1);
-			// open another tab using invite link
-			// to get some info about an element
 			const inviteURL = await page1.$eval('.invite-link > a', el => el.href);
 			const page2 = await browser.newPage();
 			await page2.goto(inviteURL);
 			await page2.type('.player-name-input', 'kuzma');
 			await page2.click('div > button');
-			// wait for playerNames1 to be length 2
 
 			await page1.waitForSelector('.players-list > div:nth-child(2)');
 			playerNames1 = await page1.$$('.players-list > div');
@@ -66,28 +61,65 @@ describe('end to end tests', () => {
 			const playerNames2 = await page2.$$('.players-list > div');
 			expect(playerNames2.length).toBe(2);
 
-			// expect `Start Game` button to still be disabled
 			let startGameBtnIsDisabled1 = await page1.$('.start-game > button[disabled]') !== null;
 			expect(startGameBtnIsDisabled1).toBe(true);
 			let startGameBtnIsDisabled2 = await page2.$('.start-game > button[disabled]') !== null;
 			expect(startGameBtnIsDisabled2).toBe(true);
 
-			// add a movie, then expect `Start Game` button to no longer be disabled
 			await page1.type('.movie-search-form > form > input', 'Saw II');
 			await page1.click('.movie-search-form > form > button');
 			await page1.waitForSelector('.movies-list > div', {
 				timeout: 2000,
 			});
 
-			// now expect button to no longer be disabled
 			startGameBtnIsDisabled1 = await page1.$('.link-to-game-grid > button[disabled]') !== null;
 			expect(startGameBtnIsDisabled1).toBe(false);
 			startGameBtnIsDisabled2 = await page2.$('.link-to-game-grid > button[disabled]') !== null;
 			expect(startGameBtnIsDisabled2).toBe(false);
 		}, 30000);
+		it('should not let user join room if room is full', async () => {
+			const pages = await Promise.all((new Array(4).fill(0).map(() => browser.newPage())));
+
+			await page1.type('.player-name-input', 'lonzo');
+			await page1.click('div > button');
+			await page1.waitForSelector('.invite-link > a');
+			const inviteURL = await page1.$eval('.invite-link > a', el => el.href);
+
+			await Promise.all(pages.map(page => page.goto(inviteURL)));
+			await Promise.all(pages.map((page, index) => page.type('.player-name-input', `player ${index}`)));
+			await Promise.all(pages.map(page => page.click('div > button')));
+
+			const page5 = pages[pages.length - 1];
+			await page5.waitForSelector('.players-list > div:nth-child(5)', {
+				timeout: 2000,
+			});
+
+			const page6 = await browser.newPage();
+			await page6.goto(inviteURL);
+
+			const dialogPromise = new Promise((resolve, reject) => {
+				setTimeout(() => reject('new got a dialog'), 4000);
+				page6.on('dialog', (dialog) => {
+					const expectedDialog = 'That room is already full.';
+					if (dialog.message() !== expectedDialog) {
+						return reject(`dialog should have been '${expectedDialog}' but instead was '${dialog.message()}'`);
+					}
+					return resolve();
+				});
+			});
+			await page6.type('.player-name-input', 'player 100');
+			await page6.click('div > button');
+			return dialogPromise;
+		}, 20000);
+		it.skip('should not let user join room if game is ongoing', () => {
+			throw new Error('unimplemented');
+		});
+		it.skip('should not let user join room if room doesnt exist', () => {
+			throw new Error('unimplemented');
+		});
 	});
 
-	describe('navigation', () => {
+	describe('split screen navigation', () => {
 		afterEach(cleanup);
 
 		let renderResult;
@@ -185,36 +217,6 @@ describe('end to end tests', () => {
 				({ container } = renderResult);
 				const navBar = container.querySelector('.site-title');
 				expect(navBar).toBeDefined();
-			});
-		});
-
-		describe('multiplayer navigation', () => {
-			beforeEach(async () => {
-				const port = 8000;
-				io.listen(port);
-
-				renderResult = render(
-					<MemoryRouter>
-						<App />
-					</MemoryRouter>
-				);
-				({ getByText, queryByText, container } = renderResult);
-
-				fireEvent.click(getByText('Multiplayer'));
-				fireEvent.change(container.querySelector('.player-name-input'), {
-					target: {
-						value: 'Lonzo',
-					},
-				});
-				fireEvent.click(getByText('Invite Friends'));
-			});
-			afterEach(done => io.close(done));
-
-			it.skip('should display `Multiplayer Game` if in a multiplayer <GameGrid />', () => {
-				throw new Error('unimplemented');
-			});
-			it.skip('should not display `Multiplayer Game` if not in a multiplayer <GameGrid />', () => {
-				throw new Error('unimplemeneted');
 			});
 		});
 	});
