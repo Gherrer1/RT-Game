@@ -41,6 +41,22 @@ async function addMovieToGame(page) {
 function clickStartGameBtn(page) {
 	return page.click('.start-game > button');
 }
+async function startGameWith2Players(page1, page2) {
+	fetch.mockResponseOnce(fakeResponse);
+
+	await typePlayerName(page1, 'lonzo');
+	await clickCreateOrJoinRoom(page1);
+	const inviteLink = await getInviteLink(page1);
+	await goToOurSite(page2, inviteLink);
+	await typePlayerName(page2, 'kuzma');
+	await clickCreateOrJoinRoom(page2);
+	await addMovieToGame(page1);
+	await page2.waitForSelector('.movies-list > div', {
+		timeout: 2000,
+	});
+	await clickStartGameBtn(page1);
+	return inviteLink;
+}
 function createDialogExpectation(page, expectedDialog) {
 	return new Promise((resolve, reject) => {
 		setTimeout(() => reject('never got a dialog'), 2000);
@@ -110,22 +126,8 @@ describe('end to end tests', () => {
 			expect(startGameBtnIsDisabled2).toBe(false);
 		}, 30000);
 		it('should not let user join room if game is ongoing', async () => {
-			fetch.mockResponseOnce(fakeResponse);
-
-			await typePlayerName(page1, 'lonzo');
-			await clickCreateOrJoinRoom(page1);
-			const inviteLink = await getInviteLink(page1);
-
 			const page2 = await browser.newPage();
-			await goToOurSite(page2, inviteLink);
-			await typePlayerName(page2, 'kuzma');
-			await clickCreateOrJoinRoom(page2);
-
-			await addMovieToGame(page1);
-			await page2.waitForSelector('.movies-list > div', {
-				timeout: 2000,
-			});
-			await clickStartGameBtn(page1);
+			const inviteLink = await startGameWith2Players(page1, page2);
 
 			const page3 = await browser.newPage();
 			await goToOurSite(page3, inviteLink);
@@ -158,6 +160,9 @@ describe('end to end tests', () => {
 			await page6.click('div > button');
 			return dialogExpectation;
 		}, 20000);
+		it.skip('should redirect to home if you navigate straight to /play/:roomID without coming from /setup-multi', () => {
+			throw new Error('unimplemented');
+		});
 	});
 
 	describe('split screen navigation', () => {

@@ -42,6 +42,9 @@ describe('<GameSetupMulti />', () => {
 	});
 
 	afterEach((done) => {
+		if (window.socket) {
+			delete window.socket;
+		}
 		cleanup();
 		io.close(done);
 	});
@@ -65,12 +68,23 @@ describe('<GameSetupMulti />', () => {
 	});
 
 	describe('create room', () => {
+		it('shouldnt have window.socket yet', () => {
+			expect(window.socket).toBeUndefined();
+		});
 		it('should show a link to invite users when user clicks `Invite Friends`', async () => {
 			expect(container.querySelector('.invite-link')).toBeNull();
 			await simulateCreateRoom(renderResult);
 			await waitForElement(() => container.querySelector('.invite-link'), {
 				timeout: 1000,
 			});
+		});
+		it('should still now have window.socket', () => {
+			// Sanity check test - my tests were messing with the global state within the test runner
+			// and this was to verify that - its not actually related to testing my application but I'm
+			// leaving this in here because it's a nice lesson about react-testing-library: when
+			// it renders your components, if your components alter global window object, that
+			// state will be reflected in your jest test runner
+			expect(window.socket).toBeUndefined();
 		});
 		it('should not show a .player-name-input once user creates room', async () => {
 			expect(container.querySelector('.player-name-input')).toBeDefined();
