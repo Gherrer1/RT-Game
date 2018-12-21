@@ -21,7 +21,6 @@ function PlayerGuesses({ player, round, updateGuess, winningScore }) {
 		</React.Fragment>
 	);
 }
-
 PlayerGuesses.propTypes = {
 	player: PropTypes.shape({
 		guesses: PropTypes.arrayOf(customArrayValidator),
@@ -30,6 +29,39 @@ PlayerGuesses.propTypes = {
 	}).isRequired,
 	round: PropTypes.number.isRequired,
 	updateGuess: PropTypes.func.isRequired,
+	winningScore: PropTypes.number.isRequired,
+};
+
+export function OtherPlayerGuesses({ player, round, winningScore }) {
+	return (
+		<React.Fragment>
+			<Player player={player} winningScore={winningScore} />
+			{player.guesses.map((guess, index) => (
+				<div key={index} className={`movie-col-cell ${index === round ? '' : 'dormant'}`}>
+					{(() => {
+						if (index < round) {
+							return <span>{guess}</span>;
+						}
+
+						if (index === round) {
+							return <span>Hidden</span>;
+						}
+
+						return null;
+					})()}
+				</div>
+			))}
+		</React.Fragment>
+	);
+}
+OtherPlayerGuesses.propTypes = {
+	player: PropTypes.shape({
+		// NOTE: might need to update this since player shape might be different in multiplayer mode
+		guesses: PropTypes.arrayOf(customArrayValidator),
+		name: PropTypes.string.isRequired,
+		score: PropTypes.number.isRequired,
+	}).isRequired,
+	round: PropTypes.number.isRequired,
 	winningScore: PropTypes.number.isRequired,
 };
 
