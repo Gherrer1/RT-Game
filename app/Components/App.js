@@ -3,6 +3,7 @@ import { Route } from 'react-router-dom';
 import GameMode from './GameMode';
 import GameSetup from './GameSetup';
 import GameGrid from './GameGrid';
+import GameGridMulti from './GameGridMulti';
 import GameSetupMulti from './GameSetupMulti';
 
 function App() {
@@ -14,7 +15,7 @@ function App() {
 			<Route path="/setup-multi" exact component={GameSetupMulti} />
 			<Route path="/setup-multi/:roomID" component={GameSetupMulti} />
 			<Route path="/play" exact component={GameGrid} />
-			<Route path="/play/:roomID" component={GameGrid} />
+			<Route path="/play/:roomID" component={GameGridMulti} />
 		</div>
 	);
 }
