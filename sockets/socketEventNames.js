@@ -2,6 +2,7 @@ module.exports = {
 	CREATE_ROOM: 'create room',
 	START_GAME: 'start game',
 	DID_START_GAME: 'did start game',
+	GAME_IN_PROGRESS: 'game in progress',
 	JOIN_ROOM: 'join room',
 	ROOM_ID: 'room id',
 	ROOM_FULL: 'room full',

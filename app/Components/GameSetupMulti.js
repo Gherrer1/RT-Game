@@ -11,7 +11,7 @@ import socketEventNames from '../../sockets/socketEventNames';
 
 const { CREATE_ROOM, JOIN_ROOM, ROOM_ID, NEW_PLAYER, SUCCESSFUL_JOIN, FAILED_JOIN, REMOVE_MOVIE,
 	DID_REMOVE_MOVIE, ADD_MOVIE_STARTER_PACK, DID_ADD_MOVIE_PACK, ADD_MOVIE, DID_ADD_MOVIE,
-	ADD_MOVIE_ERROR, ROOM_FULL, PLAYER_LEFT, START_GAME, DID_START_GAME,
+	ADD_MOVIE_ERROR, ROOM_FULL, PLAYER_LEFT, START_GAME, DID_START_GAME, GAME_IN_PROGRESS,
 } = socketEventNames;
 
 const SOCKET_SERVER_URL = process.env.SOCKET_SERVER_URL;
@@ -33,6 +33,7 @@ class GameSetupMulti extends React.Component {
 		socket.off(FAILED_JOIN);
 		socket.off(ROOM_FULL);
 		socket.off(ROOM_ID);
+		socket.off(GAME_IN_PROGRESS);
 	}
 
 	constructor(props) {
@@ -113,6 +114,7 @@ class GameSetupMulti extends React.Component {
 			// here is where we add movie updates listeners
 			this.addSocketListeners(socket);
 		});
+		socket.on(GAME_IN_PROGRESS, () => alert('The game has already started. Room not joined.') || socket.close());
 		socket.on(NEW_PLAYER, newPlayerState => this.playerJoined(newPlayerState));
 		socket.on(FAILED_JOIN, () => alert('That room does not exist.') || socket.close());
 		socket.on(ROOM_FULL, () => alert('That room is already full.') || socket.close()); // TODO: redirect back to home

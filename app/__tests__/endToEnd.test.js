@@ -9,6 +9,50 @@ import io from '../../sockets/socketSetup';
 import App from '../Components/App';
 
 const delay = time => new Promise(resolve => setTimeout(resolve, time));
+const fakeResponse = JSON.stringify({
+	message: 'Movie found!',
+	movie: {
+		name: 'Saw II',
+		year: 2005,
+		image: 'https://resizing.flixster.com/rC26YbjB9YcaitFie1N-_TczA-s=/fit-in/80x80/v1.bTsxMTE3NzU3OTtqOzE3OTk0OzEyMDA7ODAwOzEyMDA',
+		meterScore: 36,
+	},
+});
+function goToOurSite(page, url) {
+	return page.goto(url);
+}
+function typePlayerName(page, name) {
+	return page.type('.player-name-input', name);
+}
+function clickCreateOrJoinRoom(page) {
+	return page.click('div > button');
+}
+async function getInviteLink(page) {
+	await page.waitForSelector('.invite-link > a');
+	return page.$eval('.invite-link > a', el => el.href);
+}
+async function addMovieToGame(page) {
+	await page.type('.movie-search-form > form > input', 'Saw II');
+	await page.click('.movie-search-form > form > button');
+	return page.waitForSelector('.movies-list > div', {
+		timeout: 2000,
+	});
+}
+function clickStartGameBtn(page) {
+	return page.click('.start-game > button');
+}
+function createDialogExpectation(page, expectedDialog) {
+	return new Promise((resolve, reject) => {
+		setTimeout(() => reject('never got a dialog'), 2000);
+
+		page.on('dialog', (dialog) => {
+			if (dialog.message() !== expectedDialog) {
+				return reject(`dialog should have been ${expectedDialog} but instead was ${dialog.message()}`);
+			}
+			return resolve();
+		});
+	});
+}
 
 describe('end to end tests', () => {
 	describe('Multiplayer', () => {
@@ -33,15 +77,7 @@ describe('end to end tests', () => {
 			done();
 		});
 		it('should not allow `Start Game` until 2+ players and 1+ movies are added to game', async () => {
-			fetch.mockResponseOnce(JSON.stringify({
-				message: 'Movie found!',
-				movie: {
-					name: 'Saw II',
-					year: 2005,
-					image: 'https://resizing.flixster.com/rC26YbjB9YcaitFie1N-_TczA-s=/fit-in/80x80/v1.bTsxMTE3NzU3OTtqOzE3OTk0OzEyMDA7ODAwOzEyMDA',
-					meterScore: 36,
-				},
-			}));
+			fetch.mockResponseOnce(fakeResponse);
 
 			await page1.type('.player-name-input', 'lonzo');
 			await page1.click('div > button');
@@ -77,6 +113,31 @@ describe('end to end tests', () => {
 			startGameBtnIsDisabled2 = await page2.$('.link-to-game-grid > button[disabled]') !== null;
 			expect(startGameBtnIsDisabled2).toBe(false);
 		}, 30000);
+		it('should not let user join room if game is ongoing', async () => {
+			fetch.mockResponseOnce(fakeResponse);
+
+			await typePlayerName(page1, 'lonzo');
+			await clickCreateOrJoinRoom(page1);
+			const inviteLink = await getInviteLink(page1);
+
+			const page2 = await browser.newPage();
+			await goToOurSite(page2, inviteLink);
+			await typePlayerName(page2, 'kuzma');
+			await clickCreateOrJoinRoom(page2);
+
+			await addMovieToGame(page1);
+			await page2.waitForSelector('.movies-list > div', {
+				timeout: 2000,
+			});
+			await clickStartGameBtn(page1);
+
+			const page3 = await browser.newPage();
+			await goToOurSite(page3, inviteLink);
+			await typePlayerName(page3, 'kentavious');
+			const dialogExpectation = createDialogExpectation(page3, 'The game has already started. Room not joined.');
+			await clickCreateOrJoinRoom(page3);
+			return dialogExpectation;
+		}, 10000);
 		it('should not let user join room if room is full', async () => {
 			const pages = await Promise.all((new Array(4).fill(0).map(() => browser.newPage())));
 
@@ -98,7 +159,7 @@ describe('end to end tests', () => {
 			await page6.goto(inviteURL);
 
 			const dialogPromise = new Promise((resolve, reject) => {
-				setTimeout(() => reject('new got a dialog'), 4000);
+				setTimeout(() => reject('never got a dialog'), 4000);
 				page6.on('dialog', (dialog) => {
 					const expectedDialog = 'That room is already full.';
 					if (dialog.message() !== expectedDialog) {
@@ -111,12 +172,6 @@ describe('end to end tests', () => {
 			await page6.click('div > button');
 			return dialogPromise;
 		}, 20000);
-		it.skip('should not let user join room if game is ongoing', () => {
-			throw new Error('unimplemented');
-		});
-		it.skip('should not let user join room if room doesnt exist', () => {
-			throw new Error('unimplemented');
-		});
 	});
 
 	describe('split screen navigation', () => {
