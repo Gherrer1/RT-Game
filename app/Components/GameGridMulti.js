@@ -7,6 +7,13 @@ import GridHeader from './GridHeader';
 import { isValidRatingGuess } from '../helpers/validators';
 import { getWinningScore } from '../helpers/gameplay';
 import PlayerGuesses, { OtherPlayerGuesses } from './PlayerGuesses';
+import socketEventNames from '../../sockets/socketEventNames';
+
+const { PLAYER_LEFT } = socketEventNames;
+
+function removeSocketListeners(socket) {
+	socket.off(PLAYER_LEFT);
+}
 
 class GameGridMulti extends React.Component {
 	constructor(props) {
@@ -31,6 +38,7 @@ class GameGridMulti extends React.Component {
 		}
 
 		this.updateGuess = this.updateGuess.bind(this);
+		this.addSocketListeners = this.addSocketListeners.bind(this);
 	}
 
 	componentDidMount() {
@@ -45,6 +53,18 @@ class GameGridMulti extends React.Component {
 		if (movies) {
 			document.body.style.setProperty('--num-columns', movies.length);
 		}
+
+		this.addSocketListeners(window.socket);
+	}
+
+	componentWillUnmount() {
+		if (window.socket) {
+			removeSocketListeners(window.socket);
+		}
+	}
+
+	addSocketListeners(socket) {
+		socket.on(PLAYER_LEFT, players => this.setState({ players }));
 	}
 
 	updateGuess(guess) {
