@@ -1,8 +1,9 @@
 import React from 'react';
 import { render, cleanup, fireEvent, waitForElement } from 'react-testing-library';
-import { StaticRouter } from 'react-router-dom';
+import { MemoryRouter, StaticRouter } from 'react-router-dom';
+import openSocket from 'socket.io-client';
 import 'jest-dom/extend-expect';
-import GameSetupMulti from './GameSetupMulti';
+import App from './App';
 import io from '../../sockets/socketSetup';
 
 const nameUserTypes = {
@@ -17,28 +18,49 @@ function simulateTypePlayersName(container) {
 async function simulateCreateRoom(renderResult) {
 	const { container, getByText } = renderResult;
 	simulateTypePlayersName(container);
-	fireEvent.click(getByText(/Invite Friends/));
+	fireEvent.click(getByText('Invite Friends'));
 	await waitForElement(() => container.querySelector('.movie-search-form'), {
-		timeout: 1000,
+		timeout: 2000,
 	});
+}
+async function simulateAddMovie(renderResult) {
+	const { container, getByText } = renderResult;
+	fetch.mockResponseOnce(JSON.stringify({
+		message: 'Movie found!',
+		movie: {
+			name: 'Saw II',
+			year: 2005,
+			image: 'https://resizing.flixster.com/rC26YbjB9YcaitFie1N-_TczA-s=/fit-in/80x80/v1.bTsxMTE3NzU3OTtqOzE3OTk0OzEyMDA7ODAwOzEyMDA',
+			meterScore: 36,
+		},
+	}));
+
+	fireEvent.change(container.querySelector('.movie-search-form > form > input'), {
+		target: {
+			value: 'Literally a fake movie search',
+		},
+	});
+	fireEvent.click(getByText('Add Movie'));
+	await waitForElement(() => container.querySelector('.movies-list > div'));
 }
 
 describe('<GameSetupMulti />', () => {
 	let renderResult;
 	let getByText;
 	let container;
+	let socketClient;
 	beforeEach(() => {
 		fetch.resetMocks();
 
 		renderResult = render(
-			<StaticRouter context={{}}>
-				<GameSetupMulti match={{ params: {} }} history={{ push: jest.fn() }} />
+			<StaticRouter context={{}} location={{ pathname: '/setup-multi' }}>
+				<App />
 			</StaticRouter>
 		);
 		({ getByText, container } = renderResult);
 
-		const port = 8000;
-		io.listen(port);
+		io.listen(8000);
+		socketClient = openSocket('http://localhost:8000');
 	});
 
 	afterEach((done) => {
@@ -46,6 +68,7 @@ describe('<GameSetupMulti />', () => {
 			delete window.socket;
 		}
 		cleanup();
+		socketClient.close();
 		io.close(done);
 	});
 
@@ -78,7 +101,7 @@ describe('<GameSetupMulti />', () => {
 				timeout: 1000,
 			});
 		});
-		it('should still now have window.socket', () => {
+		it('should still not have window.socket', () => {
 			// Sanity check test - my tests were messing with the global state within the test runner
 			// and this was to verify that - its not actually related to testing my application but I'm
 			// leaving this in here because it's a nice lesson about react-testing-library: when
@@ -150,5 +173,29 @@ describe('<GameSetupMulti />', () => {
 			});
 			expect(container.querySelectorAll('.movies-list > div').length).toBe(5);
 		});
+		it('should transition to <GameGridMulti /> without redirecting back to home', async () => {
+			cleanup();
+			renderResult = render(
+				<MemoryRouter>
+					<App />
+				</MemoryRouter>
+			);
+			({ container, getByText } = renderResult);
+			fireEvent.click(getByText('Multiplayer'));
+			await waitForElement(() => container.querySelector('.game-setup'), { timeout: 200 });
+			await simulateCreateRoom(renderResult);
+			const inviteLink = container.querySelector('.invite-link > a').getAttribute('href');
+			const split = inviteLink.split('/');
+			const roomID = split[split.length - 1];
+			socketClient.emit('join room', roomID, 'Bertholdt');
+			await waitForElement(() => getByText('Bertholdt'), { timeout: 1000 });
+			await simulateAddMovie(renderResult);
+
+			expect(container.querySelector('.start-game > button[disabled]')).toBeNull();
+			fireEvent.click(getByText('Start Game'));
+			await waitForElement(() => getByText('How scoring works:'), { timeout: 1000 });
+			await new Promise(resolve => setTimeout(resolve, 500));
+			await waitForElement(() => getByText('How scoring works:'), { timeout: 1000 });
+		}, 10000);
 	});
 });

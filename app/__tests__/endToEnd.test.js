@@ -160,9 +160,6 @@ describe('end to end tests', () => {
 			await page6.click('div > button');
 			return dialogExpectation;
 		}, 20000);
-		it.skip('should redirect to home if you navigate straight to /play/:roomID without coming from /setup-multi', () => {
-			throw new Error('unimplemented');
-		});
 	});
 
 	describe('split screen navigation', () => {
