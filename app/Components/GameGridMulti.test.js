@@ -5,6 +5,7 @@ import openSocket from 'socket.io-client';
 import 'jest-dom/extend-expect';
 import App from './App';
 import socketServer from '../../sockets/socketSetup';
+import clearWindowSocket from '../helpers/clearWindowSocket';
 
 const fakeFetchResponse = JSON.stringify({
 	message: 'Movie found!',
@@ -61,7 +62,7 @@ describe('<GameGridMulti />', () => {
 	afterEach((done) => {
 		fetch.resetMocks();
 		if (window.socket) {
-			delete window.socket;
+			clearWindowSocket(window);
 		}
 		cleanup();
 		if (socketClient.connected) {
