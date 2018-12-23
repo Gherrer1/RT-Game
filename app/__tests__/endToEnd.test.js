@@ -160,6 +160,8 @@ describe('end to end tests', () => {
 			await page6.click('div > button');
 			return dialogExpectation;
 		}, 20000);
+		it.skip('should notify other players when player goes back from /play/:multi-room-ID to /setup-multi, which should then redirect leaving player to /', () => {
+		});
 	});
 
 	describe('split screen navigation', () => {

@@ -88,11 +88,9 @@ describe('<GameGridMulti />', () => {
 			timeout: 1000,
 		});
 	});
-	it.skip('should be notified if another player leaves by navigating home', async () => {
-
-	});
-	it.skip('should be notified if another player leaves by going back (to /setup-multi) (which should then redirect to home)', () => {
-
+	it('should be notified if another player leaves by navigating home', (done) => {
+		socketClient.on('player left', () => done());
+		fireEvent.click(getByText('The Rotten Tomatoes Game'));
 	});
 	it('should be notified when a player has submitted her guess for the round', async () => {
 		expect(queryByText('Ready!')).toBeNull();
@@ -116,8 +114,18 @@ describe('<GameGridMulti />', () => {
 		fireEvent.click(getByText("I'm Ready!"));
 		await waitForElement(() => getByText(/Actual score:/), { timeout: 2000 });
 	}, 10000);
-	it.skip('should update each players scores after all players have submitted their answers', () => {
-		throw new Error('uimplememnted');
+	it('should update each players scores after all players have submitted their answers', async () => {
+		const playerScoreNodes = container.querySelectorAll('.player-score');
+		playerScoreNodes.forEach(node => expect(node.textContent).toBe('0'));
+		socketClient.emit('player submitted guess', roomID, '50');
+		fireEvent.change(container.querySelector('.guess-input:enabled'), { target: { value: '40' } });
+		fireEvent.click(getByText("I'm Ready!"));
+		await waitForElement(() => {
+			const _playerScoreNodes = container.querySelectorAll('.player-score');
+			expect(_playerScoreNodes[0].textContent).toBe('4');
+			expect(_playerScoreNodes[1].textContent).toBe('14');
+			return true;
+		}, { timeout: 1000 });
 	});
 	it.skip('should move on to next round after all players have submitted their answers', () => {
 		throw new Error('unimplemented');

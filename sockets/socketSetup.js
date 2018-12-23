@@ -11,6 +11,11 @@ function getRoom(id) {
 	return io.sockets.adapter.rooms[id];
 }
 
+const calculateScore = (prevScore, guess, actualScore) => (
+	Number(guess) === actualScore
+		? prevScore - 10
+		: prevScore + Math.abs(actualScore - Number(guess)));
+
 io.on('connection', (socket) => {
 	console.log('connection!');
 	console.log('all rooms:', Object.keys(io.sockets.adapter.rooms));
@@ -161,20 +166,26 @@ io.on('connection', (socket) => {
 
 		if (room.gameState.players.every(p => p.submittedGuessForRound)) {
 			// score round
-			// update each players score
-			// x increment round
-			// send round, players, movie data - including actual rating
+			const { movies, round, players } = room.gameState;
+			const actualScore = movies[round].meterScore;
+			const playersStateAfterRound = players.map(p => ({
+				...p,
+				submittedGuessForRound: false,
+				guessForRound: null,
+				guesses: p.guesses.map((g, index) => (index === round ? p.guessForRound : g)),
+				score: calculateScore(p.score, p.guessForRound, actualScore),
+			}));
 			room.gameState = {
 				...room.gameState,
 				round: room.gameState.round + 1,
+				players: playersStateAfterRound,
 			};
 			const stateToSend = {
 				round: room.gameState.round,
+				players: room.gameState.players,
 			};
 			io.in(roomID).emit(DID_SCORE_ROUND, stateToSend);
 		}
-		// if every player is ready:
-		//		score round, --> send score states, round++ state to all users
 	});
 
 	socket.on('disconnecting', () => {

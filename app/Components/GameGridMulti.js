@@ -71,8 +71,9 @@ class GameGridMulti extends React.Component {
 		socket.on(PLAYER_LEFT, players => this.setState({ players }));
 		socket.on(PLAYER_DID_SUBMIT_GUESS,
 			newPlayersState => this.setState({ players: newPlayersState }));
-		socket.on(DID_SCORE_ROUND, gameState => this.setState({
-			round: gameState.round,
+		socket.on(DID_SCORE_ROUND, ({ round, players }) => this.setState({
+			round,
+			players,
 		}));
 	}
 
