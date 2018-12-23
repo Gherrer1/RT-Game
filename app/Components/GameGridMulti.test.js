@@ -92,16 +92,13 @@ describe('<GameGridMulti />', () => {
 		socketClient.emit('player submitted guess', roomID, '79');
 		await waitForElement(() => getByText('Ready!'), { timeout: 1000 });
 	}, 10000);
-	it.skip('should disable `Im Ready!` button after user submits a valid guess', async () => {
-		await waitForElement(() => expect(getByText("I'm Ready!")).not.toBeDisabled() || true, {
-			timeout: 1500,
-		});
+	it('should disable `Im Ready!` button after user submits a valid guess', async () => {
+		expect(getByText("I'm Ready!")).toBeDisabled();
+		fireEvent.change(container.querySelector('.guess-input:enabled'), { target: { value: '33' } });
 		expect(getByText("I'm Ready!")).not.toBeDisabled();
-		fireEvent.change(container.querySelector('.movie-col-cell > input:enabled'), { target: { value: '33' } });
-		expect(container.querySelector('.movie-col-cell > input:enabled').value).toBe('33');
 		fireEvent.click(getByText("I'm Ready!"));
 		await waitForElement(() => expect(getByText("I'm Ready!")).toBeDisabled() || true, { timeout: 1000 });
-	}, 10000);
+	});
 	it('should show the actual movie rating once all players have submitted their answers', async () => {
 		expect(queryByText('36')).toBeNull();
 		socketClient.emit('player submitted guess', roomID, '50');

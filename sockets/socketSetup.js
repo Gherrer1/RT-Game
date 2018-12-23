@@ -30,12 +30,11 @@ io.on('connection', (socket) => {
 	});
 
 	socket.on(JOIN_ROOM, (roomID, playerName) => {
-		// if theres no room, fail and disconnect
 		const room = getRoom(roomID);
 		if (!room) {
 			return socket.emit(FAILED_JOIN);
 		}
-		// if room already has 5 players, fail and disconnect
+
 		if (room.gameState.players.length >= 5) {
 			return socket.emit(ROOM_FULL);
 		}
@@ -144,10 +143,13 @@ io.on('connection', (socket) => {
 		const room = getRoom(roomID);
 		if (!room) { return; }
 
+		// TODO: validate guess
+		// if valid guess: do everything that follows
+		// else: send invalid guess message
+
 		const newPlayersState = room.gameState.players.map(player => (player.id === socket.id ? ({
 			...player,
 			submittedGuessForRound: true,
-			// TODO: validate guess on the server before actually changing the game state
 			guessForRound: guess,
 		}) : player));
 
@@ -160,7 +162,7 @@ io.on('connection', (socket) => {
 		if (room.gameState.players.every(p => p.submittedGuessForRound)) {
 			// score round
 			// update each players score
-			// increment round
+			// x increment round
 			// send round, players, movie data - including actual rating
 			room.gameState = {
 				...room.gameState,

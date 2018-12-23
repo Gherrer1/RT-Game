@@ -16,6 +16,7 @@ const { PLAYER_LEFT, PLAYER_SUBMITTED_GUESS, PLAYER_DID_SUBMIT_GUESS, DID_SCORE_
 function removeSocketListeners(socket) {
 	socket.off(PLAYER_LEFT);
 	socket.off(PLAYER_DID_SUBMIT_GUESS);
+	socket.off(DID_SCORE_ROUND);
 }
 
 class GameGridMulti extends React.Component {
@@ -31,6 +32,7 @@ class GameGridMulti extends React.Component {
 				round: routerState.round,
 				socketRoom: routerState.socketRoom,
 				shouldRedirectToHome: false,
+				submittedGuessForRound: false,
 			};
 		} else {
 			this.state = {
@@ -101,10 +103,13 @@ class GameGridMulti extends React.Component {
 		}
 
 		window.socket.emit(PLAYER_SUBMITTED_GUESS, socketRoom, thisPlayer.guesses[round]);
+		this.setState({
+			submittedGuessForRound: true,
+		});
 	}
 
 	render() {
-		const { players, movies, round, shouldRedirectToHome } = this.state;
+		const { players, movies, round, shouldRedirectToHome, submittedGuessForRound } = this.state;
 
 		if (shouldRedirectToHome || !window.socket) {
 			return <Redirect to="/" />;
@@ -139,7 +144,7 @@ class GameGridMulti extends React.Component {
 						round={round}
 						buttonText="I'm Ready!"
 						handleClick={this.submitGuess}
-						disableButton={thisPlayer.guesses[round] === ''}
+						disableButton={thisPlayer.guesses[round] === '' || submittedGuessForRound}
 					/>
 				</div>
 			</div>
