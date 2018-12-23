@@ -5,6 +5,7 @@ import openSocket from 'socket.io-client';
 import 'jest-dom/extend-expect';
 import App from './App';
 import io from '../../sockets/socketSetup';
+import clearWindowSocket from '../helpers/clearWindowSocket';
 
 const nameUserTypes = {
 	target: {
@@ -65,7 +66,7 @@ describe('<GameSetupMulti />', () => {
 
 	afterEach((done) => {
 		if (window.socket) {
-			delete window.socket;
+			clearWindowSocket(window);
 		}
 		cleanup();
 		socketClient.close();
