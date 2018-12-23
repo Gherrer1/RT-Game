@@ -4,7 +4,7 @@ const Player = require('./Player');
 const { CREATE_ROOM, JOIN_ROOM, ROOM_ID, NEW_PLAYER, SUCCESSFUL_JOIN, FAILED_JOIN, REMOVE_MOVIE,
 	DID_REMOVE_MOVIE, ADD_MOVIE_STARTER_PACK, DID_ADD_MOVIE_PACK, ADD_MOVIE, DID_ADD_MOVIE,
 	ADD_MOVIE_ERROR, ROOM_FULL, PLAYER_LEFT, START_GAME, DID_START_GAME, GAME_IN_PROGRESS,
-	PLAYER_SUBMITTED_GUESS, PLAYER_DID_SUBMIT_GUESS,
+	PLAYER_SUBMITTED_GUESS, PLAYER_DID_SUBMIT_GUESS, DID_SCORE_ROUND,
 } = require('./socketEventNames');
 
 function getRoom(id) {
@@ -141,8 +141,6 @@ io.on('connection', (socket) => {
 	});
 
 	socket.on(PLAYER_SUBMITTED_GUESS, (roomID, guess) => {
-		// if every player is ready:
-		//		score round, --> send score states, round++ state to all users
 		const room = getRoom(roomID);
 		if (!room) { return; }
 
@@ -158,6 +156,23 @@ io.on('connection', (socket) => {
 			players: newPlayersState,
 		};
 		socket.to(roomID).emit(PLAYER_DID_SUBMIT_GUESS, room.gameState.players);
+
+		if (room.gameState.players.every(p => p.submittedGuessForRound)) {
+			// score round
+			// update each players score
+			// increment round
+			// send round, players, movie data - including actual rating
+			room.gameState = {
+				...room.gameState,
+				round: room.gameState.round + 1,
+			};
+			const stateToSend = {
+				round: room.gameState.round,
+			};
+			io.in(roomID).emit(DID_SCORE_ROUND, stateToSend);
+		}
+		// if every player is ready:
+		//		score round, --> send score states, round++ state to all users
 	});
 
 	socket.on('disconnecting', () => {

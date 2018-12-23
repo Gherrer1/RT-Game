@@ -10,7 +10,8 @@ import { getWinningScore } from '../helpers/gameplay';
 import PlayerGuesses, { OtherPlayerGuesses } from './PlayerGuesses';
 import socketEventNames from '../../sockets/socketEventNames';
 
-const { PLAYER_LEFT, PLAYER_SUBMITTED_GUESS, PLAYER_DID_SUBMIT_GUESS } = socketEventNames;
+const { PLAYER_LEFT, PLAYER_SUBMITTED_GUESS, PLAYER_DID_SUBMIT_GUESS, DID_SCORE_ROUND,
+} = socketEventNames;
 
 function removeSocketListeners(socket) {
 	socket.off(PLAYER_LEFT);
@@ -68,6 +69,9 @@ class GameGridMulti extends React.Component {
 		socket.on(PLAYER_LEFT, players => this.setState({ players }));
 		socket.on(PLAYER_DID_SUBMIT_GUESS,
 			newPlayersState => this.setState({ players: newPlayersState }));
+		socket.on(DID_SCORE_ROUND, gameState => this.setState({
+			round: gameState.round,
+		}));
 	}
 
 	updateGuess(playerId, guessIndex, newValue) {

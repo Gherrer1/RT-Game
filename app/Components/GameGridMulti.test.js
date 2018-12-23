@@ -56,7 +56,7 @@ describe('<GameGridMulti />', () => {
 		fireEvent.click(getByText('Start Game'));
 		await waitForElement(() => getByText('How scoring works:'));
 		done();
-	});
+	}, 10000);
 
 	afterEach((done) => {
 		fetch.resetMocks();
@@ -68,7 +68,7 @@ describe('<GameGridMulti />', () => {
 			socketClient.close();
 		}
 		socketServer.close(done);
-	});
+	}, 10000);
 
 	it('should redirect to / if user navigates to this route not from <GameSetupMulti />', async () => {
 		cleanup();
@@ -79,7 +79,7 @@ describe('<GameGridMulti />', () => {
 		);
 		({ getByText } = renderResult);
 		await waitForElement(() => getByText('Multiplayer'), { timeout: 1000 });
-	});
+	}, 10000);
 	it('should be notified if another player leaves', async () => {
 		getByText('Bertoldt');
 		socketClient.close();
@@ -91,13 +91,34 @@ describe('<GameGridMulti />', () => {
 		expect(queryByText('Ready!')).toBeNull();
 		socketClient.emit('player submitted guess', roomID, '79');
 		await waitForElement(() => getByText('Ready!'), { timeout: 1000 });
-	});
+	}, 10000);
+	it.skip('should disable `Im Ready!` button after user submits a valid guess', async () => {
+		await waitForElement(() => expect(getByText("I'm Ready!")).not.toBeDisabled() || true, {
+			timeout: 1500,
+		});
+		expect(getByText("I'm Ready!")).not.toBeDisabled();
+		fireEvent.change(container.querySelector('.movie-col-cell > input:enabled'), { target: { value: '33' } });
+		expect(container.querySelector('.movie-col-cell > input:enabled').value).toBe('33');
+		fireEvent.click(getByText("I'm Ready!"));
+		await waitForElement(() => expect(getByText("I'm Ready!")).toBeDisabled() || true, { timeout: 1000 });
+	}, 10000);
 	it('should show the actual movie rating once all players have submitted their answers', async () => {
-		const expectedRating = 36;
 		expect(queryByText('36')).toBeNull();
 		socketClient.emit('player submitted guess', roomID, '50');
-		// simulate UI typeing 70 into input, clicking ready
-
-		await waitForElement(getByText('36'), { timeout: 1000 });
+		await waitForElement(() => getByText('Ready!'), { timeout: 3000 });
+		fireEvent.change(container.querySelector('.guess-input:enabled'), { target: { value: '56' } });
+		expect(container.querySelector('.guess-input:enabled').value).toBe('56');
+		expect(getByText("I'm Ready!")).not.toBeDisabled();
+		fireEvent.click(getByText("I'm Ready!"));
+		await waitForElement(() => getByText(/Actual score:/), { timeout: 2000 });
+	}, 10000);
+	it.skip('should update each players scores after all players have submitted their answers', () => {
+		throw new Error('uimplememnted');
+	});
+	it.skip('should move on to next round after all players have submitted their answers', () => {
+		throw new Error('unimplemented');
+	});
+	it.skip('should show winner after users go through all the movies (rounds)', () => {
+		throw new Error('unimplemented');
 	});
 });

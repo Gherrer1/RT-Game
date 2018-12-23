@@ -20,4 +20,5 @@ module.exports = {
 
 	PLAYER_SUBMITTED_GUESS: 'player submitted guess',
 	PLAYER_DID_SUBMIT_GUESS: 'player did submit guess',
+	DID_SCORE_ROUND: 'did score round',
 };
