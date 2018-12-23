@@ -87,6 +87,12 @@ describe('<GameGridMulti />', () => {
 			timeout: 1000,
 		});
 	});
+	it.skip('should be notified if another player leaves by navigating home', async () => {
+
+	});
+	it.skip('should be notified if another player leaves by going back (to /setup-multi) (which should then redirect to home)', () => {
+
+	});
 	it('should be notified when a player has submitted her guess for the round', async () => {
 		expect(queryByText('Ready!')).toBeNull();
 		socketClient.emit('player submitted guess', roomID, '79');
