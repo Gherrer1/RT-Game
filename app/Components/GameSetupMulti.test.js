@@ -1,11 +1,12 @@
 import React from 'react';
 import { render, cleanup, fireEvent, waitForElement } from 'react-testing-library';
-import { MemoryRouter, StaticRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import openSocket from 'socket.io-client';
 import 'jest-dom/extend-expect';
 import App from './App';
-import io from '../../sockets/socketSetup';
+import socketServer from '../../sockets/socketSetup';
 import clearWindowSocket from '../helpers/clearWindowSocket';
+import fakeMovies from '../fakeMovieData';
 
 const nameUserTypes = {
 	target: {
@@ -48,30 +49,32 @@ async function simulateAddMovie(renderResult) {
 describe('<GameSetupMulti />', () => {
 	let renderResult;
 	let getByText;
+	let queryByText;
 	let container;
 	let socketClient;
 	beforeEach(() => {
-		fetch.resetMocks();
-
 		renderResult = render(
-			<StaticRouter context={{}} location={{ pathname: '/setup-multi' }}>
+			<MemoryRouter initialEntries={['/setup-multi']}>
 				<App />
-			</StaticRouter>
+			</MemoryRouter>
 		);
-		({ getByText, container } = renderResult);
+		({ getByText, queryByText, container } = renderResult);
 
-		io.listen(8000);
+		socketServer.listen(8000);
 		socketClient = openSocket('http://localhost:8000');
 	});
 
 	afterEach((done) => {
+		fetch.resetMocks();
 		if (window.socket) {
 			clearWindowSocket(window);
 		}
 		cleanup();
-		socketClient.close();
-		io.close(done);
-	});
+		if (socketClient.connected) {
+			socketClient.close();
+		}
+		socketServer.close(done);
+	}, 12500);
 
 	describe('ui', () => {
 		it('should have a player-name input', () => {
@@ -135,10 +138,15 @@ describe('<GameSetupMulti />', () => {
 	});
 
 	describe('while in room', () => {
-		it('should add movie to screen after a successful search', async () => {
+		let roomID;
+		beforeEach(async (done) => {
 			await simulateCreateRoom(renderResult);
-
-			// make sure there arent any movies to begin with
+			const inviteLink = container.querySelector('.invite-link > a').getAttribute('href');
+			const split = inviteLink.split('/');
+			roomID = split[split.length - 1];
+			done();
+		});
+		it('should add movie to screen after a successful search', async () => {
 			let movieDivs = container.querySelectorAll('.movies-list > div');
 			expect(movieDivs.length).toBe(0);
 			fetch.mockResponseOnce(JSON.stringify({
@@ -161,12 +169,14 @@ describe('<GameSetupMulti />', () => {
 			movieDivs = container.querySelectorAll('.movies-list > div');
 			expect(movieDivs.length).toBe(1);
 		});
+		it('should add movie to screen after another player adds movie', async () => {
+			expect(container.querySelector('.movies-list > div')).toBeNull();
+			socketClient.emit('add movie', roomID, fakeMovies[0]);
+			await waitForElement(() => container.querySelector('.movies-list > div'), { timeout: 1000 });
+			getByText(/Thor/);
+		});
 		it('should add 5 movies to screen after clicking Movie starter pack', async () => {
-			const { queryByText } = renderResult;
-			simulateCreateRoom(renderResult);
-			await waitForElement(() => getByText(/Super heroes/), {
-				timeout: 500,
-			});
+			getByText(/Super heroes/);
 			expect(queryByText(/Deadpool/)).toBeNull();
 			fireEvent.click(getByText(/Super heroes/));
 			await waitForElement(() => getByText(/Deadpool/), {
@@ -179,19 +189,6 @@ describe('<GameSetupMulti />', () => {
 			throw new Error('unimplemented');
 		});
 		it('should transition to <GameGridMulti /> without redirecting back to home', async () => {
-			cleanup();
-			renderResult = render(
-				<MemoryRouter>
-					<App />
-				</MemoryRouter>
-			);
-			({ container, getByText } = renderResult);
-			fireEvent.click(getByText('Multiplayer'));
-			await waitForElement(() => container.querySelector('.game-setup'), { timeout: 200 });
-			await simulateCreateRoom(renderResult);
-			const inviteLink = container.querySelector('.invite-link > a').getAttribute('href');
-			const split = inviteLink.split('/');
-			const roomID = split[split.length - 1];
 			socketClient.emit('join room', roomID, 'Bertholdt');
 			await waitForElement(() => getByText('Bertholdt'), { timeout: 1000 });
 			await simulateAddMovie(renderResult);
