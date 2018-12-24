@@ -193,4 +193,8 @@ describe('<GameGridMulti />', () => {
 		fireEvent.click(getByText("I'm Ready!"));
 		await waitForElement(() => getByText(/Winners/));
 	});
+	// was bug - now tested
+	it('should keep true winner\'s name up even as players leave the room', () => {
+		throw new Error('unimplemented');
+	});
 });

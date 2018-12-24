@@ -174,6 +174,10 @@ describe('<GameSetupMulti />', () => {
 			});
 			expect(container.querySelectorAll('.movies-list > div').length).toBe(5);
 		});
+		// bug - test this
+		it('should add 5 movies to screen after other player adds Movie starter pack', async () => {
+			throw new Error('unimplemented');
+		});
 		it('should transition to <GameGridMulti /> without redirecting back to home', async () => {
 			cleanup();
 			renderResult = render(
