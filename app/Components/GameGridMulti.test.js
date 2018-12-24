@@ -157,11 +157,17 @@ describe('<GameGridMulti />', () => {
 		expect(firstRoundMovie.textContent).toMatch(/Saw II/);
 		expect(secondRoundMovie.textContent).toMatch(/Spider-Man/);
 	});
-	it.skip('should show winner after users go through all the movies (rounds)', () => {
-		throw new Error('unimplemented');
+	// was bug - now tested
+	it('should undisable the next round\'s `Im Ready` button when user has their guess typed in ready to submit', async () => {
+		socketClient.emit('player submitted guess', roomID, '50');
+		fireEvent.change(container.querySelector('.guess-input:enabled'), { target: { value: '40' } });
+		fireEvent.click(getByText("I'm Ready!"));
+		await waitForElement(() => getByText(/Actual score:/), { timeout: 500 });
+
+		fireEvent.change(container.querySelector('.guess-input:enabled'), { target: { value: '39' } });
+		expect(getByText("I'm Ready!")).not.toBeDisabled();
 	});
-	// bug
-	it.skip('should undisable the next round\'s `Im Ready` button when user has their guess typed in ready to submit', () => {
+	it.skip('should show winner after users go through all the movies (rounds)', () => {
 		throw new Error('unimplemented');
 	});
 });
