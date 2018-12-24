@@ -17,14 +17,14 @@ const calculateScore = (prevScore, guess, actualScore) => (
 		: prevScore + Math.abs(actualScore - Number(guess)));
 
 io.on('connection', (socket) => {
-	console.log('connection!');
-	console.log('all rooms:', Object.keys(io.sockets.adapter.rooms));
+	// console.log('connection!');
+	// console.log('all rooms:', Object.keys(io.sockets.adapter.rooms));
 
 	// ========= Game Setup Events ===========
 
 	socket.on(CREATE_ROOM, (name) => {
 		socket.join(socket.id);
-		console.log(`created room ${socket.id}`);
+		// console.log(`created room ${socket.id}`);
 		const room = getRoom(socket.id);
 		room.gameState = {
 			movies: [],
@@ -49,7 +49,7 @@ io.on('connection', (socket) => {
 		}
 
 		socket.join(roomID);
-		console.log(`${socket.id} is joining room ${roomID}`);
+		// console.log(`${socket.id} is joining room ${roomID}`);
 
 		const newGameState = {
 			...room.gameState,
@@ -206,8 +206,8 @@ io.on('connection', (socket) => {
 	});
 
 	socket.on('disconnect', () => {
-		console.log(`disconnected ${socket.id}`);
-		console.log('All rooms:', io.sockets.adapter.rooms);
+		// console.log(`disconnected ${socket.id}`);
+		// console.log('All rooms:', io.sockets.adapter.rooms);
 	});
 });
 

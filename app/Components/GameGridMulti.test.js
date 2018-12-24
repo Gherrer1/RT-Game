@@ -7,13 +7,22 @@ import App from './App';
 import socketServer from '../../sockets/socketSetup';
 import clearWindowSocket from '../helpers/clearWindowSocket';
 
-const fakeFetchResponse = JSON.stringify({
+const fakeFetchResponse1 = JSON.stringify({
 	message: 'Movie found!',
 	movie: {
 		name: 'Saw II',
 		year: 2005,
 		image: 'https://resizing.flixster.com/rC26YbjB9YcaitFie1N-_TczA-s=/fit-in/80x80/v1.bTsxMTE3NzU3OTtqOzE3OTk0OzEyMDA7ODAwOzEyMDA',
 		meterScore: 36,
+	},
+});
+const fakeFetchResponse2 = JSON.stringify({
+	message: 'Movie found!',
+	movie: {
+		image: 'https://resizing.flixster.com/3ZFWkpQboU-qeXF_5wFPpntkRKo=/fit-in/80x80/v1.bTsxMjQxNTA2NTtqOzE3ODczOzEyMDA7Mzc4OzU2MA',
+		meterScore: 92,
+		name: 'Spider-Man: Homecoming',
+		year: 2017,
 	},
 });
 const fakeMovieInputText = {
@@ -45,10 +54,15 @@ describe('<GameGridMulti />', () => {
 		});
 		fireEvent.click(getByText('Invite Friends'));
 		await waitForElement(() => container.querySelector('.movie-search-form'), { timeout: 1000 });
-		fetch.mockResponseOnce(fakeFetchResponse);
+		fetch.mockResponseOnce(fakeFetchResponse1);
 		fireEvent.change(container.querySelector('.movie-search-form > form > input'), fakeMovieInputText);
 		fireEvent.click(getByText('Add Movie'));
 		await waitForElement(() => container.querySelector('.movies-list > div'));
+		fetch.resetMocks();
+		fetch.mockResponseOnce(fakeFetchResponse2);
+		fireEvent.change(container.querySelector('.movie-search-form > form > input'), fakeMovieInputText);
+		fireEvent.click(getByText('Add Movie'));
+		await waitForElement(() => container.querySelector('.movies-list > div:nth-child(2)'), { timeout: 500 });
 		const inviteLink = container.querySelector('.invite-link > a').getAttribute('href');
 		const splitByDash = inviteLink.split('/');
 		roomID = splitByDash[splitByDash.length - 1];
@@ -127,10 +141,27 @@ describe('<GameGridMulti />', () => {
 			return true;
 		}, { timeout: 1000 });
 	});
-	it.skip('should move on to next round after all players have submitted their answers', () => {
-		throw new Error('unimplemented');
+	it('should move on to next round after all players have submitted their answers', async () => {
+		let firstRoundMovie = container.querySelector('.header-movie:not(.dormant)');
+		let secondRoundMovie = container.querySelector('.header-movie.dormant');
+		expect(firstRoundMovie.textContent).toMatch(/Saw II/);
+		expect(secondRoundMovie.textContent).toMatch(/Spider-Man/);
+
+		socketClient.emit('player submitted guess', roomID, '50');
+		fireEvent.change(container.querySelector('.guess-input:enabled'), { target: { value: '40' } });
+		fireEvent.click(getByText("I'm Ready!"));
+		await waitForElement(() => getByText(/Actual score:/), { timeout: 2000 });
+
+		firstRoundMovie = container.querySelector('.header-movie.dormant');
+		secondRoundMovie = container.querySelector('.header-movie:not(.dormant)');
+		expect(firstRoundMovie.textContent).toMatch(/Saw II/);
+		expect(secondRoundMovie.textContent).toMatch(/Spider-Man/);
 	});
 	it.skip('should show winner after users go through all the movies (rounds)', () => {
+		throw new Error('unimplemented');
+	});
+	// bug
+	it.skip('should undisable the next round\'s `Im Ready` button when user has their guess typed in ready to submit', () => {
 		throw new Error('unimplemented');
 	});
 });
