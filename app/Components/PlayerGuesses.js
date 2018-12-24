@@ -45,7 +45,7 @@ export function OtherPlayerGuesses({ player, round, winningScore }) {
 
 						if (index === round) {
 							if (player.submittedGuessForRound) {
-								return <span>Ready!</span>;
+								return <span style={{ borderBottom: `3px solid ${player.color}` }}>Ready!</span>;
 							}
 							return <span>Hidden</span>;
 						}
