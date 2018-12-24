@@ -134,9 +134,13 @@ class MovieSearchFrom extends React.Component {
 MovieSearchFrom.propTypes = {
 	addMovieToGame: PropTypes.func.isRequired,
 	handleMovieSet: PropTypes.func.isRequired,
-	didFireSearch: PropTypes.func.isRequired,
-	searchDidEnd: PropTypes.func.isRequired,
+	didFireSearch: PropTypes.func,
+	searchDidEnd: PropTypes.func,
 	disableSearch: PropTypes.bool.isRequired,
+};
+MovieSearchFrom.defaultProps = {
+	didFireSearch: () => {},
+	searchDidEnd: () => {},
 };
 
 export default MovieSearchFrom;

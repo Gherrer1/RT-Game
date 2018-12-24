@@ -44,7 +44,6 @@ class GameSetupMulti extends React.Component {
 			socketRoom: null,
 			inRoom: false,
 			fromInviteLink: false,
-			loading: false,
 			movies: [],
 			players: [],
 		};
@@ -57,6 +56,7 @@ class GameSetupMulti extends React.Component {
 		this.addMovieSetToServer = this.addMovieSetToServer.bind(this);
 		this.removeMovieFromServer = this.removeMovieFromServer.bind(this);
 		this.startGame = this.startGame.bind(this);
+		this.updatePlayerName = this.updatePlayerName.bind(this);
 	}
 
 	componentDidMount() {
@@ -137,6 +137,14 @@ class GameSetupMulti extends React.Component {
 		window.socket.emit(REMOVE_MOVIE, socketRoom, movie);
 	}
 
+	updatePlayerName(e) {
+		const { value } = e.target;
+
+		this.setState({
+			playerName: value,
+		});
+	}
+
 	startGame() {
 		const { socketRoom } = this.state;
 		window.socket.emit(START_GAME, socketRoom);
@@ -180,16 +188,14 @@ class GameSetupMulti extends React.Component {
 							</p>
 							<h2>Step 2: Add 1 to 5 movies</h2>
 							<MovieSearchForm
-								addMovieToGame={movie => this.addMovieToServer(movie)}
-								didFireSearch={() => this.setState({ loading: true })}
-								searchDidEnd={() => this.setState({ loading: false })}
+								addMovieToGame={this.addMovieToServer}
 								disableSearch={movies.length >= 5}
 								handleMovieSet={this.addMovieSetToServer}
 							/>
 
 							<MoviesList
 								movies={movies}
-								removeMovie={movie => this.removeMovieFromServer(movie)}
+								removeMovie={this.removeMovieFromServer}
 							/>
 
 							<h2>Step 3:</h2>
@@ -211,9 +217,7 @@ class GameSetupMulti extends React.Component {
 								type="text"
 								className="player-name-input"
 								value={playerName}
-								onChange={e => this.setState({
-									playerName: e.target.value,
-								})}
+								onChange={this.updatePlayerName}
 							/>
 							{!fromInviteLink && (
 								<Button disabled={playerName === ''} onClick={this.createSocketRoom}>
