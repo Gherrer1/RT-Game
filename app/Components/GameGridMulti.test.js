@@ -171,8 +171,7 @@ describe('<GameGridMulti />', () => {
 		expect(getByText("I'm Ready!")).not.toBeDisabled();
 	});
 	it('should show winner after users go through all the movies (rounds)', async () => {
-		expect(container.querySelector('.winners')).toBeNull();
-
+		expect(queryByText(/Winner/)).toBeNull();
 		socketClient.emit('player submitted guess', roomID, '50');
 		fireEvent.change(container.querySelector('.guess-input:enabled'), { target: { value: '40' } });
 		fireEvent.click(getByText("I'm Ready!"));
@@ -181,7 +180,17 @@ describe('<GameGridMulti />', () => {
 		fireEvent.change(container.querySelector('.guess-input:enabled'), { target: { value: '41' } });
 		fireEvent.click(getByText("I'm Ready!"));
 		await waitForElement(() => expect(container.querySelectorAll('.actual-score').length).toBe(2) || true, { timeout: 1000 });
-
-		expect(container.querySelector('.winners')).not.toBeNull();
+		getByText(/Winner/);
+	});
+	it('should show WINNERS if multiple players tie', async () => {
+		expect(queryByText(/Winners/)).toBeNull();
+		socketClient.emit('player submitted guess', roomID, '50');
+		fireEvent.change(container.querySelector('.guess-input:enabled'), { target: { value: '50' } });
+		fireEvent.click(getByText("I'm Ready!"));
+		await waitForElement(() => getByText(/Actual score:/), { timeout: 500 });
+		socketClient.emit('player submitted guess', roomID, '50');
+		fireEvent.change(container.querySelector('.guess-input:enabled'), { target: { value: '50' } });
+		fireEvent.click(getByText("I'm Ready!"));
+		await waitForElement(() => getByText(/Winners/));
 	});
 });
