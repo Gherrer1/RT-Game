@@ -28,7 +28,7 @@ function ScoreRoundRow({ round, handleClick, movies, buttonText, disableButton }
 
 
 				return (
-					<div key={index} className="movie-col-cell">
+					<div key={index} className={`movie-col-cell ${index < round ? 'actual-score' : ''}`}>
 						{cellContent}
 					</div>
 				);

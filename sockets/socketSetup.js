@@ -4,7 +4,7 @@ const Player = require('./Player');
 const { CREATE_ROOM, JOIN_ROOM, ROOM_ID, NEW_PLAYER, SUCCESSFUL_JOIN, FAILED_JOIN, REMOVE_MOVIE,
 	DID_REMOVE_MOVIE, ADD_MOVIE_STARTER_PACK, DID_ADD_MOVIE_PACK, ADD_MOVIE, DID_ADD_MOVIE,
 	ADD_MOVIE_ERROR, ROOM_FULL, PLAYER_LEFT, START_GAME, DID_START_GAME, GAME_IN_PROGRESS,
-	PLAYER_SUBMITTED_GUESS, PLAYER_DID_SUBMIT_GUESS, DID_SCORE_ROUND,
+	PLAYER_SUBMITTED_GUESS, PLAYER_DID_SUBMIT_GUESS, DID_SCORE_ROUND, GAME_OVER,
 } = require('./socketEventNames');
 
 function getRoom(id) {
@@ -185,6 +185,14 @@ io.on('connection', (socket) => {
 				players: room.gameState.players,
 			};
 			io.in(roomID).emit(DID_SCORE_ROUND, stateToSend);
+
+			if (room.gameState.round >= room.gameState.movies.length) {
+				// game over
+				// why might we want to send stateToSend again? because im considering the edge case where
+				// this message gets to the user before the DID_SCORE_ROUND message, in which case itd be
+				// useful for the user to have this info to announce the winner
+				io.in(roomID).emit(GAME_OVER, stateToSend);
+			}
 		}
 	});
 

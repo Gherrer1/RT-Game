@@ -9,14 +9,16 @@ import { isValidRatingGuess } from '../helpers/validators';
 import { getWinningScore } from '../helpers/gameplay';
 import PlayerGuesses, { OtherPlayerGuesses } from './PlayerGuesses';
 import socketEventNames from '../../sockets/socketEventNames';
+import AnnounceWinner from './AnnounceWinner';
 
-const { PLAYER_LEFT, PLAYER_SUBMITTED_GUESS, PLAYER_DID_SUBMIT_GUESS, DID_SCORE_ROUND,
+const { PLAYER_LEFT, PLAYER_SUBMITTED_GUESS, PLAYER_DID_SUBMIT_GUESS, DID_SCORE_ROUND, GAME_OVER,
 } = socketEventNames;
 
 function removeSocketListeners(socket) {
 	socket.off(PLAYER_LEFT);
 	socket.off(PLAYER_DID_SUBMIT_GUESS);
 	socket.off(DID_SCORE_ROUND);
+	socket.off(GAME_OVER);
 }
 
 class GameGridMulti extends React.Component {
@@ -33,6 +35,7 @@ class GameGridMulti extends React.Component {
 				socketRoom: routerState.socketRoom,
 				shouldRedirectToHome: false,
 				submittedGuessForRound: false,
+				gameOver: false,
 			};
 		} else {
 			this.state = {
@@ -76,6 +79,11 @@ class GameGridMulti extends React.Component {
 			players,
 			submittedGuessForRound: false,
 		}));
+		socket.on(GAME_OVER, ({ round, players }) => this.setState({
+			gameOver: true,
+			players,
+			round,
+		}));
 	}
 
 	updateGuess(playerId, guessIndex, newValue) {
@@ -111,7 +119,8 @@ class GameGridMulti extends React.Component {
 	}
 
 	render() {
-		const { players, movies, round, shouldRedirectToHome, submittedGuessForRound } = this.state;
+		const { players, movies, round, shouldRedirectToHome,
+			submittedGuessForRound, gameOver } = this.state;
 
 		if (shouldRedirectToHome || !window.socket) {
 			return <Redirect to="/" />;
@@ -125,6 +134,9 @@ class GameGridMulti extends React.Component {
 			<div>
 				<NavBar />
 				<HowScoringWorks />
+				{(round >= movies.length && gameOver)
+					&& <AnnounceWinner winners={players.filter(p => p.score === winningScore)} />
+				}
 				<div className="game-grid">
 					<GridHeader movies={movies} round={round} />
 					<PlayerGuesses

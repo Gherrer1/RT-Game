@@ -45,7 +45,10 @@ describe('<GameGridMulti />', () => {
 		({ getByText, queryByText, container } = renderResult);
 
 		// start up socket server and client
-		socketServer.listen(8000);
+		socketServer.attach(8000, {
+			pingInterval: 1000,
+			pingTimeout: 1000,
+		});
 		socketClient = openSocket('http://localhost:8000');
 
 		// quickly setup game
@@ -71,7 +74,7 @@ describe('<GameGridMulti />', () => {
 		fireEvent.click(getByText('Start Game'));
 		await waitForElement(() => getByText('How scoring works:'));
 		done();
-	}, 10000);
+	}, 11000);
 
 	afterEach((done) => {
 		fetch.resetMocks();
@@ -83,7 +86,7 @@ describe('<GameGridMulti />', () => {
 			socketClient.close();
 		}
 		socketServer.close(done);
-	}, 10000);
+	}, 12000);
 
 	it('should redirect to / if user navigates to this route not from <GameSetupMulti />', async () => {
 		cleanup();
@@ -94,7 +97,7 @@ describe('<GameGridMulti />', () => {
 		);
 		({ getByText } = renderResult);
 		await waitForElement(() => getByText('Multiplayer'), { timeout: 1000 });
-	}, 10000);
+	}, 9000);
 	it('should be notified if another player leaves', async () => {
 		getByText('Bertoldt');
 		socketClient.close();
@@ -167,7 +170,18 @@ describe('<GameGridMulti />', () => {
 		fireEvent.change(container.querySelector('.guess-input:enabled'), { target: { value: '39' } });
 		expect(getByText("I'm Ready!")).not.toBeDisabled();
 	});
-	it.skip('should show winner after users go through all the movies (rounds)', () => {
-		throw new Error('unimplemented');
+	it('should show winner after users go through all the movies (rounds)', async () => {
+		expect(container.querySelector('.winners')).toBeNull();
+
+		socketClient.emit('player submitted guess', roomID, '50');
+		fireEvent.change(container.querySelector('.guess-input:enabled'), { target: { value: '40' } });
+		fireEvent.click(getByText("I'm Ready!"));
+		await waitForElement(() => getByText(/Actual score:/), { timeout: 500 });
+		socketClient.emit('player submitted guess', roomID, '59');
+		fireEvent.change(container.querySelector('.guess-input:enabled'), { target: { value: '41' } });
+		fireEvent.click(getByText("I'm Ready!"));
+		await waitForElement(() => expect(container.querySelectorAll('.actual-score').length).toBe(2) || true, { timeout: 1000 });
+
+		expect(container.querySelector('.winners')).not.toBeNull();
 	});
 });
