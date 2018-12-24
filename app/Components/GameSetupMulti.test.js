@@ -186,7 +186,10 @@ describe('<GameSetupMulti />', () => {
 		});
 		// bug - test this
 		it('should add 5 movies to screen after other player adds Movie starter pack', async () => {
-			throw new Error('unimplemented');
+			getByText(/Super heroes/);
+			expect(container.querySelectorAll('.movie-list > div').length).toBe(0);
+			socketClient.emit('add movie starter pack', roomID, fakeMovies);
+			await waitForElement(() => getByText(/Stuart Little/) && getByText(/Iron Man/), { timeout: 1500 });
 		});
 		it('should transition to <GameGridMulti /> without redirecting back to home', async () => {
 			socketClient.emit('join room', roomID, 'Bertholdt');

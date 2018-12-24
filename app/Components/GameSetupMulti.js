@@ -54,6 +54,7 @@ class GameSetupMulti extends React.Component {
 		this.addSocketListeners = this.addSocketListeners.bind(this);
 		this.playerJoined = this.playerJoined.bind(this);
 		this.addMovieToServer = this.addMovieToServer.bind(this);
+		this.addMovieSetToServer = this.addMovieSetToServer.bind(this);
 		this.removeMovieFromServer = this.removeMovieFromServer.bind(this);
 		this.startGame = this.startGame.bind(this);
 	}
@@ -126,6 +127,11 @@ class GameSetupMulti extends React.Component {
 		window.socket.emit(ADD_MOVIE, socketRoom, movie);
 	}
 
+	addMovieSetToServer(movies) {
+		const { socketRoom } = this.state;
+		window.socket.emit(ADD_MOVIE_STARTER_PACK, socketRoom, movies);
+	}
+
 	removeMovieFromServer(movie) {
 		const { socketRoom } = this.state;
 		window.socket.emit(REMOVE_MOVIE, socketRoom, movie);
@@ -178,7 +184,7 @@ class GameSetupMulti extends React.Component {
 								didFireSearch={() => this.setState({ loading: true })}
 								searchDidEnd={() => this.setState({ loading: false })}
 								disableSearch={movies.length >= 5}
-								handleMovieSet={_movies => this.setState({ movies: _movies })}
+								handleMovieSet={this.addMovieSetToServer}
 							/>
 
 							<MoviesList
