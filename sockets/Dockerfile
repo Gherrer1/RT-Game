@@ -1,14 +1,13 @@
 FROM node:10.14.1-jessie-slim
 
-RUN npm init -y && npm install -g nodemon && npm install --save socket.io randomcolor
-
 WORKDIR /app
 
-EXPOSE 8000
+EXPOSE ${PORT:-8000}
 
-COPY socketSetup.js socketSetup.js
-COPY server.js server.js
-COPY Player.js Player.js
-COPY socketEventNames.js socketEventNames.js
+COPY package.json package.json
 
-CMD ["nodemon", "server.js"]
+RUN npm install
+
+COPY . .
+
+CMD ["node_modules/.bin/nodemon", "server.js"]

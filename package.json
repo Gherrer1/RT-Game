@@ -12,6 +12,7 @@
   "scripts": {
     "test": "jest --watch --runInBand",
     "start:client": "webpack-dev-server --env.ENVIRONMENT=development --open",
+    "start:client:prod": "webpack-dev-server --env.ENVIRONMENT=production --open",
     "start:server": "nodemon backend/server.js",
     "build": "webpack -p",
     "deploy": "webpack -p && firebase deploy",

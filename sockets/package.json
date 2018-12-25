@@ -1,0 +1,20 @@
+{
+  "name": "rt-sockets",
+  "version": "1.0.0",
+  "description": "",
+  "main": "Player.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "heroku container:push web -a guarded-earth-55661 && heroku container:release web -a guarded-earth-55661",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "randomcolor": "^0.5.3",
+    "socket.io": "^2.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.9"
+  }
+}
