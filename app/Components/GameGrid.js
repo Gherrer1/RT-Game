@@ -1,5 +1,7 @@
 import React from 'react';
+import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import NavBar from './NavBar';
 import HowScoringWorks from './HowScoringWorks';
 import GridHeader from './GridHeader';
 import PlayerGuesses from './PlayerGuesses';
@@ -12,21 +14,33 @@ class GameGrid extends React.Component {
 	constructor(props) {
 		super(props);
 
-		this.state = {
-			players: props.players.map(player => ({
-				...player,
-				guesses: props.movies.map(() => ''),
-			})),
-			movies: [...props.movies],
-			round: 0,
-		};
+		const { location } = this.props;
+		const { state: routerState } = location;
+		if (routerState && routerState.players && routerState.movies) {
+			this.state = {
+				players: routerState.players.map(player => ({
+					...player,
+					guesses: routerState.movies.map(() => ''),
+				})),
+				movies: [...routerState.movies],
+				round: 0,
+				shouldRedirectToHome: false,
+			};
+		} else {
+			this.state = {
+				shouldRedirectToHome: true,
+			};
+		}
 
 		this.updateGuess = this.updateGuess.bind(this);
 		this.scoreRound = this.scoreRound.bind(this);
 	}
 
 	componentDidMount() {
-		document.body.style.setProperty('--num-columns', this.state.movies.length);
+		const { movies } = this.state;
+		if (movies) {
+			document.body.style.setProperty('--num-columns', movies.length);
+		}
 	}
 
 	scoreRound(round) {
@@ -69,10 +83,16 @@ class GameGrid extends React.Component {
 	}
 
 	render() {
-		const { players, movies, round } = this.state;
+		const { players, movies, round, shouldRedirectToHome } = this.state;
+
+		if (shouldRedirectToHome) {
+			return <Redirect to="/" />;
+		}
+
 		const winningScore = getWinningScore(players);
 		return (
 			<div>
+				<NavBar />
 				<HowScoringWorks />
 				{(round >= movies.length)
 						&& <AnnounceWinners winners={players.filter(p => p.score === winningScore)} />
@@ -92,6 +112,7 @@ class GameGrid extends React.Component {
 						movies={movies}
 						round={round}
 						handleClick={this.scoreRound}
+						buttonText="Score Row!"
 					/>
 				</div>
 			</div>
@@ -100,8 +121,7 @@ class GameGrid extends React.Component {
 }
 
 GameGrid.propTypes = {
-	players: PropTypes.array.isRequired,
-	movies: PropTypes.array.isRequired,
+	location: PropTypes.object.isRequired,
 };
 
 export default GameGrid;
