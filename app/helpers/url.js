@@ -1,6 +1,6 @@
 export default function createInviteURL(roomID) {
-	// const host = window.location.hostname;
-
-	// return `${host}${host === 'localhost' ? ':8080' : '.com'}/?r=${roomID}`;
-	return `http://localhost:8080/setup-multi/${roomID}`;
+	if (window.location.hostname === 'localhost') {
+		return `http://localhost:8080/setup-multi/${roomID}`;
+	}
+	return `https://${window.location.hostname}/setup-multi/${roomID}`;
 }
