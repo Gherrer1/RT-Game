@@ -42,6 +42,7 @@ class GameSetupMulti extends React.Component {
 		this.state = {
 			playerName: '',
 			socketRoom: null,
+			waitingOnSocketServer: false,
 			inRoom: false,
 			fromInviteLink: false,
 			movies: [],
@@ -85,6 +86,7 @@ class GameSetupMulti extends React.Component {
 	createSocketRoom() {
 		const { playerName } = this.state;
 		const socket = openSocket(SOCKET_SERVER_URL);
+		this.setState({ waitingOnSocketServer: true });
 		socket.on(ROOM_ID, (roomID, gameState) => {
 			this.setState({
 				socketRoom: roomID,
@@ -104,6 +106,7 @@ class GameSetupMulti extends React.Component {
 		const { match } = this.props;
 		const roomID = match.params.roomID || prompt('Enter the room ID');
 		const socket = openSocket(SOCKET_SERVER_URL);
+		this.setState({ waitingOnSocketServer: true });
 		socket.on(SUCCESSFUL_JOIN, (roomId, gameState) => {
 			window.socket = socket;
 			this.setState({
@@ -168,7 +171,8 @@ class GameSetupMulti extends React.Component {
 	}
 
 	render() {
-		const { playerName, inRoom, fromInviteLink, socketRoom, movies, players } = this.state;
+		const { playerName, inRoom, fromInviteLink, socketRoom, movies, players,
+			waitingOnSocketServer } = this.state;
 		const startGameDisabled = !(players.length >= 2 && movies.length >= 1);
 
 		return (
@@ -220,10 +224,10 @@ class GameSetupMulti extends React.Component {
 								onChange={this.updatePlayerName}
 							/>
 							{!fromInviteLink && (
-								<Button disabled={playerName === ''} onClick={this.createSocketRoom}>
+								<Button disabled={playerName === '' || waitingOnSocketServer} onClick={this.createSocketRoom}>
 									Invite Friends
 								</Button>)}
-							<Button disabled={playerName === ''} onClick={this.joinRoom}>
+							<Button disabled={playerName === '' || waitingOnSocketServer} onClick={this.joinRoom}>
 								Join Room
 							</Button>
 						</div>

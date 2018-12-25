@@ -98,6 +98,23 @@ describe('<GameSetupMulti />', () => {
 		it('shouldnt have window.socket yet', () => {
 			expect(window.socket).toBeUndefined();
 		});
+		// bug - test solution
+		it('should disable `Invite Friends` and `Join Room` buttons when user clicks `Invite Friends` - so they dont click again while socket server processes', async () => {
+			simulateTypePlayersName(container);
+			expect(getByText('Invite Friends')).not.toBeDisabled();
+			expect(getByText('Join Room')).not.toBeDisabled();
+			fireEvent.click(getByText('Invite Friends'));
+			expect(getByText('Invite Friends')).toBeDisabled();
+			expect(getByText('Join Room')).toBeDisabled();
+		});
+		it('should disable `Invite Friends` and `Join Room` buttons when user clicks `Join Room` - so they dont click again while socket server processes', async () => {
+			simulateTypePlayersName(container);
+			expect(getByText('Invite Friends')).not.toBeDisabled();
+			expect(getByText('Join Room')).not.toBeDisabled();
+			fireEvent.click(getByText('Join Room'));
+			expect(getByText('Invite Friends')).toBeDisabled();
+			expect(getByText('Join Room')).toBeDisabled();
+		});
 		it('should show a link to invite users when user clicks `Invite Friends`', async () => {
 			expect(container.querySelector('.invite-link')).toBeNull();
 			await simulateCreateRoom(renderResult);
