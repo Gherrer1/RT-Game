@@ -115,6 +115,15 @@ describe('<GameSetupMulti />', () => {
 			expect(getByText('Invite Friends')).toBeDisabled();
 			expect(getByText('Join Room')).toBeDisabled();
 		});
+		it.skip('should reenable `Invite Friends` and `Join Room` buttons if joined room doesnt exist and user isnt coming from invite link', async () => {
+			throw new Error('unimplemented');
+		});
+		it.skip('should redirect to home if room doesnt exist and user is coming from invite link', async () => {
+			throw new Error('unimplemented');
+		});
+		it.skip('should redirect home if game is in progress', async () => {
+			throw new Error('unimplemented');
+		});
 		it('should show a link to invite users when user clicks `Invite Friends`', async () => {
 			expect(container.querySelector('.invite-link')).toBeNull();
 			await simulateCreateRoom(renderResult);
