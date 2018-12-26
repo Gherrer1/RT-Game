@@ -86,6 +86,7 @@ class GameSetupMulti extends React.Component {
 	createSocketRoom() {
 		const { playerName } = this.state;
 		const socket = openSocket(SOCKET_SERVER_URL);
+		window.socket = socket;
 		this.setState({ waitingOnSocketServer: true });
 		socket.on(ROOM_ID, (roomID, gameState) => {
 			this.setState({
@@ -93,10 +94,10 @@ class GameSetupMulti extends React.Component {
 				inRoom: true,
 				players: gameState.players,
 			});
-			window.socket = socket;
 			this.addSocketListeners(socket);
 		});
 		socket.on(NEW_PLAYER, newPlayerState => this.playerJoined(newPlayerState));
+		// TODO: failed join scenario
 		socket.emit(CREATE_ROOM, playerName);
 	}
 
@@ -106,22 +107,32 @@ class GameSetupMulti extends React.Component {
 		const { match } = this.props;
 		const roomID = match.params.roomID || prompt('Enter the room ID');
 		const socket = openSocket(SOCKET_SERVER_URL);
+		window.socket = socket;
 		this.setState({ waitingOnSocketServer: true });
 		socket.on(SUCCESSFUL_JOIN, (roomId, gameState) => {
-			window.socket = socket;
 			this.setState({
 				socketRoom: roomId,
 				inRoom: true,
 				movies: gameState.movies,
 				players: gameState.players,
 			});
-			// here is where we add movie updates listeners
 			this.addSocketListeners(socket);
 		});
 		socket.on(GAME_IN_PROGRESS, () => alert('The game has already started. Room not joined.') || socket.close());
 		socket.on(NEW_PLAYER, newPlayerState => this.playerJoined(newPlayerState));
-		socket.on(FAILED_JOIN, () => alert('That room does not exist.') || socket.close());
-		socket.on(ROOM_FULL, () => alert('That room is already full.') || socket.close()); // TODO: redirect back to home
+		// we also want to remove window.socket dont we
+		socket.on(FAILED_JOIN, () => {
+			alert('That room does not exist.');
+			GameSetupMulti.removeSocketListeners(window.socket);
+			delete window.socket;
+			socket.close();
+		});
+		socket.on(ROOM_FULL, () => {
+			alert('That room is already full.');
+			GameSetupMulti.removeSocketListeners(window.socket);
+			delete window.socket;
+			socket.close();
+		}); // TODO: redirect back to home
 		socket.emit(JOIN_ROOM, roomID, playerName);
 	}
 
