@@ -22,12 +22,13 @@ module.exports = (env) => {
             publicPath: '/',
         },
         resolve: {
-            extensions: ['.ts', '.js']
+            extensions: ['.ts', '.tsx', '.js']
         },
         module: {
             rules: [
                 { test: /\.js$/, use: 'babel-loader', exclude: /node_modules/ },
                 { test: /\.ts$/, use: 'babel-loader', exclude: /node_modules/ },
+                { test: /\.tsx$/, use: 'babel-loader', exclude: /node_modules/ },
                 { test: /\.css$/, use: ['style-loader', 'css-loader'] }
             ]
         },

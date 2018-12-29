@@ -6,6 +6,8 @@
         // dont emit files, allow Babel to transform files
         "noEmit": true,
         "strict": true,
+        "module": "esnext",
+        "jsx": "react",
         "isolatedModules": true,
         "esModuleInterop": true
     },

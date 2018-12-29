@@ -1,8 +1,16 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Button } from 'react-bootstrap/lib';
+import { Player } from '../../sharedTypes';
 
-function PlayerNameInput({ player, index, updatePlayerName, removePlayer, removeDisabled }) {
+interface Props {
+	index: number;
+	player: Player;
+	updatePlayerName(i: number, n: string): void;
+	removePlayer(i: string): void;
+	removeDisabled: boolean;
+}
+
+function PlayerNameInput({ player, index, updatePlayerName, removePlayer, removeDisabled }: Props) {
 	return (
 		<div className="player-input">
 			<input
@@ -14,13 +22,5 @@ function PlayerNameInput({ player, index, updatePlayerName, removePlayer, remove
 		</div>
 	);
 }
-
-PlayerNameInput.propTypes = {
-	player: PropTypes.object.isRequired,
-	index: PropTypes.number.isRequired,
-	updatePlayerName: PropTypes.func.isRequired,
-	removePlayer: PropTypes.func.isRequired,
-	removeDisabled: PropTypes.bool.isRequired,
-};
 
 export default PlayerNameInput;
