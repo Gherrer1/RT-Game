@@ -3,3 +3,9 @@ export interface Player {
     name: string;
     color: string;
 }
+
+export interface IMovie {
+    image: string;
+    name: string;
+    year: number;
+}

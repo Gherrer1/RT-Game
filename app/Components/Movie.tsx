@@ -1,8 +1,14 @@
 import React from 'react';
 import Button from 'react-bootstrap/lib/Button';
 import PropTypes from 'prop-types';
+import { IMovie } from '../../sharedTypes';
 
-function Movie({ movie, remove }) {
+interface Props {
+	movie: IMovie;
+	remove: ((movie: IMovie) => void) | null;
+}
+
+function Movie({ movie, remove = null }: Props) {
 	return (
 		<div>
 			<ul className="movie-info">
