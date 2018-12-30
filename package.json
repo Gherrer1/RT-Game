@@ -17,7 +17,7 @@
     "build": "webpack -p --env.ENVIRONMENT=production",
     "deploy": "webpack -p --env.ENVIRONMENT=production && firebase deploy",
     "socket:dev": "docker image build -t socket:devvv sockets/ && docker run -p 8000:8000 --name sock --rm -v $(pwd)/sockets/:/app/ socket:devvv",
-    "typescript": "tsc --watch"
+    "tsc": "tsc -w"
   },
   "author": "",
   "license": "ISC",
