@@ -1,8 +1,13 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import HeaderMovie from './HeaderMovie';
+import { IMovie } from '../../sharedTypes';
 
-function GridHeader({ movies, round }) {
+interface Props {
+	movies: IMovie[];
+	round: number;
+}
+
+function GridHeader({ movies, round }: Props) {
 	return (
 		<React.Fragment>
 			<div />
@@ -12,10 +17,5 @@ function GridHeader({ movies, round }) {
 		</React.Fragment>
 	);
 }
-
-GridHeader.propTypes = {
-	movies: PropTypes.array.isRequired,
-	round: PropTypes.number.isRequired,
-};
 
 export default GridHeader;
