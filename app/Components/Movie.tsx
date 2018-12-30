@@ -1,6 +1,5 @@
 import React from 'react';
 import Button from 'react-bootstrap/lib/Button';
-import PropTypes from 'prop-types';
 import { IMovie } from '../../sharedTypes';
 
 interface Props {
@@ -23,13 +22,5 @@ function Movie({ movie, remove = null }: Props) {
 		</div>
 	);
 }
-
-Movie.propTypes = {
-	movie: PropTypes.object.isRequired,
-	remove: PropTypes.func,
-};
-Movie.defaultProps = {
-	remove: null,
-};
 
 export default Movie;

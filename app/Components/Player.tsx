@@ -1,6 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { customArrayValidator } from '../helpers/validators';
 import { IPlayer } from '../../sharedTypes';
 
 interface Props {
@@ -22,14 +20,5 @@ function Player({ player, winningScore }: Props) {
 		</div>
 	);
 }
-
-Player.propTypes = {
-	player: PropTypes.shape({
-		name: PropTypes.string.isRequired,
-		score: PropTypes.number.isRequired,
-		guesses: PropTypes.arrayOf(customArrayValidator),
-	}).isRequired,
-	winningScore: PropTypes.number.isRequired,
-};
 
 export default Player;
