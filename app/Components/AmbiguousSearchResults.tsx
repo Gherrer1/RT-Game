@@ -1,8 +1,15 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import Alert from 'react-bootstrap/lib/Alert';
+import { IMovie } from '../../sharedTypes';
 
-function AmbiguousSearchResults({ message, searchedFor, recommendations, handleClickMovie }) {
+interface Props {
+    message: string;
+    searchedFor: string;
+    handleClickMovie(movie: IMovie): void;
+    recommendations: IMovie[];
+}
+
+function AmbiguousSearchResults({ message, searchedFor, recommendations, handleClickMovie }: Props) {
     return (
         <Alert bsStyle="warning">
             <h4>{message}</h4>
@@ -22,12 +29,5 @@ function AmbiguousSearchResults({ message, searchedFor, recommendations, handleC
         </Alert>
     );
 }
-
-AmbiguousSearchResults.propTypes = {
-    message: PropTypes.string.isRequired,
-    searchedFor: PropTypes.string.isRequired,
-    recommendations: PropTypes.array.isRequired,
-    handleClickMovie: PropTypes.func.isRequired,
-};
 
 export default AmbiguousSearchResults;
