@@ -1,8 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Movie from './Movie';
+import { IMovie } from '../../sharedTypes';
 
-export default function MoviesList({ removeMovie, movies }) {
+interface Props {
+	movies: IMovie[];
+	removeMovie: (movie: IMovie) => void;
+}
+
+export default function MoviesList({ removeMovie, movies }: Props) {
 	return (
 		<div className="movies-list">
 			{movies.map(movie => (
