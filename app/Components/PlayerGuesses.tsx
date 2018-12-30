@@ -1,9 +1,15 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import Player from './Player';
-import { customArrayValidator } from '../helpers/validators';
+import { IPlayerDuringGame } from '../../sharedTypes';
 
-function PlayerGuesses({ player, round, updateGuess, winningScore }) {
+interface Props {
+	player: IPlayerDuringGame;
+	round: number;
+	winningScore: number;
+	updateGuess(playerID: string, guessIndex: number, newValue: string): void;
+}
+
+function PlayerGuesses({ player, round, updateGuess, winningScore }: Props) {
 	return (
 		<React.Fragment>
 			<Player player={player} winningScore={winningScore} />
@@ -21,18 +27,14 @@ function PlayerGuesses({ player, round, updateGuess, winningScore }) {
 		</React.Fragment>
 	);
 }
-PlayerGuesses.propTypes = {
-	player: PropTypes.shape({
-		guesses: PropTypes.arrayOf(customArrayValidator),
-		name: PropTypes.string.isRequired,
-		score: PropTypes.number.isRequired,
-	}).isRequired,
-	round: PropTypes.number.isRequired,
-	updateGuess: PropTypes.func.isRequired,
-	winningScore: PropTypes.number.isRequired,
-};
 
-export function OtherPlayerGuesses({ player, round, winningScore }) {
+interface OPGuesses {
+	player: IPlayerDuringGame;
+	round: number;
+	winningScore: number;
+}
+
+export function OtherPlayerGuesses({ player, round, winningScore }: OPGuesses) {
 	return (
 		<React.Fragment>
 			<Player player={player} winningScore={winningScore} />
@@ -57,15 +59,5 @@ export function OtherPlayerGuesses({ player, round, winningScore }) {
 		</React.Fragment>
 	);
 }
-OtherPlayerGuesses.propTypes = {
-	player: PropTypes.shape({
-		// NOTE: might need to update this since player shape might be different in multiplayer mode
-		guesses: PropTypes.arrayOf(customArrayValidator),
-		name: PropTypes.string.isRequired,
-		score: PropTypes.number.isRequired,
-	}).isRequired,
-	round: PropTypes.number.isRequired,
-	winningScore: PropTypes.number.isRequired,
-};
 
 export default PlayerGuesses;
