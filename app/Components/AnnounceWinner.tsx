@@ -1,7 +1,11 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { IPlayerDuringGame } from '../../sharedTypes';
 
-function AnnounceWinner({ winners }) {
+interface Props {
+	winners: IPlayerDuringGame[];
+}
+
+function AnnounceWinner({ winners }: Props) {
 	const winnersNames = winners.map(player => player.name);
 	return (
 		<div className="winners">
@@ -12,9 +16,5 @@ function AnnounceWinner({ winners }) {
 		</div>
 	);
 }
-
-AnnounceWinner.propTypes = {
-	winners: PropTypes.array.isRequired,
-};
 
 export default AnnounceWinner;

@@ -15,6 +15,7 @@
   },
   "scripts": {
     "test": "jest --watch --runInBand",
+    "test:once": "jest --runInBand",
     "start:client": "webpack-dev-server --env.ENVIRONMENT=development --open",
     "start:client:prod": "webpack-dev-server --env.ENVIRONMENT=production --open",
     "start:server": "nodemon backend/server.js",
