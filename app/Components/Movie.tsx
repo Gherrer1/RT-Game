@@ -4,10 +4,10 @@ import { IMovie } from '../../sharedTypes';
 
 interface Props {
 	movie: IMovie;
-	remove: ((movie: IMovie) => void) | null;
+	remove?: ((movie: IMovie) => void);
 }
 
-function Movie({ movie, remove = null }: Props) {
+function Movie({ movie, remove }: Props) {
 	return (
 		<div>
 			<ul className="movie-info">

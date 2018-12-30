@@ -1,18 +1,18 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import Movie from './Movie';
+import { IMovie } from '../../sharedTypes';
 
-function HeaderMovie({ movie, emphasized }) {
+interface Props {
+	movie: IMovie;
+	emphasized: boolean;
+}
+
+function HeaderMovie({ movie, emphasized }: Props) {
 	return (
 		<div className={`movie-col-cell header-movie ${emphasized ? '' : 'dormant'}`}>
 			<Movie movie={movie} />
 		</div>
 	);
 }
-
-HeaderMovie.propTypes = {
-	movie: PropTypes.object.isRequired,
-	emphasized: PropTypes.bool.isRequired,
-};
 
 export default HeaderMovie;
