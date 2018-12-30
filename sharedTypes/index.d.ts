@@ -1,7 +1,9 @@
-export interface Player {
+export interface IPlayer {
     id: string;
     name: string;
     color: string;
+    score: number;
+    guesses: string[];
 }
 
 export interface IMovie {

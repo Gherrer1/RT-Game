@@ -1,10 +1,10 @@
 import React from 'react';
 import { Button } from 'react-bootstrap/lib';
-import { Player } from '../../sharedTypes';
+import { IPlayer } from '../../sharedTypes';
 
 interface Props {
 	index: number;
-	player: Player;
+	player: IPlayer;
 	updatePlayerName(i: number, n: string): void;
 	removePlayer(i: string): void;
 	removeDisabled: boolean;

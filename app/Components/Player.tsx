@@ -1,8 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { customArrayValidator } from '../helpers/validators';
+import { IPlayer } from '../../sharedTypes';
 
-function Player({ player, winningScore }) {
+interface Props {
+	player: IPlayer;
+	winningScore: number;
+}
+
+function Player({ player, winningScore }: Props) {
 	return (
 		<div className="player-cell">
 			<span>{player.name}</span>
