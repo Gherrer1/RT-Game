@@ -1,16 +1,38 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 import { Alert, Button } from 'react-bootstrap/lib';
 import AmbiguousSearchResults from './AmbiguousSearchResults';
 import dicaprio from '../starterPacks/dicaprio';
 import superheroes from '../starterPacks/superheroes';
 import princesses from '../starterPacks/princesses';
 import getMovieData from '../api';
+import { IMovie } from '../../sharedTypes';
 
 const { MOVIE_FOUND, COULD_NOT_FIND_MOVIE_NAMED, RECOMMENDATIONS, MULTIPLE_MOVIES_FOUND } = require('../../lambda/messages');
 
-class MovieSearchFrom extends React.Component {
-	constructor(props) {
+interface Props {
+	addMovieToGame: (movie: IMovie) => undefined;
+	handleMovieSet: (movies: IMovie[]) => void;
+	didFireSearch: () => void;
+	searchDidEnd: () => void;
+	disableSearch: boolean;
+}
+
+interface State {
+	movieInput: string;
+	errorMessage: string | null;
+	warningMessage: string | null;
+	searchedFor: string | null;
+	loading: boolean;
+	recommendations: IMovie[] | null;
+}
+
+class MovieSearchFrom extends React.Component<Props, State> {
+	static defaultProps = {
+		didFireSearch: () => {},
+		searchDidEnd: () => {},
+	}
+
+	constructor(props: Props) {
 		super(props);
 
 		this.state = {
@@ -26,7 +48,7 @@ class MovieSearchFrom extends React.Component {
 		this.handleSelectMovieStarterPack = this.handleSelectMovieStarterPack.bind(this);
 	}
 
-	async searchForMovie(e) {
+	async searchForMovie(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 
 		const { movieInput: movieTitle } = this.state;
@@ -70,7 +92,7 @@ class MovieSearchFrom extends React.Component {
 		}
 	}
 
-	handleSelectMovieStarterPack(e, moviePackage) {
+	handleSelectMovieStarterPack(e: React.MouseEvent<HTMLButtonElement, MouseEvent>, moviePackage: IMovie[]) {
 		e.preventDefault();
 		const { handleMovieSet } = this.props;
 		handleMovieSet(moviePackage);
@@ -119,8 +141,8 @@ class MovieSearchFrom extends React.Component {
 				{warningMessage && (
 					<AmbiguousSearchResults
 						message={warningMessage}
-						searchedFor={searchedFor}
-						recommendations={recommendations}
+						searchedFor={searchedFor as string}
+						recommendations={recommendations as IMovie[]}
 						handleClickMovie={movie => addMovieToGame(movie) || this.setState({
 							warningMessage: null,
 						})}
@@ -130,17 +152,5 @@ class MovieSearchFrom extends React.Component {
 		);
 	}
 }
-
-MovieSearchFrom.propTypes = {
-	addMovieToGame: PropTypes.func.isRequired,
-	handleMovieSet: PropTypes.func.isRequired,
-	didFireSearch: PropTypes.func,
-	searchDidEnd: PropTypes.func,
-	disableSearch: PropTypes.bool.isRequired,
-};
-MovieSearchFrom.defaultProps = {
-	didFireSearch: () => {},
-	searchDidEnd: () => {},
-};
 
 export default MovieSearchFrom;
