@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import openSocket from 'socket.io-client';
 import { Button } from 'react-bootstrap/lib';
 import NavBar from './NavBar';
@@ -8,20 +7,39 @@ import MoviesList from './MoviesList';
 import PlayersList from './PlayersList';
 import getInviteURL from '../helpers/url';
 import socketEventNames from '../../sockets/socketEventNames';
+import { IMovie, IPlayer } from '../../sharedTypes';
+import { RouteComponentProps } from 'react-router-dom';
 
 const { CREATE_ROOM, JOIN_ROOM, ROOM_ID, NEW_PLAYER, SUCCESSFUL_JOIN, FAILED_JOIN, REMOVE_MOVIE,
 	DID_REMOVE_MOVIE, ADD_MOVIE_STARTER_PACK, DID_ADD_MOVIE_PACK, ADD_MOVIE, DID_ADD_MOVIE,
 	ADD_MOVIE_ERROR, ROOM_FULL, PLAYER_LEFT, START_GAME, DID_START_GAME, GAME_IN_PROGRESS,
 } = socketEventNames;
 
-const SOCKET_SERVER_URL = process.env.SOCKET_SERVER_URL;
+const SOCKET_SERVER_URL: string | undefined = process.env.SOCKET_SERVER_URL;
 if (!SOCKET_SERVER_URL) {
 	throw new Error('Socket server url missing. Check your .env file');
 }
 
-class GameSetupMulti extends React.Component {
+interface MatchParams {
+	roomID: string;
+}
+
+interface Props extends RouteComponentProps<MatchParams> {
+}
+
+interface State {
+	playerName: string;
+	socketRoom: string | null;
+	waitingOnSocketServer: boolean;
+	inRoom: boolean;
+	fromInviteLink: boolean;
+	movies: IMovie[];
+	players: IPlayer[];
+}
+
+class GameSetupMulti extends React.Component<Props, State> {
 	// TODO: remove async / socket / api stuff from component
-	static removeSocketListeners(socket) {
+	static removeSocketListeners(socket: SocketIOClient.Socket) {
 		socket.off(DID_REMOVE_MOVIE);
 		socket.off(DID_ADD_MOVIE_PACK);
 		socket.off(DID_ADD_MOVIE);
@@ -36,7 +54,7 @@ class GameSetupMulti extends React.Component {
 		socket.off(GAME_IN_PROGRESS);
 	}
 
-	constructor(props) {
+	constructor(props: Props) {
 		super(props);
 
 		this.state = {
@@ -77,7 +95,7 @@ class GameSetupMulti extends React.Component {
 		}
 	}
 
-	playerJoined(newPlayersState) {
+	playerJoined(newPlayersState: IPlayer[]) {
 		this.setState({
 			players: newPlayersState,
 		});
@@ -85,7 +103,7 @@ class GameSetupMulti extends React.Component {
 
 	createSocketRoom() {
 		const { playerName } = this.state;
-		const socket = openSocket(SOCKET_SERVER_URL);
+		const socket = openSocket(SOCKET_SERVER_URL as string);
 		window.socket = socket;
 		this.setState({ waitingOnSocketServer: true });
 		socket.on(ROOM_ID, (roomID, gameState) => {
@@ -96,7 +114,7 @@ class GameSetupMulti extends React.Component {
 			});
 			this.addSocketListeners(socket);
 		});
-		socket.on(NEW_PLAYER, newPlayerState => this.playerJoined(newPlayerState));
+		socket.on(NEW_PLAYER, (newPlayerState: IPlayer[]) => this.playerJoined(newPlayerState));
 		// TODO: failed join scenario
 		socket.emit(CREATE_ROOM, playerName);
 	}
@@ -106,10 +124,10 @@ class GameSetupMulti extends React.Component {
 		const { playerName } = this.state;
 		const { match } = this.props;
 		const roomID = match.params.roomID || prompt('Enter the room ID');
-		const socket = openSocket(SOCKET_SERVER_URL);
+		const socket = openSocket(SOCKET_SERVER_URL as string);
 		window.socket = socket;
 		this.setState({ waitingOnSocketServer: true });
-		socket.on(SUCCESSFUL_JOIN, (roomId, gameState) => {
+		socket.on(SUCCESSFUL_JOIN, (roomId: string, gameState) => {
 			this.setState({
 				socketRoom: roomId,
 				inRoom: true,
@@ -118,8 +136,11 @@ class GameSetupMulti extends React.Component {
 			});
 			this.addSocketListeners(socket);
 		});
-		socket.on(GAME_IN_PROGRESS, () => alert('The game has already started. Room not joined.') || socket.close());
-		socket.on(NEW_PLAYER, newPlayerState => this.playerJoined(newPlayerState));
+		socket.on(GAME_IN_PROGRESS, () => {
+			alert('The game has already started. Room not joined.');
+			socket.close()
+		});
+		socket.on(NEW_PLAYER, (newPlayerState: IPlayer[]) => this.playerJoined(newPlayerState));
 		// we also want to remove window.socket dont we
 		socket.on(FAILED_JOIN, () => {
 			alert('That room does not exist.');
@@ -136,22 +157,23 @@ class GameSetupMulti extends React.Component {
 		socket.emit(JOIN_ROOM, roomID, playerName);
 	}
 
-	addMovieToServer(movie) {
+	addMovieToServer(movie: IMovie): undefined {
 		const { socketRoom } = this.state;
 		window.socket.emit(ADD_MOVIE, socketRoom, movie);
+		return;
 	}
 
-	addMovieSetToServer(movies) {
+	addMovieSetToServer(movies: IMovie[]) {
 		const { socketRoom } = this.state;
 		window.socket.emit(ADD_MOVIE_STARTER_PACK, socketRoom, movies);
 	}
 
-	removeMovieFromServer(movie) {
+	removeMovieFromServer(movie: IMovie) {
 		const { socketRoom } = this.state;
 		window.socket.emit(REMOVE_MOVIE, socketRoom, movie);
 	}
 
-	updatePlayerName(e) {
+	updatePlayerName(e: React.ChangeEvent<HTMLInputElement>) {
 		const { value } = e.target;
 
 		this.setState({
@@ -165,12 +187,12 @@ class GameSetupMulti extends React.Component {
 	}
 
 	// exclusively related to movies for now
-	addSocketListeners(socket) {
-		socket.on(DID_REMOVE_MOVIE, newMoviesState => this.setState({ movies: newMoviesState }));
-		socket.on(DID_ADD_MOVIE_PACK, movies => this.setState({ movies }));
-		socket.on(DID_ADD_MOVIE, movieState => this.setState({ movies: movieState }));
-		socket.on(ADD_MOVIE_ERROR, msg => alert(msg));
-		socket.on(PLAYER_LEFT, players => this.setState({ players }));
+	addSocketListeners(socket: SocketIOClient.Socket) {
+		socket.on(DID_REMOVE_MOVIE, (newMoviesState: IMovie[]) => this.setState({ movies: newMoviesState }));
+		socket.on(DID_ADD_MOVIE_PACK, (movies: IMovie[]) => this.setState({ movies }));
+		socket.on(DID_ADD_MOVIE, (newMovieState: IMovie[]) => this.setState({ movies: newMovieState }));
+		socket.on(ADD_MOVIE_ERROR, (msg: string) => alert(msg));
+		socket.on(PLAYER_LEFT, (players: IPlayer[]) => this.setState({ players }));
 		socket.on(DID_START_GAME, (gameState) => {
 			const { history } = this.props;
 			const { socketRoom } = this.state;
@@ -254,14 +276,5 @@ class GameSetupMulti extends React.Component {
 		);
 	}
 }
-
-GameSetupMulti.propTypes = {
-	match: PropTypes.shape({
-		params: PropTypes.object.isRequired,
-	}).isRequired,
-	history: PropTypes.shape({
-		push: PropTypes.func.isRequired,
-	}).isRequired,
-};
 
 export default GameSetupMulti;

@@ -74,6 +74,7 @@
     "@types/react-bootstrap": "^0.32.15",
     "@types/react-dom": "^16.0.11",
     "@types/react-router-dom": "^4.3.1",
+    "@types/socket.io-client": "^1.4.32",
     "cheerio": "^1.0.0-rc.2",
     "express": "^4.16.4",
     "prop-types": "^15.6.2",

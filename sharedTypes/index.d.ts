@@ -1,3 +1,9 @@
+declare global {
+    interface Window {
+        socket: SocketIOClient.Socket;
+    }
+}
+
 export interface IPlayer {
     id: string | number;
     name: string;
