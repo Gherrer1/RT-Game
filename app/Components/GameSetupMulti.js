@@ -241,6 +241,12 @@ class GameSetupMulti extends React.Component {
 							<Button disabled={playerName === '' || waitingOnSocketServer} onClick={this.joinRoom}>
 								Join Room
 							</Button>
+							{waitingOnSocketServer
+								&& (
+									<div>
+										Gives us a minute, our Heroku-hosted servers might be in sleep mode...
+									</div>)
+							}
 						</div>
 					)
 				}
