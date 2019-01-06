@@ -1,5 +1,5 @@
 export interface IPlayer {
-    id: string;
+    id: string | number;
     name: string;
     color: string;
     score: number;
@@ -7,7 +7,7 @@ export interface IPlayer {
 }
 
 export interface IPlayerDuringGame {
-    id: string;
+    id: string | number;
     name: string;
     color: string;
     score: number;

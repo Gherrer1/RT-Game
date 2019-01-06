@@ -6,7 +6,7 @@ interface Props {
 	player: IPlayerDuringGame;
 	round: number;
 	winningScore: number;
-	updateGuess(playerID: string, guessIndex: number, newValue: string): void;
+	updateGuess(playerID: string | number, guessIndex: number, newValue: string): void;
 }
 
 function PlayerGuesses({ player, round, updateGuess, winningScore }: Props) {

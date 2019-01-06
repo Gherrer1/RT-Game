@@ -6,7 +6,7 @@ interface Props {
 	index: number;
 	player: IPlayer;
 	updatePlayerName(i: number, n: string): void;
-	removePlayer(i: string): void;
+	removePlayer(i: string | number): void;
 	removeDisabled: boolean;
 }
 
