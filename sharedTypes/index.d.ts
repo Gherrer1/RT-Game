@@ -19,4 +19,5 @@ export interface IMovie {
     image: string;
     name: string;
     year: number;
+    meterScore: number;
 }

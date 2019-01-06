@@ -1,7 +1,11 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { IPlayer } from '../../sharedTypes';
 
-function PlayersList({ players }) {
+interface Props {
+	players: IPlayer[]
+}
+
+function PlayersList({ players }: Props) {
 	return (
 		<div className="players-list">
 			{players.map(p => (
@@ -12,9 +16,5 @@ function PlayersList({ players }) {
 		</div>
 	);
 }
-
-PlayersList.propTypes = {
-	players: PropTypes.array.isRequired,
-};
 
 export default PlayersList;

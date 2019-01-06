@@ -1,8 +1,16 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Button } from 'react-bootstrap/lib';
+import { IMovie } from '../../sharedTypes';
 
-function ScoreRoundRow({ round, handleClick, movies, buttonText, disableButton }) {
+interface Props {
+	round: number;
+	movies: IMovie[];
+	buttonText: string;
+	handleClick: (round: number) => void;
+	disableButton: boolean;
+}
+
+function ScoreRoundRow({ round, handleClick, movies, buttonText, disableButton = false }: Props) {
 	const emptyArray = (new Array(movies.length)).fill(0);
 	return (
 		<React.Fragment>
@@ -36,16 +44,5 @@ function ScoreRoundRow({ round, handleClick, movies, buttonText, disableButton }
 		</React.Fragment>
 	);
 }
-
-ScoreRoundRow.propTypes = {
-	round: PropTypes.number.isRequired,
-	handleClick: PropTypes.func.isRequired,
-	movies: PropTypes.array.isRequired,
-	buttonText: PropTypes.string.isRequired,
-	disableButton: PropTypes.bool,
-};
-ScoreRoundRow.defaultProps = {
-	disableButton: false,
-};
 
 export default ScoreRoundRow;
