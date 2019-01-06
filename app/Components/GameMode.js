@@ -17,11 +17,11 @@ class GameMode extends React.Component {
 				<NavBar />
 				<div className="select-game-mode">
 					<Link to="/setup">
-						<Button>Split Screen</Button>
+						<Button bsSize="lg">Split Screen</Button>
 					</Link>
 					<div />
 					<Link to="/setup-multi">
-						<Button>
+						<Button bsSize="lg">
 							Multiplayer
 						</Button>
 					</Link>

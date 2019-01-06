@@ -18,6 +18,16 @@ h2 {
     margin-bottom: 5px;
 }
 
+.select-game-mode {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.select-game-mode a {
+    margin: 20px;
+}
+
 .game-setup {
     padding-bottom: 20px;
 }
