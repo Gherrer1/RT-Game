@@ -7,7 +7,7 @@ import MoviesList from './MoviesList';
 import PlayersList from './PlayersList';
 import getInviteURL from '../helpers/url';
 import socketEventNames from '../../sockets/socketEventNames';
-import { IMovie, IPlayer } from '../../sharedTypes';
+import { IMovie, IPlayer, IGameStateSetup } from '../../sharedTypes';
 import { RouteComponentProps } from 'react-router-dom';
 
 const { CREATE_ROOM, JOIN_ROOM, ROOM_ID, NEW_PLAYER, SUCCESSFUL_JOIN, FAILED_JOIN, REMOVE_MOVIE,
@@ -106,7 +106,7 @@ class GameSetupMulti extends React.Component<Props, State> {
 		const socket = openSocket(SOCKET_SERVER_URL as string);
 		window.socket = socket;
 		this.setState({ waitingOnSocketServer: true });
-		socket.on(ROOM_ID, (roomID, gameState) => {
+		socket.on(ROOM_ID, (roomID: string, gameState: IGameStateSetup) => {
 			this.setState({
 				socketRoom: roomID,
 				inRoom: true,
@@ -127,7 +127,7 @@ class GameSetupMulti extends React.Component<Props, State> {
 		const socket = openSocket(SOCKET_SERVER_URL as string);
 		window.socket = socket;
 		this.setState({ waitingOnSocketServer: true });
-		socket.on(SUCCESSFUL_JOIN, (roomId: string, gameState) => {
+		socket.on(SUCCESSFUL_JOIN, (roomId: string, gameState: IGameStateSetup) => {
 			this.setState({
 				socketRoom: roomId,
 				inRoom: true,
@@ -193,7 +193,7 @@ class GameSetupMulti extends React.Component<Props, State> {
 		socket.on(DID_ADD_MOVIE, (newMovieState: IMovie[]) => this.setState({ movies: newMovieState }));
 		socket.on(ADD_MOVIE_ERROR, (msg: string) => alert(msg));
 		socket.on(PLAYER_LEFT, (players: IPlayer[]) => this.setState({ players }));
-		socket.on(DID_START_GAME, (gameState) => {
+		socket.on(DID_START_GAME, (gameState: IGameStateSetup) => {
 			const { history } = this.props;
 			const { socketRoom } = this.state;
 			history.push({

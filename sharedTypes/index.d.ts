@@ -27,3 +27,8 @@ export interface IMovie {
     year: number;
     meterScore: number;
 }
+
+export interface IGameStateSetup {
+    movies: IMovie[];
+    players: IPlayer[];
+}
